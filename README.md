@@ -85,3 +85,11 @@ Una vez descargado, colócalo en la ruta que espera el backend (ver `chessgenome
 ### Alternativa futura
 
 El README original ya contempla embeber `stockfish.wasm` en el cliente para eliminar la dependencia del binario en el servidor. Ver sección "Pendiente opcional".
+
+### Binario de Stockfish usado por el proyecto
+
+El binario concreto utilizado en el desarrollo está disponible en la Release:
+
+https://github.com/Yulces/ChessGenome/releases/tag/stockfish-v1
+
+Incluye la nota de licencia GPL v3 y el enlace al código fuente oficial.
