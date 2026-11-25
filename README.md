@@ -62,3 +62,26 @@ MongoDB + Redis deben estar activos.
     docker exec -i chessgenome-mongodb mongorestore --archive --gzip --drop < data/mongodb/chessgenome_mongo_dump.gz
 
 Ver `data/mongodb/README.md` para más detalles.
+
+## Stockfish
+
+El código de integración con Stockfish está incluido en:
+
+- `chessgenome-backend/src/modules/stockfish/` (API NestJS)
+- `chessgenome-frontend/src/services/stockfishEngine.ts` y `StockfishPanel.tsx` (cliente)
+
+**El binario del motor Stockfish no se incluye en el repositorio** por dos motivos:
+
+1. **Tamaño**: el ejecutable supera el límite de 100 MB por archivo de GitHub.
+2. **Licencia**: Stockfish se distribuye bajo GPL v3, que exige proporcionar el código fuente o un enlace al mismo al distribuir el binario.
+
+### Cómo obtener Stockfish
+
+- Descarga oficial: https://stockfishchess.org/download/
+- O desde tu gestor de paquetes (`apt install stockfish`, `brew install stockfish`, etc.)
+
+Una vez descargado, colócalo en la ruta que espera el backend (ver `chessgenome-backend/src/modules/stockfish/stockfish.service.ts`) o configura la variable de entorno correspondiente.
+
+### Alternativa futura
+
+El README original ya contempla embeber `stockfish.wasm` en el cliente para eliminar la dependencia del binario en el servidor. Ver sección "Pendiente opcional".
