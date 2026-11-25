@@ -48,3 +48,17 @@ MongoDB + Redis deben estar activos.
 3. Auth usuarios + leaderboards
 4. Siembra masiva desde PGNs
 
+
+## Contenido del repositorio
+
+- `chessgenome-backend/`, `chessgenome-frontend/`, `DietrichessAnalyzer/`, `dietrichess-service/`: código del proyecto.
+- `paper/`: scripts de análisis, datos y plantilla LaTeX del artículo.
+- `data/mongodb/`: dump comprimido de la base de datos MongoDB (`chessgenome_mongo_dump.gz`). Ver `data/mongodb/README.md` para instrucciones de restauración.
+- `deploy/`: configuración de despliegue (Nginx, systemd, etc.).
+- `scripts/`: utilidades auxiliares.
+
+## Restaurar la base de datos
+
+    docker exec -i chessgenome-mongodb mongorestore --archive --gzip --drop < data/mongodb/chessgenome_mongo_dump.gz
+
+Ver `data/mongodb/README.md` para más detalles.
