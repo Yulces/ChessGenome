@@ -93,3 +93,7 @@ El binario concreto utilizado en el desarrollo está disponible en la Release:
 https://github.com/Yulces/ChessGenome/releases/tag/stockfish-v1
 
 Incluye la nota de licencia GPL v3 y el enlace al código fuente oficial.
+
+## Licencia
+
+Este proyecto se distribuye bajo la licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
