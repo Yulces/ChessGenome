@@ -1,0 +1,1330 @@
+-------------------------------------------------------------------------------
+                    DIETRICHESSANALYZER - BENUTZERHANDBUCH
+                          Version 3.0 - VOLLSTÄNDIG
+-------------------------------------------------------------------------------
+
+                Schachanalysesystem mit Gödel'scher Darstellung
+                                © 2026 DietriChessAnalyzer
+
+
++-----------------------------------------------------------------------------+
+¦                               INHALTSVERZEICHNIS                           ¦
++-----------------------------------------------------------------------------¦
+¦ 1.  EINLEITUNG                                                             ¦
+¦ 2.  INSTALLATION UND ANFORDERUNGEN                                         ¦
+¦ 3.  BENUTZEROBERFLÄCHE                                                     ¦
+¦ 4.  LADEN UND NAVIGIEREN VON PGN                                           ¦
+¦ 5.  PARTIEANALYSE                                                          ¦
+¦ 6.  DETAILLIERTE WERTE                                                     ¦
+¦ 7.  DIAGRAMME UND VISUALISIERUNG                                           ¦
+¦ 8.  STELLUNGSEDITOR                                                        ¦
+¦ 9.  STELLUNGSSUCHE                                                         ¦
+¦ 10. MEHRFACHE PGN-ANALYSE                                                  ¦
+¦ 11. NEURONALES NETZ - VOLLSTÄNDIGE ANLEITUNG                              ¦
+¦ 12. EXPORT NACH DOCX                                                       ¦
+¦ 13. FEHLERBEHEBUNG                                                         ¦
+¦ 14. GLOSSAR DER BEGRIFFE                                                   ¦
+¦ 15. REFERENZEN UND RESSOURCEN                                              ¦
++-----------------------------------------------------------------------------+
+
+
+-------------------------------------------------------------------------------
+1. EINLEITUNG
+-------------------------------------------------------------------------------
+
+1.1 Was ist DietriChessAnalyzer?
+--------------------------------
+
+DietriChessAnalyzer ist eine Schachanalysesoftware, die die Gödel'sche
+Darstellung von Positionen verwendet, um jede Position in eine einzige Zahl
+umzuwandeln, den sogenannten S-WERT (S Value).
+
+Diese Darstellung wandelt jede Schachposition in eine eindeutige natürliche
+Zahl um und ermöglicht:
+
+  • Mathematische Analyse von Positionen
+  • Quantitative Vergleichbarkeit von Zügen
+  • Grafische Visualisierung des Partieverlaufs
+  • Vorhersage durch neuronale Netze
+  • Datenbank von Positionen mit ihren S-Werten
+
+
+1.2 Philosophie des Programms
+-----------------------------
+
+Das Programm basiert auf der Idee, dass jede Schachposition als eindeutige
+Zahl dargestellt werden kann, indem man das PRODUKT VON PRIMZAHLEN POTENZIERT
+MIT EXPONENTEN verwendet, die Figuren und Felder repräsentieren.
+
+
+1.3 Grundlegende Konzepte
+-------------------------
+
++-----------------------------------------------------------------------------+
+¦ KONZEPT       ¦ ERKLÄRUNG                                                 ¦
++---------------+-------------------------------------------------------------¦
+¦ S-WERT        ¦ Eindeutige Zahl, die die vollständige Position            ¦
+¦ (S Value)     ¦ repräsentiert. Berechnet als Produkt von                  ¦
+¦               ¦ (Feldwert ^ Figurenwert) für jede Figur auf dem Brett.   ¦
++---------------+-------------------------------------------------------------¦
+¦ Log10(S)      ¦ Logarithmus zur Basis 10 des S-Werts. Ermöglicht die     ¦
+¦               ¦ Arbeit mit handlicheren Zahlen und die Visualisierung    ¦
+¦               ¦ von Trends.                                               ¦
++---------------+-------------------------------------------------------------¦
+¦ VPo(k)        ¦ Positionswert im Zug k. Dies ist der S-Wert zu einem     ¦
+¦               ¦ bestimmten Zeitpunkt.                                    ¦
++---------------+-------------------------------------------------------------¦
+¦ D(k)          ¦ Differenz zwischen VPo(k) und VPo(k-1). Misst die        ¦
+¦               ¦ Wertänderung zwischen aufeinanderfolgenden Zügen.        ¦
++---------------+-------------------------------------------------------------¦
+¦ R(k)          ¦ Verhältnis zwischen VPo(k) und VPo(k-1). Misst die       ¦
+¦               ¦ Änderungsrate zwischen Zügen.                            ¦
++---------------+-------------------------------------------------------------¦
+¦ FELDZUORDNUNG ¦ Jedes Feld hat eine zugeordnete Primzahl:                ¦
+¦               ¦ a1=2, b1=3, c1=5, d1=7, e1=11, ... h8=311               ¦
++---------------+-------------------------------------------------------------¦
+¦ FIGURENWERTE  ¦ Jede Figur hat einen Exponentenwert:                     ¦
+¦               ¦ Bauer=1, Springer=5, Läufer=7, Turm=3, Dame=9, König=11 ¦
++-----------------------------------------------------------------------------+
+
+
+1.4 Dateistruktur
+-----------------
+
+Ihr Ordner/
++-- chess_analyzer_local.py      ? Hauptanwendung
++-- neural_network.py            ? Neuronales Netz Modul
++-- engines/
+¦   +-- stockfish.exe            ? Schachengine (separat herunterladen)
++-- data/
+¦   +-- positions.db             ? SQLite-Datenbank (wird automatisch erstellt)
++-- exports/                     ? Exportierte Dokumente
++-- logs/                        ? Protokolldateien
++-- models/                      ? Gespeicherte neuronale Netzmodelle
+
+
+-------------------------------------------------------------------------------
+2. INSTALLATION UND ANFORDERUNGEN
+-------------------------------------------------------------------------------
+
+2.1 Systemanforderungen
+-----------------------
+
++-----------------------------------------------------------------------------+
+¦ ANFORDERUNG   ¦ MINIMAL        ¦ EMPFOHLEN                                ¦
++---------------+----------------+-------------------------------------------¦
+¦ BS            ¦ Windows 7/10/11¦ Windows 10/11                            ¦
+¦ Python        ¦ 3.8            ¦ 3.11.6                                   ¦
+¦ RAM           ¦ 4 GB           ¦ 8 GB                                     ¦
+¦ Festplatte    ¦ 500 MB         ¦ 1 GB                                     ¦
+¦ Prozessor     ¦ Dual Core      ¦ Quad Core                                ¦
++----------------------------------------------------------------------------+
+
+
+2.2 Benötigte Abhängigkeiten
+----------------------------
+
+GRUNDINSTALLATION:
+  pip install PyQt5 chess python-chess numpy matplotlib scipy python-docx
+
+FÜR DAS NEURONALE NETZ:
+  pip install tensorflow scikit-learn joblib
+
+
+2.3 Installation von Stockfish
+------------------------------
+
+1. Laden Sie Stockfish herunter von: https://stockfishchess.org/download/
+2. Platzieren Sie die Datei stockfish.exe im Ordner engines/
+3. Das Programm erkennt sie automatisch
+
+
+-------------------------------------------------------------------------------
+3. BENUTZEROBERFLÄCHE
+-------------------------------------------------------------------------------
+
+3.1 Allgemeine Beschreibung
+---------------------------
+
+Beim Öffnen der Anwendung sehen Sie ein Fenster, das in mehrere Bereiche
+unterteilt ist:
+
++-----------------------------------------------------------------------------+
+¦  DIETRICHESSANALYZER - Version 3.0                                         ¦
++-----------------------------------------------------------------------------¦
+¦  [PGN-Analyse]  [Mehrfache PGN-Analyse]                                   ¦
++-----------------------------------------------------------------------------¦
+¦  +---------------------------------------------------------------------+   ¦
+¦  ¦  [PGN laden] [Analysieren] [Details] [Export] [Nächste Züge]      ¦   ¦
+¦  ¦  [Suchen] [DB-Statistik] [Neuronales Netz] [Editor] [Hilfe]  [Sprache ?]¦
+¦  +---------------------------------------------------------------------+   ¦
+¦  +---------------------------------------------------------------------+   ¦
+¦  ¦  +-------------------------+  ¦  +-----------------------------+   ¦   ¦
+¦  ¦  ¦  PGN-TEXTEDITOR         ¦  ¦  ¦  SCHACHBRETT               ¦   ¦   ¦
+¦  ¦  ¦  1. e4 e5 2. Sf3 Sc6   ¦  ¦  ¦      rnbqkbnr              ¦   ¦   ¦
+¦  ¦  ¦  3. Lb5 a6 ...         ¦  ¦  ¦      pppppppp              ¦   ¦   ¦
+¦  ¦  +-------------------------+  ¦  ¦  [<<] [<] [>] [>>]          ¦   ¦   ¦
+¦  +--------------------------------------------------------------------+   ¦
+¦  +---------------------------------------------------------------------+   ¦
+¦  ¦  [Diagramm-Viewer öffnen]                                          ¦   ¦
+¦  +---------------------------------------------------------------------+   ¦
++-----------------------------------------------------------------------------+
+
+
+3.2 Hauptregisterkarten
+-----------------------
+
++-----------------------------------------------------------------------------+
+¦ REGISTERKARTE          ¦ FUNKTION                                         ¦
++------------------------+--------------------------------------------------¦
+¦ PGN-Analyse            ¦ Analyse einer einzelnen Partie                   ¦
+¦ Mehrfache PGN-Analyse  ¦ Analyse mehrerer Partien aus einer PGN-Datei    ¦
++---------------------------------------------------------------------------+
+
+
+3.3 Hauptschaltflächen
+----------------------
+
++-----------------------------------------------------------------------------+
+¦ SCHALTFLÄCHE        ¦ FUNKTION                         ¦ TASTATURKÜRZEL  ¦
++---------------------+---------------------------------+------------------¦
+¦ PGN laden           ¦ Lädt eine PGN-Datei              ¦ Ctrl+O           ¦
+¦ Analysieren         ¦ Analysiert die geladene Partie   ¦ Ctrl+A           ¦
+¦ Detaillierte Werte  ¦ Zeigt detaillierte Wertetabelle  ¦ Ctrl+V           ¦
+¦ Nach DOCX exportieren¦ Exportiert die Analyse nach Word¦ Ctrl+E           ¦
+¦ Nächste Züge        ¦ Analysiert Züge ab aktueller Pos.¦ Ctrl+N           ¦
+¦ Positionen suchen   ¦ Sucht Positionen in der DB       ¦ Ctrl+S           ¦
+¦ DB-Statistik        ¦ Zeigt Datenbankstatistiken       ¦ -                ¦
+¦ Neuronales Netz     ¦ Öffnet die neuronale Netzanalyse ¦ Ctrl+R           ¦
+¦ Stellungseditor     ¦ Stellungseditor öffnen           ¦ Ctrl+P           ¦
+¦ Hilfe               ¦ Zeigt Hilfe an                   ¦ F1               ¦
+¦ Sprache             ¦ Wechselt Sprache (EN/ES/DE)      ¦ -                ¦
++---------------------------------------------------------------------------+
+
+
+3.4 PGN-Textbereich
+-------------------
+
+• Zeigt den Inhalt der geladenen PGN-Datei an
+• Ermöglicht manuelle Bearbeitung der PGN
+• Nach der Analyse werden die Gödel-Werte hinzugefügt
+
+
+3.5 Schachbrett
+---------------
+
+• Zeigt die aktuelle Position der Partie an
+• Navigationsschaltflächen:
+  - <<  : Zum ersten Zug gehen
+  - <   : Vorheriger Zug
+  - >   : Nächster Zug
+  - >>  : Zum letzten Zug gehen
+
+
+-------------------------------------------------------------------------------
+4. LADEN UND NAVIGIEREN VON PGN
+-------------------------------------------------------------------------------
+
+4.1 Laden einer PGN-Datei
+-------------------------
+
+SCHRITT FÜR SCHRITT:
+  1. Klicken Sie auf "PGN laden"
+  2. Wählen Sie eine PGN-Datei (Format .pgn) aus
+  3. Die Datei wird im Textbereich geladen
+  4. Das Brett zeigt die Anfangsposition
+  5. Die Navigationsschaltflächen werden aktiviert
+
+WARUM TUN SIE DAS?
+  • Zum Importieren von Schachpartien im Standardformat
+  • Zum Analysieren gespeicherter Partien
+  • Zum Arbeiten mit Turnier- oder Datenbankpartien
+
+WIE FUNKTIONIERT ES?
+  Das Programm parst die PGN-Datei mit der Bibliothek chess.pgn, extrahiert
+  die Züge und speichert sie in self.move_list, speichert den Zustand (FEN)
+  jeder Position in self.board_states und rendert das Brett mit chess.svg.
+
+
+4.2 Navigation durch die Partie
+-------------------------------
+
++-----------------------------------------------------------------------------+
+¦ SCHALTFLÄCHE ¦ AKTION                  ¦ WANN VERWENDEN                   ¦
++--------------+-------------------------+-----------------------------------¦
+¦ <<           ¦ Erster Zug              ¦ Um die Anfangsposition zu sehen  ¦
+¦ <            ¦ Vorheriger Zug          ¦ Um einen Zug zurückzugehen       ¦
+¦ >            ¦ Nächster Zug            ¦ Um einen Zug vorwärts zu gehen   ¦
+¦ >>           ¦ Letzter Zug             ¦ Um die Endposition zu sehen      ¦
++---------------------------------------------------------------------------+
+
+WIE FUNKTIONIERT DIE NAVIGATION?
+  self.current_move_index speichert den aktuellen Index. Beim Navigieren wird
+  das entsprechende FEN aus self.board_states geladen und das Brett neu
+  gerendert.
+
+
+4.3 Das FEN-Format (Forsyth-Edwards Notation)
+----------------------------------------------
+
+BEISPIEL:
+  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+
+BEDEUTUNG:
++-----------------------------------------------------------------------------+
+¦ TEIL           ¦ BEISPIEL       ¦ ERKLÄRUNG                               ¦
++----------------+----------------+-----------------------------------------¦
+¦ Figuren        ¦ rnbqkbnr/pp... ¦ Kleinbuchstaben=schwarz, Groß=weiß    ¦
+¦ Zugrecht       ¦ w              ¦ w=weiß, b=schwarz                     ¦
+¦ Rochade        ¦ KQkq           ¦ Rochaderechte                         ¦
+¦ En passant     ¦ -              ¦ En-passant-Feld                       ¦
+¦ Halbzug        ¦ 0              ¦ Halbzüge seit letztem Schlag          ¦
+¦ Zugnummer      ¦ 1              ¦ Aktuelle Zugnummer                    ¦
++---------------------------------------------------------------------------+
+
+
+-------------------------------------------------------------------------------
+5. PARTIEANALYSE
+-------------------------------------------------------------------------------
+
+5.1 Was macht die Analyse?
+--------------------------
+
+Die Analyse wandelt jede Position der Partie in einen GÖDEL-WERT (G) um und
+berechnet abgeleitete Metriken, um die Entwicklung der Partie zu verstehen.
+
+
+5.2 Analyseprozess
+------------------
+
+SCHRITT FÜR SCHRITT:
+  1. Laden Sie eine PGN-Datei (PGN laden)
+  2. Klicken Sie auf "Analysieren"
+  3. Das Programm verarbeitet jede Position der Partie
+  4. Es berechnet für jede Position:
+       - S-Wert (exakt) ? Produkt von (Feld^Figur)
+       - VPo(k) ? Positionswert
+       - D(k) ? Differenz zur vorherigen Position
+       - R(k) ? Verhältnis zur vorherigen Position
+  5. Speichert die Positionen in der Datenbank
+  6. Zeigt eine Meldung mit Statistiken
+
+WARUM TUN SIE DAS?
+  • Um die Partie quantitativ zu verstehen
+  • Um Züge zu identifizieren, die den Wert drastisch ändern
+  • Um verschiedene Partien oder Züge zu vergleichen
+
+
+5.3 Berechnung des S-Werts
+--------------------------
+
+FORMEL:
+  S = ?(Fc ^ Ff)
+
+Wobei:
+  • Fc = Feldwert (Primzahl, die jedem Feld zugeordnet ist)
+  • Ff = Figurenwert (Exponent)
+
+PRAKTISCHES BEISPIEL:
+  Weißer Bauer auf e4:
+    - Feld e4 ? Wert 109
+    - Figur P (weißer Bauer) ? Wert 1
+    - Beitrag = 109^1 = 109
+
+  Schwarzer Springer auf f6:
+    - Feld f6 ? Wert 199
+    - Figur n (schwarzer Springer) ? Wert 6
+    - Beitrag = 199^6
+
+  Der gesamte S-Wert ist das Produkt aller dieser Beiträge.
+
+
+5.4 Abgeleitete Metriken
+------------------------
+
++-----------------------------------------------------------------------------+
+¦ METRIK    ¦ FORMEL                    ¦ WAS WIRD GEMESSEN                 ¦
++-----------+---------------------------+------------------------------------¦
+¦ VPo(k)    ¦ S im Zug k                ¦ Absoluter Positionswert           ¦
+¦ D(k)      ¦ VPo(k) - VPo(k-1)         ¦ Änderung zwischen Zügen          ¦
+¦ R(k)      ¦ VPo(k) / VPo(k-1)         ¦ Änderungsrate                    ¦
++----------------------------------------------------------------------------+
+
+INTERPRETATION:
+  • D(k) positiv ? Die Position hat sich verbessert
+  • D(k) negativ ? Die Position hat sich verschlechtert
+  • R(k) > 1 ? Die Position hat sich verbessert
+  • R(k) < 1 ? Die Position hat sich verschlechtert
+
+
+5.5 Analysebeispiel
+-------------------
+
+  Anfangsposition: S = 2.45e+150
+  Nach 1.e4: S = 3.12e+152
+  D(1) = 3.10e+152 (deutliche Verbesserung)
+  R(1) = 127.3 (große Verbesserung)
+
+
+-------------------------------------------------------------------------------
+6. DETAILLIERTE WERTE
+-------------------------------------------------------------------------------
+
+6.1 Was zeigt die Wertetabelle?
+-------------------------------
+
+Beim Klicken auf "Detaillierte Werte" öffnet sich ein Fenster mit einer
+Tabelle, die alle während der Analyse berechneten Werte anzeigt.
+
+
+6.2 Tabellenspalten
+-------------------
+
++-----------------------------------------------------------------------------+
+¦ SPALTE          ¦ BESCHREIBUNG                                            ¦
++-----------------+---------------------------------------------------------¦
+¦ #Zug            ¦ Zugnummer (0 = Anfangsposition)                         ¦
+¦ Zug             ¦ Zugnotation in SAN                                     ¦
+¦ VPo(k)          ¦ Positionswert (Gödel-Wert)                             ¦
+¦ Exakter Wert   ¦ Exakter S-Wert (Produkt von Feld^Figur)                 ¦
+¦ Faktoren        ¦ Zerlegung in Faktoren (Feld^Figur)                     ¦
+¦ D(k)            ¦ Differenz zur vorherigen Position                      ¦
+¦ R(k)            ¦ Verhältnis zur vorherigen Position                     ¦
+¦ FEN             ¦ Vollständiges FEN der Position                         ¦
+¦ SF Bester       ¦ Bester Zug laut Stockfish                              ¦
+¦ SF Bewertung    ¦ Stockfish-Bewertung (Centipawns)                       ¦
++---------------------------------------------------------------------------+
+
+
+6.3 Ansichtsmodi
+----------------
+
+Die Auswahl "Anzeigen:" ermöglicht das Filtern der Informationen:
+
++-----------------------------------------------------------------------------+
+¦ MODUS                           ¦ ANZEIGE                                 ¦
++---------------------------------+-----------------------------------------¦
+¦ 1. Alle Daten                   ¦ Alle Spalten                           ¦
+¦ 2. Nur Positionswert            ¦ Nur VPo(k) und Faktoren                ¦
+¦ 3. Positionswert und voller Wert¦ VPo(k) und exakter Wert                ¦
+¦ 4. Nur FEN                      ¦ Nur FEN jeder Position                 ¦
+¦ 5. Nur R(k)-Werte               ¦ Nur R(k) zwischen Positionen           ¦
+¦ 6. Nur D(k)-Werte               ¦ Nur D(k) zwischen Positionen           ¦
++---------------------------------------------------------------------------+
+
+
+6.4 Interpretation der Faktoren
+-------------------------------
+
+Beispiel: 2^1 x 3^5 x 5^7 x 7^3 x 11^9
+
+  • 2^1   ? Weißer Bauer auf a1 (Feld 2, Figur 1)
+  • 3^5   ? Weißer Springer auf b1 (Feld 3, Figur 5)
+  • 5^7   ? Weißer Läufer auf c1 (Feld 5, Figur 7)
+  • 7^3   ? Weißer Turm auf d1 (Feld 7, Figur 3)
+  • 11^9  ? Weiße Dame auf e1 (Feld 11, Figur 9)
+
+Das Produkt all dieser Faktoren ergibt den exakten S-Wert.
+
+
+-------------------------------------------------------------------------------
+7. DIAGRAMME UND VISUALISIERUNG
+-------------------------------------------------------------------------------
+
+7.1 Was zeigt der Diagramm-Viewer?
+-----------------------------------
+
+Beim Klicken auf "Diagramm-Viewer öffnen" öffnet sich ein Fenster mit
+Diagrammen, die die Entwicklung der Werte über die gesamte Partie visualisieren.
+
+
+7.2 Diagrammtypen
+-----------------
+
++-----------------------------------------------------------------------------+
+¦ DIAGRAMM  ¦ SCHALTFLÄCHE  ¦ WAS WIRD ANGEZEIGT                           ¦
++-----------+---------------+-----------------------------------------------¦
+¦ VPo(k)    ¦ "VPo(k)"      ¦ Entwicklung des Positionswerts               ¦
+¦ D(k)      ¦ "D(k)"        ¦ Entwicklung der Differenzen zwischen Zügen   ¦
+¦ R(k)      ¦ "R(k)"        ¦ Entwicklung der Verhältnisse zwischen Zügen  ¦
++---------------------------------------------------------------------------+
+
+
+7.3 Diagrammoptionen
+--------------------
+
++-----------------------------------------------------------------------------+
+¦ OPTION                ¦ FUNKTION                                          ¦
++-----------------------+---------------------------------------------------¦
+¦ Diagrammtyp           ¦ Diagrammart (Linie, Punkt, Balken)               ¦
+¦ Sicherer Modus (log10)¦ Verwendet logarithmische Skala gegen Überlauf    ¦
++---------------------------------------------------------------------------+
+
+SICHERER MODUS (log10):
+  Da die Werte extrem groß sein können, wendet der sichere Modus den
+  Logarithmus zur Basis 10 auf alle Werte an, wodurch die Diagramme besser
+  lesbar werden.
+
+
+7.4 Navigation in Diagrammen
+----------------------------
+
+  • Horizontales Scrollen: Verschiebt das Diagramm entlang der Partie
+  • Vertikales Scrollen: Passt die vertikale Skala an
+  • Zoom: Verwenden Sie das Mausrad oder die Schaltflächen der Werkzeugleiste
+
+
+7.5 Interpretation der Diagramme
+--------------------------------
+
+VPo(k)-DIAGRAMM:
+  • Aufsteigende Linie ? Die Position verbessert sich
+  • Absteigende Linie ? Die Position verschlechtert sich
+  • Spitzen ? Züge, die die Position drastisch verändern
+  • Täler ? Züge, die die Position verschlechtern
+
+D(k)-DIAGRAMM:
+  • Positive Punkte ? Züge, die die Position verbessern
+  • Negative Punkte ? Züge, die die Position verschlechtern
+  • Große Punkte ? Züge mit großer Auswirkung
+
+R(k)-DIAGRAMM:
+  • Wert > 1 ? Verbesserung der Position
+  • Wert < 1 ? Verschlechterung der Position
+  • Extreme Werte ? Sehr bedeutende Züge
+
+
+-------------------------------------------------------------------------------
+8. STELLUNGSEDITOR
+-------------------------------------------------------------------------------
+
+8.1 Was macht der Stellungseditor?
+----------------------------------
+
+Ermöglicht das Bearbeiten jeder Schachposition, um Varianten zu konstruieren
+oder bestimmte Positionen zu analysieren.
+
+
+8.2 So öffnen Sie den Editor
+----------------------------
+
+  • Schaltfläche "Stellungseditor öffnen" im Hauptfenster
+  • Schaltfläche "Suchen (Editor öffnen)" im Suchdialog
+
+
+8.3 Editormodi
+--------------
+
++-----------------------------------------------------------------------------+
+¦ MODUS         ¦ FUNKTION                                                  ¦
++---------------+-----------------------------------------------------------¦
+¦ Züge spielen  ¦ Züge auf dem Brett ausführen (Partiemodus)               ¦
+¦ Figuren       ¦ Figuren auf dem Brett platzieren oder entfernen          ¦
+¦ bearbeiten    ¦                                                          ¦
++----------------------------------------------------------------------------+
+
+
+8.4 Bearbeitungswerkzeuge
+-------------------------
+
++-----------------------------------------------------------------------------+
+¦ WERKZEUG          ¦ FUNKTION                                             ¦
++-------------------+-------------------------------------------------------¦
+¦ Weiße Figuren     ¦ K, D, T, L, S, B ? Weiße Figuren platzieren         ¦
+¦ Schwarze Figuren  ¦ k, d, t, l, s, b ? Schwarze Figuren platzieren      ¦
+¦ Löschen (X)       ¦ Figuren durch Klicken auf dem Brett entfernen       ¦
+¦ Zug rückgängig    ¦ Macht den letzten Zug rückgängig                    ¦
+¦ Brett leeren      ¦ Löscht das gesamte Brett                            ¦
+¦ Anfangsposition   ¦ Setzt die Anfangsposition zurück                    ¦
+¦ Alles zurücksetzen¦ Vollständiger Neustart                              ¦
++---------------------------------------------------------------------------+
+
+
+8.5 PGN-Kopfzeilen
+------------------
+
++-----------------------------------------------------------------------------+
+¦ FELD        ¦ BESCHREIBUNG                                               ¦
++-------------+-------------------------------------------------------------¦
+¦ Event       ¦ Name des Ereignisses                                      ¦
+¦ Ort         ¦ Spielort                                                  ¦
+¦ Datum       ¦ Datum der Partie                                          ¦
+¦ Runde       ¦ Turnierrunde                                              ¦
+¦ Weiß        ¦ Name des Weiß-Spielers                                   ¦
+¦ Schwarz     ¦ Name des Schwarz-Spielers                                ¦
+¦ Ergebnis    ¦ Ergebnis (1-0, 0-1, 1/2-1/2, *)                         ¦
++---------------------------------------------------------------------------+
+
+
+8.6 PGN-Vorschau
+----------------
+
+Der Editor zeigt eine Vorschau des generierten PGN mit Kopfzeilen und den
+ausgeführten Zügen.
+
+
+8.7 Praktische Anwendung - Eine Variante erstellen
+--------------------------------------------------
+
+  1. Editor öffnen
+  2. Figuren in der gewünschten Position platzieren
+  3. Die Variante durch Ziehen von Figuren spielen
+  4. Bestätigen, um die Position an die Hauptanwendung zu senden
+  5. Die Variante mit "Analysieren" untersuchen
+
+
+-------------------------------------------------------------------------------
+9. STELLUNGSSUCHE
+-------------------------------------------------------------------------------
+
+9.1 Was macht die Suche?
+------------------------
+
+Ermöglicht das Suchen von Positionen in der Datenbank und die Anzeige von
+Statistiken über diese.
+
+
+9.2 So öffnen Sie die Suche
+---------------------------
+
+  • Schaltfläche "Positionen suchen" im Hauptfenster
+  • Tastenkürzel Ctrl+S
+
+
+9.9 Analyse mit Stockfish
+-------------------------
+
+  • Schaltfläche "Mit Stockfish analysieren" ? Analysiert die Position
+  • Zeigt an:
+    - Bester Zug: Bester Zug laut Stockfish
+    - Bewertung: Bewertung in Centipawns (positiv = Vorteil für Weiß)
+    - Tiefe: Analysetiefe
+    - Top-Züge: Beste Züge mit ihren Bewertungen
+
+
+9.10 Datenbankstatistiken
+-------------------------
+
++-----------------------------------------------------------------------------+
+¦ METRIK                  ¦ BESCHREIBUNG                                    ¦
++-------------------------+-------------------------------------------------¦
+¦ Eindeutige Positionen   ¦ Anzahl eindeutiger Positionen in der DB        ¦
+¦ Gesamtvorkommen         ¦ Gesamtzahl registrierter Positionen            ¦
+¦ Übergänge               ¦ Anzahl der Übergänge zwischen Positionen       ¦
+¦ Durchschnittsfrequenz   ¦ Durchschnittliche Häufigkeit                  ¦
+¦ Positionen mit Stockfish¦ Positionen mit Stockfish-Analyse              ¦
+¦ Datenbankgröße          ¦ Größe der Datenbank in MB                     ¦
++---------------------------------------------------------------------------+
+
+
+9.11 Häufigste Positionen
+-------------------------
+
+Tabelle der häufigsten Positionen in der Datenbank:
+
++-----------------------------------------------------------------------------+
+¦ SPALTE      ¦ BESCHREIBUNG                                               ¦
++-------------+-------------------------------------------------------------¦
+¦ Rang        ¦ Platzierung im Ranking                                     ¦
+¦ FEN         ¦ Vollständiges FEN der Position                             ¦
+¦ S-Wert      ¦ Gödel-Wert                                               ¦
+¦ Häufigkeit  ¦ Anzahl der Vorkommen                                       ¦
+¦ Gewinnrate  ¦ Siegquote                                                  ¦
+¦ SF Bester   ¦ Bester Zug laut Stockfish                                 ¦
+¦ SF Bewertung¦ Stockfish-Bewertung                                       ¦
++---------------------------------------------------------------------------+
+
+DOPPELKLICK auf eine Zeile ? Lädt die Position in das Suchbrett.
+
+
+-------------------------------------------------------------------------------
+10. MEHRFACHE PGN-ANALYSE
+-------------------------------------------------------------------------------
+
+10.1 Was macht es?
+------------------
+
+Analysiert mehrere Partien aus einer einzigen PGN-Datei und speichert alle
+Positionen in der Datenbank.
+
+
+10.2 Prozess
+------------
+
+  1. Laden Sie eine PGN-Datei mit mehreren Partien
+  2. Sehen Sie die Liste der geladenen Partien
+  3. Klicken Sie auf "Alle Partien analysieren"
+  4. Das Programm verarbeitet jede Partie:
+       - Extrahiert alle Züge
+       - Berechnet den S-Wert jeder Position
+       - Speichert in der Datenbank
+       - Registriert Übergänge zwischen Positionen
+  5. Der Status jeder Partie wird aktualisiert
+  6. Die Zusammenfassung wird angezeigt
+
+
+10.3 Tabellenspalten
+--------------------
+
++-----------------------------------------------------------------------------+
+¦ SPALTE      ¦ BESCHREIBUNG                                               ¦
++-------------+-------------------------------------------------------------¦
+¦ #           ¦ Partienummer                                               ¦
+¦ Event       ¦ Ereignisname                                               ¦
+¦ Weiß        ¦ Weiß-Spieler                                              ¦
+¦ Schwarz     ¦ Schwarz-Spieler                                           ¦
+¦ Ergebnis    ¦ Ergebnis (1-0, 0-1, 1/2-1/2, *)                          ¦
+¦ Züge        ¦ Anzahl der Züge                                            ¦
+¦ Status      ¦ Status (Ausstehend, Analysiert, Fehler)                   ¦
++---------------------------------------------------------------------------+
+
+
+10.4 Doppelklick auf eine Partie
+--------------------------------
+
+Zeigt detaillierte Informationen zur Partie:
+
+  Partie 1:
+  Event: Weltmeisterschaft
+  Ort: Dubai
+  Datum: 2024.12.15
+  Runde: 12
+  Weiß: Carlsen
+  Schwarz: Nakamura
+  Ergebnis: 1-0
+  Züge: 45
+
+
+-------------------------------------------------------------------------------
+11. NEURONALES NETZ - VOLLSTÄNDIGE ANLEITUNG
+-------------------------------------------------------------------------------
+
+11.1 Was ist das neuronale Netz?
+--------------------------------
+
+Es ist ein SYSTEM DES MASCHINELLEN LERNENS, das lernt, Schachpositionen auf
+der Grundlage der in der Datenbank gespeicherten Daten zu bewerten.
+
+
+11.2 Wofür wird es verwendet?
+-----------------------------
+
++-----------------------------------------------------------------------------+
+¦ FUNKTION    ¦ BESCHREIBUNG                                               ¦
++-------------+-------------------------------------------------------------¦
+¦ Vorhersage  ¦ Bewertet die Qualität von Zügen von einer Position aus    ¦
+¦ Lernen      ¦ Verbessert sich mit mehr Daten analysierter Partien       ¦
+¦ Vergleich   ¦ Vergleicht seine Vorhersagen mit Stockfish                ¦
+¦ Visualisiert¦ Zeigt Vorhersagen für jeden Zug grafisch an               ¦
++---------------------------------------------------------------------------+
+
+
+11.3 So öffnen Sie das neuronale Netz
+-------------------------------------
+
+  1. Klicken Sie auf "Neuronales Netz" in der Hauptschaltflächenleiste
+  2. Der Dialog für die neuronale Netzanalyse öffnet sich
+  3. Die aktuelle Position des Hauptbretts wird automatisch geladen
+
+
+11.4 Oberfläche des neuronalen Netzes
+-------------------------------------
+
++-----------------------------------------------------------------------------+
+¦  NEURONALES NETZ ANALYSE                                                  ¦
++-----------------------------------------------------------------------------¦
+¦  +-----------------------------------------------------------------------+ ¦
+¦  ¦  BRETT                          ¦  NETZWERKSTATUS                   ¦ ¦
+¦  ¦                                 ¦  ? Nicht trainiert               ¦ ¦
+¦  ¦      rnbqkbnr                  ¦                                   ¦ ¦
+¦  ¦      pppppppp                  ¦  POSITIONSINFORMATION             ¦ ¦
+¦  ¦                                 ¦  FEN: rnbqkbnr/pppppppp/8/...    ¦ ¦
+¦  ¦  [<<] [<] [>] [>>]             ¦  Züge: 0                         ¦ ¦
+¦  ¦  Zug: 0/0                      ¦  Figuren: Weiß: 16 | Schwarz: 16 ¦ ¦
+¦  ¦                                 ¦  S-Wert: 2.45e+150               ¦ ¦
+¦  ¦  [Brett aktualisieren]         ¦  Log10(S): 150.389               ¦ ¦
+¦  ¦                                 ¦                                   ¦ ¦
+¦  ¦                                 ¦  STOCKFISH-REFERENZ              ¦ ¦
+¦  ¦                                 ¦  Bester: e2e4 (e4)               ¦ ¦
+¦  ¦                                 ¦  Bewertung: 45 cp                ¦ ¦
+¦  ¦                                 ¦  [Mit Stockfish vergleichen]     ¦ ¦
+¦  ¦                                 ¦                                   ¦ ¦
+¦  ¦                                 ¦  TRAINING                        ¦ ¦
+¦  ¦                                 ¦  [Netz trainieren] [Position     ¦ ¦
+¦  ¦                                 ¦   analysieren]                   ¦ ¦
+¦  ¦                                 ¦  [Modell speichern] [Modell     ¦ ¦
+¦  ¦                                 ¦   laden]                         ¦ ¦
+¦  ¦                                 ¦  ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦ ¦ ¦
+¦  +-----------------------------------------------------------------------+ ¦
+¦  +----------------------------------------------------------------------+ ¦
+¦  ¦  ZUGVORHERSAGEN                                                     ¦ ¦
+¦  ¦  +----------------------------------------------------------------+ ¦ ¦
+¦  ¦  ¦ # ¦ Zug(UCI)¦ Zug(SAN)¦ S-Wert   ¦ Log10(S)¦ NN-Wert ¦Konf.  ¦ ¦ ¦
+¦  ¦  +---+---------+---------+----------+---------+---------+--------¦ ¦ ¦
+¦  ¦  ¦ 1 ¦ e2e4    ¦ e4      ¦ 1.23e+160¦ 160.090 ¦ 0.8234  ¦ 82.3%  ¦ ¦ ¦
+¦  ¦  ¦ 2 ¦ d2d4    ¦ d4      ¦ 8.45e+158¦ 158.927 ¦ 0.7651  ¦ 76.5%  ¦ ¦ ¦
+¦  ¦  ¦ 3 ¦ g1f3    ¦ Sf3     ¦ 3.67e+157¦ 157.565 ¦ 0.7012  ¦ 70.1%  ¦ ¦ ¦
+¦  ¦  +----------------------------------------------------------------+ ¦ ¦
+¦  ¦  Bester Zug: e4 (e2e4)    Konfidenz: 82.3%   [Vergleichsdiagramm     ¦ ¦
+¦  ¦                                                 anzeigen]            ¦ ¦
+¦  +----------------------------------------------------------------------+ ¦
+¦  +----------------------------------------------------------------------+ ¦
+¦  ¦  DETAILLIERTE ANALYSE                                               ¦ ¦
+¦  ¦  ============================================================        ¦ ¦
+¦  ¦  NEURONALES NETZ VORHERSAGEN                                         ¦ ¦
+¦  ¦  ============================================================        ¦ ¦
+¦  ¦  Position: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1¦ ¦
+¦  ¦  Legale Züge: 20                                                    ¦ ¦
+¦  ¦  Aktueller S-Wert: 2.45e+150                                        ¦ ¦
+¦  ¦  Aktueller Log10(S): 150.389                                        ¦ ¦
+¦  ¦  Top 5 NN-Vorhersagen:                                              ¦ ¦
+¦  ¦  1. e4         | NN: 82.3% | S: 1.23e+160 | Log: 160.090           ¦ ¦
+¦  ¦  2. d4         | NN: 76.5% | S: 8.45e+158 | Log: 158.927           ¦ ¦
+¦  ¦  3. Sf3        | NN: 70.1% | S: 3.67e+157 | Log: 157.565           ¦ ¦
+¦  +----------------------------------------------------------------------+ ¦
+¦                                                                           ¦
+¦  [Schließen]                                                              ¦
++-----------------------------------------------------------------------------+
+
+
+11.5 DETAILLIERTE ERKLÄRUNG JEDES ABSCHNITTS
+---------------------------------------------
+
+11.5.1 BRETT UND NAVIGATION
+
++-----------------------------------------------------------------------------+
+¦ ELEMENT         ¦ FUNKTION                     ¦ WIE ES FUNKTIONIERT      ¦
++-----------------+-----------------------------+---------------------------¦
+¦ Brett           ¦ Zeigt aktuelle Position     ¦ chess.svg + QSvgWidget    ¦
+¦ <<              ¦ Erster Zug                  ¦ current_move_index = 0    ¦
+¦ <               ¦ Vorheriger Zug              ¦ current_move_index -= 1   ¦
+¦ >               ¦ Nächster Zug                ¦ current_move_index += 1   ¦
+¦ >>              ¦ Letzter Zug                 ¦ current_move_index = len  ¦
+¦ Zug: X/Y        ¦ Zeigt aktuellen Zug         ¦ f"Zug: {cur}/{tot}"       ¦
+¦ Brett           ¦ Aktualisiert das Brett      ¦ Rendert SVG neu           ¦
+¦ aktualisieren   ¦                             ¦                           ¦
++---------------------------------------------------------------------------+
+
+WARUM GIBT ES DIE NAVIGATION?
+  • Ermöglicht das Durchgehen der historischen Partie
+  • Erleichtert den Vergleich zwischen Positionen
+  • Ermöglicht die Analyse, wie sich die Bewertung des Netzes bei jedem
+    Zug ändert
+
+
+11.5.2 NETZWERKSTATUS
+
++-----------------------------------------------------------------------------+
+¦ ELEMENT   ¦ WAS WIRD ANGEZEIGT   ¦ INTERPRETATION                         ¦
++-----------+----------------------+----------------------------------------¦
+¦ Status    ¦ Netzwerkstatus       ¦ ? Nicht trainiert / ? Trainiert       ¦
+¦ Genauigkeit¦ Modellgenauigkeit   ¦ Prozentuale Trefferquote (z.B. 72.4%) ¦
++---------------------------------------------------------------------------+
+
+WAS BEDEUTET "TRAINIERT"?
+  • Das Netz wurde mit Daten aus der Datenbank trainiert
+  • Das Modell hat gelernt, Positionen zu bewerten
+  • Die Genauigkeit gibt an, wie gut es generalisiert
+
+WIE WIRD DIE GENAUIGKEIT BERECHNET?
+  • Training mit 80% der Daten
+  • Test mit den restlichen 20%
+  • Genauigkeit = Trefferquote im Test
+
+
+11.5.3 POSITIONSINFORMATION
+
++-----------------------------------------------------------------------------+
+¦ FELD         ¦ BESCHREIBUNG                 ¦ INTERPRETATION              ¦
++--------------+-----------------------------+-----------------------------¦
+¦ FEN          ¦ Vollständiges FEN           ¦ Eindeutige Kennung          ¦
+¦ Züge         ¦ Anzahl Züge in der Partie   ¦ Wie viele Züge gespielt     ¦
+¦ Figuren      ¦ Anzahl weißer/schwarzer Fig.¦ Material auf dem Brett      ¦
+¦ S-Wert       ¦ Gödel-Wert der Position     ¦ Eindeutige Positionsnummer  ¦
+¦ Log10(S)     ¦ Logarithmus des S-Werts     ¦ Komprimierte Version        ¦
++----------------------------------------------------------------------------+
+
+WAS IST DER S-WERT?
+  S = ?(Fc ^ Ff)
+
+  Beispiel (Anfangsposition, teilweise):
+    - Bauer auf a2: 23^1
+    - Bauer auf b2: 29^1
+    - ...
+    - König auf e1: 283^11
+  S = 23^1 × 29^1 × ... × 283^11 = 2.45e+150
+
+WARUM Log10(S) VERWENDEN?
+  • Der S-Wert ist astronomisch groß
+  • Log10(S) komprimiert ihn auf eine handhabbare Zahl
+  • Erleichtert die Visualisierung in Diagrammen
+  • Ermöglicht den Vergleich von Positionen auf logarithmischer Skala
+
+
+11.5.4 STOCKFISH-REFERENZ
+
++-----------------------------------------------------------------------------+
+¦ ELEMENT               ¦ BESCHREIBUNG                ¦ INTERPRETATION      ¦
++-----------------------+----------------------------+----------------------¦
+¦ Bester                ¦ Bester Zug laut Stockfish  ¦ Qualitätsreferenz   ¦
+¦ Bewertung             ¦ Bewertung in Centipawns    ¦ 100 = 1 Bauer Vorteil¦
+¦ Mit Stockfish         ¦ Vergleicht Vorhersagen     ¦ Validiert das Netz  ¦
+¦ vergleichen           ¦                            ¦                      ¦
++----------------------------------------------------------------------------+
+
+WAS IST EIN CENTIPAWN?
+  • 1 Centipawn = 1/100 Bauer
+  • Positive Bewertung = Vorteil für Weiß
+  • Negative Bewertung = Vorteil für Schwarz
+
+BEISPIELE FÜR BEWERTUNGEN:
+  +45  = 0.45 Bauern Vorteil für Weiß
+  -23  = 0.23 Bauern Vorteil für Schwarz
+  +300 = Entscheidender Vorteil (gewonnen)
+
+
+11.5.5 TRAINING
+
++-----------------------------------------------------------------------------+
+¦ SCHALTFLÄCHE        ¦ FUNKTION               ¦ WANN VERWENDEN             ¦
++---------------------+------------------------+----------------------------¦
+¦ Netz trainieren     ¦ Trainiert das Netz     ¦ Erstmals oder nach        ¦
+¦                     ¦                        ¦ Hinzufügen von Daten      ¦
+¦ Position analysieren¦ Analysiert aktuelle    ¦ Nach dem Training         ¦
+¦                     ¦ Position               ¦                            ¦
+¦ Modell speichern    ¦ Speichert das Modell   ¦ Zur Wiederverwendung      ¦
+¦ Modell laden        ¦ Lädt ein gespeichertes ¦ Zur Verwendung eines      ¦
+¦                     ¦ Modell                 ¦ früheren Modells          ¦
++---------------------------------------------------------------------------+
+
+TRAININGSPROZESS:
+  1. Daten extrahieren: Das Netz holt Positionen aus der Datenbank
+  2. Merkmale: Für jede Position werden extrahiert:
+       - Weißes/schwarzes Material
+       - Materialbilanz
+       - Figurenanzahl
+       - Zentrumskontrolle
+       - Mobilität
+       - Königssicherheit
+       - Bauernstruktur
+  3. Normalisieren: Skaliert die Merkmale
+  4. Trainieren: Das Netz passt seine Gewichte an, um den Fehler zu minimieren
+  5. Validieren: Testet das Modell mit unbekannten Daten
+
+ARCHITEKTUR DES NEURONALEN NETZES:
+  Eingabe (Merkmale) ? Schicht 1 (64 Neuronen) ? Dropout (20%)
+  ? Schicht 2 (32 Neuronen) ? Dropout (20%) ? Schicht 3 (16 Neuronen)
+  ? Ausgabe (1 Neuron - Positionsbewertung)
+
+
+11.5.6 ZUGVORHERSAGEN - DER WICHTIGSTE ABSCHNITT!
+
+TABELLENSTRUKTUR:
+
++-----------------------------------------------------------------------------+
+¦ SPALTE       ¦ WAS WIRD ANGEZEIGT         ¦ WIE WIRD ES BERECHNET       ¦
++--------------+----------------------------+-----------------------------¦
+¦ #            ¦ Rangfolge                  ¦ Sortiert nach Bewertung     ¦
+¦ Zug (UCI)    ¦ Zug im UCI-Format          ¦ e2e4 (Start-Ziel)           ¦
+¦ Zug (SAN)    ¦ Zug in algebraischer       ¦ e4 (menschliche Notation)   ¦
+¦              ¦ Notation                   ¦                             ¦
+¦ S-Wert       ¦ Gödel-Wert nach dem Zug    ¦ S_nachher                   ¦
+¦ Log10(S)     ¦ Logarithmus des S-Werts    ¦ log10(S_nachher)            ¦
+¦ NN-Wert      ¦ Bewertung des Netzes       ¦ Bewertung der Position      ¦
+¦ Konfidenz    ¦ Vertrauen in Vorhersage    ¦ NN-Wert × 100               ¦
+¦ SF Überein-  ¦ Übereinstimmung mit        ¦ ? Übereinstimmung /         ¦
+¦ stimmung     ¦ Stockfish                  ¦ ? Keine Übereinstimmung     ¦
++---------------------------------------------------------------------------+
+
+INTERPRETATION JEDER SPALTE:
+
+# (Rangfolge)
+  • WAS ES IST: Das Ranking der Züge nach dem neuronalen Netz
+  • INTERPRETATION: Zug #1 ist der beste laut Netz
+  • FARBE: Blau hervorgehobene Zeile für den besten Zug
+
+Zug (UCI)
+  • WAS ES IST: Zug im UCI-Format (Universal Chess Interface)
+  • FORMAT: e2e4 (von e2 nach e4)
+  • WARUM: Dies ist das Standardformat für Schachengines
+
+Zug (SAN)
+  • WAS ES IST: Zug in algebraischer Standardnotation
+  • FORMAT: e4, Sf3, O-O
+  • WARUM: Dies ist für Menschen lesbar
+
+S-Wert
+  • WAS ES IST: Der Gödel-Wert der Position nach dem Zug
+  • INTERPRETATION:
+      - Höherer Wert = mehr Kontrolle/Material
+      - Nicht direkt besser oder schlechter
+      - Hängt von der Phase der Partie ab
+
+Log10(S)
+  • WAS ES IST: Logarithmus zur Basis 10 des S-Werts
+  • INTERPRETATION:
+      - Handlichere Zahl
+      - Erleichtert den Vergleich
+      - Komprimierte Version des Werts
+
+NN-Wert
+  • WAS ES IST: Bewertung des neuronalen Netzes für die Position
+  • BEREICH: 0.0 bis 1.0 (normalisiert)
+  • INTERPRETATION:
+      - > 0.7  ? Gute Position (GRÜN)
+      - 0.5-0.7 ? Ausgeglichene Position (GELB)
+      - 0.3-0.5 ? Ungünstige Position (ORANGE)
+      - < 0.3  ? Schlechte Position (ROT)
+
+Konfidenz
+  • WAS ES IST: NN-Wert in Prozent
+  • INTERPRETATION:
+      - > 70% ? Hohe Konfidenz (GRÜN)
+      - 50-70% ? Mittlere Konfidenz (GELB)
+      - < 50% ? Geringe Konfidenz (ROT)
+
+SF Übereinstimmung
+  • WAS ES IST: Zeigt, ob der Zug mit Stockfish übereinstimmt
+  • INTERPRETATION:
+      - ? Übereinstimmung ? Das Netz stimmt mit Stockfish überein
+      - ? Keine Übereinstimmung ? Das Netz weicht von Stockfish ab
+
+
+11.5.6.3 PRAKTISCHES INTERPRETATIONSBEISPIEL
+
+Position: Anfangsposition (rnbqkbnr/pppppppp/8/...)
+
+Analysierte Züge:
+
+1. e4 (NN-Wert: 0.82, Konfidenz: 82%)
+   - S-Wert: 1.23e+160
+   - Log10(S): 160.09
+   - SF Übereinstimmung: ?
+   - INTERPRETATION: Ausgezeichneter Zug, das Netz ist überzeugt,
+     Stockfish stimmt zu
+
+2. d4 (NN-Wert: 0.76, Konfidenz: 76%)
+   - S-Wert: 8.45e+158
+   - Log10(S): 158.93
+   - SF Übereinstimmung: ?
+   - INTERPRETATION: Guter Zug, das Netz ist überzeugt,
+     Stockfish bevorzugt e4
+
+3. Sf3 (NN-Wert: 0.70, Konfidenz: 70%)
+   - S-Wert: 3.67e+157
+   - Log10(S): 157.56
+   - SF Übereinstimmung: ?
+   - INTERPRETATION: Solider Zug, weniger Einfluss als e4/d4
+
+
+11.5.7 BESCHTER ZUG UND KONFIDENZ
+
++-----------------------------------------------------------------------------+
+¦ ELEMENT      ¦ WAS WIRD ANGEZEIGT       ¦ INTERPRETATION                  ¦
++--------------+--------------------------+---------------------------------¦
+¦ Bester Zug   ¦ Bester Zug laut Netz     ¦ e4 (e2e4)                      ¦
+¦ Konfidenz    ¦ Vertrauen in Vorhersage  ¦ 82.3%                          ¦
++----------------------------------------------------------------------------+
+
+WAS BEDEUTET DIE KONFIDENZ?
+  • Hoch (>70%): Das Netz ist sicher, dass es der beste Zug ist
+  • Mittel (50-70%): Das Netz hat Zweifel, mehrere Züge sind ähnlich
+  • Niedrig (<50%): Das Netz ist unsicher, die Position kann komplex sein
+
+
+11.5.8 VERGLEICHSDIAGRAMM ANZEIGEN
+
+Zeigt ein Balkendiagramm, das alle Züge vergleicht:
+
+  100% ¦  ¦¦¦¦
+   90% ¦  ¦¦¦¦
+   80% ¦  ¦¦¦¦  ¦¦¦¦
+   70% ¦  ¦¦¦¦  ¦¦¦¦  ¦¦¦¦
+   60% ¦  ¦¦¦¦  ¦¦¦¦  ¦¦¦¦
+   50% ¦  ¦¦¦¦  ¦¦¦¦  ¦¦¦¦
+   40% ¦  ¦¦¦¦  ¦¦¦¦  ¦¦¦¦
+   30% ¦  ¦¦¦¦  ¦¦¦¦  ¦¦¦¦  ¦¦¦¦
+   20% ¦  ¦¦¦¦  ¦¦¦¦  ¦¦¦¦  ¦¦¦¦
+   10% ¦  ¦¦¦¦  ¦¦¦¦  ¦¦¦¦  ¦¦¦¦
+    0% +--------------------------
+         e4    d4    Sf3   Sc3
+
+INTERPRETATION DES DIAGRAMMS:
+  • GRÜNE Balken (>70%): Züge, die das Netz für GUT hält
+  • ORANGE Balken (50-70%): Züge, die das Netz für ANNEHMBAR hält
+  • ROTE Balken (<50%): Züge, die das Netz für SCHLECHT hält
+
+
+11.5.9 DETAILLIERTE ANALYSE
+
+Zeigt eine textuelle Zusammenfassung der Analyse:
+
+============================================================
+NEURONALES NETZ VORHERSAGEN
+============================================================
+
+Position: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+Legale Züge: 20
+Aktueller S-Wert: 2.45e+150
+Aktueller Log10(S): 150.389
+
+Top 5 NN-Vorhersagen:
+------------------------------------------------------------
+1. e4         | NN: 82.3% | S: 1.23e+160 | Log: 160.090
+2. d4         | NN: 76.5% | S: 8.45e+158 | Log: 158.927
+3. Sf3        | NN: 70.1% | S: 3.67e+157 | Log: 157.565
+4. Sc3        | NN: 65.4% | S: 4.12e+157 | Log: 157.615
+5. e3         | NN: 58.2% | S: 2.34e+156 | Log: 156.369
+
+
+11.6 ARBEITSABLAUF MIT DEM NEURONALEN NETZ
+------------------------------------------
+
+11.6.1 ERSTMALIGE VERWENDUNG
+
+  1. Partien laden ? "Mehrfache PGN-Analyse" verwenden, um die DB zu füllen
+  2. Neuronales Netz öffnen ? Schaltfläche "Neuronales Netz"
+  3. Netz trainieren ? Schaltfläche "Netz trainieren"
+  4. Position analysieren ? Schaltfläche "Position analysieren"
+  5. Vorhersagen ansehen ? Zugtabelle
+  6. Modell speichern ? Schaltfläche "Modell speichern" (optional)
+
+11.6.2 NORMALE VERWENDUNG
+
+  1. Neuronales Netz öffnen ? Lädt die aktuelle Position
+  2. Position analysieren ? Schaltfläche "Position analysieren"
+  3. Züge erkunden ? Zugtabelle ansehen
+  4. Mit Stockfish vergleichen ? "Mit Stockfish vergleichen"
+  5. Diagramm anzeigen ? "Vergleichsdiagramm anzeigen"
+
+11.6.3 NEUTRAINING
+
+  1. Mehr Daten hinzufügen ? Mehr Partien analysieren
+  2. Neuronales Netz öffnen
+  3. Erneut trainieren ? Schaltfläche "Netz trainieren"
+  4. Das Netz verbessert sich mit mehr Daten
+
+
+11.7 BEDEUTUNG DER FARBEN
+-------------------------
+
++-----------------------------------------------------------------------------+
+¦ FARBE             ¦ BEDEUTUNG               ¦ WO ERSCHEINT ES             ¦
++-------------------+-------------------------+-----------------------------¦
+¦ GRÜN              ¦ Gute Bewertung          ¦ NN-Wert > 0.7               ¦
+¦ GELB              ¦ Mittlere Bewertung      ¦ NN-Wert 0.5-0.7             ¦
+¦ ORANGE            ¦ Geringe Bewertung       ¦ NN-Wert 0.3-0.5             ¦
+¦ ROT               ¦ Schlechte Bewertung     ¦ NN-Wert < 0.3               ¦
+¦ BLAU              ¦ Bester Zug              ¦ Zeile #1                    ¦
+¦ HELLGRÜN          ¦ Übereinstimmung mit SF  ¦ SF Übereinstimmung ?       ¦
++---------------------------------------------------------------------------+
+
+
+11.8 HÄUFIGE FRAGEN ZUM NEURONALEN NETZ
+---------------------------------------
+
+WIE VIELE DATEN BENÖTIGT ES FÜR GENAUIGKEIT?
+  • Minimum: 50 Positionen
+  • Empfohlen: 1000+ Positionen
+  • Ideal: 5000+ Positionen
+
+WAS BEDEUTET EINE NIEDRIGE GENAUIGKEIT?
+  • Es könnte nicht genug Daten geben
+  • Die Daten könnten verrauscht sein
+  • Das Netz könnte mehr Training benötigen
+
+WARUM STIMMT DAS NETZ NICHT MIT STOCKFISH ÜBEREIN?
+  • Das Netz könnte recht haben (Stockfish ist nicht unfehlbar)
+  • Das Netz könnte falsch liegen (benötigt mehr Daten)
+  • Unterschiedliche Bewertungskriterien
+
+WIE VERBESSERE ICH DIE GENAUIGKEIT?
+  • Mehr Partien analysieren
+  • Partien verschiedener Spielstärken einbeziehen
+  • Sicherstellen, dass die Daten von guter Qualität sind
+
+WAS MACHT DER SICHERE MODUS?
+  • Wendet Logarithmus auf die Werte an
+  • Verhindert Überlauf durch sehr große Zahlen
+  • Erleichtert die Visualisierung in Diagrammen
+
+
+-------------------------------------------------------------------------------
+12. EXPORT NACH DOCX
+-------------------------------------------------------------------------------
+
+12.1 Was wird exportiert?
+-------------------------
+
+Ein Word-Dokument mit:
+  1. Titel "Positionswertanalyse"
+  2. Metadaten der Partie (Ereignis, Weiß, Schwarz, etc.)
+  3. Original-PGN
+  4. Tabelle der Gödel-Werte
+  5. Diagramme von VPo(k), D(k) und R(k)
+
+
+12.2 Exportprozess
+------------------
+
+  1. Partie analysieren ? Schaltfläche "Analysieren"
+  2. Klicken Sie auf "Nach DOCX exportieren"
+  3. Warten Sie, während das Dokument generiert wird
+  4. Die Datei wird im Ordner exports/ gespeichert
+  5. Dateiname: [pgn_name]_[datum].docx
+
+
+12.3 Dokumentstruktur
+---------------------
+
+  Positionswertanalyse
+  ====================
+
+  Ereignis: Weltmeisterschaft
+  Weiß: Magnus Carlsen
+  Schwarz: Ian Nepomniachtchi
+  Datum: 2024.12.15
+  Ergebnis: 1-0
+
+  Original-PGN:
+  -------------
+  1. e4 e5 2. Sf3 Sc6 ...
+
+  Gödel-Werte:
+  ------------
+  G(0) = 2.45e+150
+  G(1) = 3.12e+152
+  G(2) = 2.98e+152
+  ...
+
+  Visualisierung:
+  ---------------
+  [Diagramm VPo(k)]
+  [Diagramm D(k)]
+  [Diagramm R(k)]
+
+
+12.4 Diagrammkonfiguration
+--------------------------
+
+Die Diagramme werden automatisch generiert mit:
+  • Titel: Angabe des Diagrammtyps
+  • X-Achse: Zugnummer
+  • Y-Achse: Entsprechender Wert
+  • Segmente: Alle 20 Züge für bessere Lesbarkeit unterteilt
+
+
+-------------------------------------------------------------------------------
+13. FEHLERBEHEBUNG
+-------------------------------------------------------------------------------
+
+13.1 Protokolldateien
+---------------------
+
+Das Programm erstellt Protokolle im Ordner logs/:
+  • chess_analyzer.log ? Allgemeines Anwendungsprotokoll
+  • Enthält nützliche Informationen zur Fehlersuche
+
+
+13.2 Häufige Fehlermeldungen
+----------------------------
+
++-----------------------------------------------------------------------------+
+¦ FEHLER                          ¦ URSACHE        ¦ LÖSUNG                  ¦
++---------------------------------+----------------+-------------------------¦
+¦ ModuleNotFoundError: No module  ¦ TensorFlow    ¦ pip install tensorflow  ¦
+¦ named 'tensorflow'              ¦ nicht         ¦                         ¦
+¦                                 ¦ installiert    ¦                         ¦
++---------------------------------+----------------+-------------------------¦
+¦ Stockfish nicht gefunden        ¦ Stockfish nicht¦ Stockfish herunterladen ¦
+¦                                 ¦ im Ordner      ¦ und in engines/ legen  ¦
++---------------------------------+----------------+-------------------------¦
+¦ Fehler beim Laden der PGN      ¦ PGN beschädigt¦ PGN-Datei prüfen        ¦
+¦                                 ¦ oder ungültig  ¦                         ¦
++---------------------------------+----------------+-------------------------¦
+¦ OverflowWarning                 ¦ S-Wert zu groß ¦ Sicheren Modus in      ¦
+¦                                 ¦                ¦ Diagrammen verwenden   ¦
++---------------------------------------------------------------------------+
+
+
+13.3 Leistung
+-------------
+
++-----------------------------------------------------------------------------+
+¦ VORGANG                         ¦ GESCHÄTZTE ZEIT                         ¦
++---------------------------------+------------------------------------------¦
+¦ PGN laden                       ¦ < 1 Sekunde                             ¦
+¦ Partie analysieren (100 Züge)   ¦ 2-5 Sekunden                            ¦
+¦ Netz trainieren (1000 Pos.)     ¦ 10-30 Sekunden                          ¦
+¦ Nach DOCX exportieren (100 Z.)  ¦ 5-10 Sekunden                           ¦
+¦ 100 PGN-Partien analysieren     ¦ 1-2 Minuten                             ¦
++---------------------------------------------------------------------------+
+
+
+13.4 Tipps zur Leistungsverbesserung
+------------------------------------
+
+  1. Datenbank: Gelegentlich die Datenbank bereinigen
+  2. Netzmodelle: Trainierte Modelle speichern, um nicht jedes Mal neu zu
+     trainieren
+  3. Große PGNs: Große PGN-Dateien in kleinere Teile aufteilen
+  4. Arbeitsspeicher: Andere Programme schließen, während das neuronale
+     Netz trainiert wird
+
+
+-------------------------------------------------------------------------------
+14. GLOSSAR DER BEGRIFFE
+-------------------------------------------------------------------------------
+
++-----------------------------------------------------------------------------+
+¦ BEGRIFF         ¦ DEFINITION                                              ¦
++-----------------+---------------------------------------------------------¦
+¦ FEN              ¦ Standardnotation für Schachpositionen                  ¦
+¦ PGN              ¦ Standardformat für Schachpartien                      ¦
+¦ UCI              ¦ Kommunikationsprotokoll für Schachengines             ¦
+¦ SAN              ¦ Algebraische Standardnotation                         ¦
+¦ S-Wert           ¦ Gödel-Wert der Position                               ¦
+¦ VPo(k)           ¦ Positionswert im Zug k                                ¦
+¦ D(k)             ¦ Differenz zwischen VPo(k) und VPo(k-1)                ¦
+¦ R(k)             ¦ Verhältnis zwischen VPo(k) und VPo(k-1)               ¦
+¦ Centipawn        ¦ Vorteilseinheit (1/100 Bauer)                         ¦
+¦ Stockfish        ¦ Open-Source-Schachengine                              ¦
+¦ Neuronales Netz  ¦ System des maschinellen Lernens                       ¦
+¦ Log10(S)         ¦ Logarithmus zur Basis 10 des S-Werts                 ¦
+¦ NN-Wert          ¦ Bewertung des neuronalen Netzes (0-1)                 ¦
+¦ Konfidenz        ¦ Vertrauen in die Vorhersage (%)                       ¦
+¦ SF Übereinstimmung¦ Übereinstimmung mit Stockfish                         ¦
+¦ Feldzuordnung    ¦ Zuordnung von Primzahlen zu Feldern                   ¦
+¦ Figurenwerte     ¦ Exponenten, die jedem Figurentyp zugeordnet sind     ¦
++---------------------------------------------------------------------------+
+
+
+-------------------------------------------------------------------------------
+15. REFERENZEN UND RESSOURCEN
+-------------------------------------------------------------------------------
+
+15.1 Nützliche Links
+--------------------
+
+  • Stockfish: https://stockfishchess.org/download/
+  • Python Chess: https://python-chess.readthedocs.io/
+  • TensorFlow: https://www.tensorflow.org/
+  • PyQt5: https://www.riverbankcomputing.com/software/pyqt/
+
+
+15.2 Nützliche Befehle
+----------------------
+
+  # Abhängigkeiten installieren
+  pip install PyQt5 chess python-chess numpy matplotlib scipy python-docx tensorflow scikit-learn joblib
+
+  # Programm ausführen
+  python chess_analyzer_local.py
+
+  # Protokolle anzeigen
+  cat logs/chess_analyzer.log
+
+
+-------------------------------------------------------------------------------
+                    © 2026 DietriChessAnalyzer - Alle Rechte vorbehalten
+-------------------------------------------------------------------------------

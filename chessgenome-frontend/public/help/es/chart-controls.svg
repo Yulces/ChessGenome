@@ -1,0 +1,198 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 620" width="900" height="620" font-family="system-ui, -apple-system, sans-serif">
+  <rect width="900" height="620" fill="#ffffff"/>
+
+  <!-- Título -->
+  <text x="450" y="28" text-anchor="middle" font-size="18" font-weight="700" fill="#111">Controles del gráfico</text>
+
+  <!-- ===== Barra 1: SERIES ===== -->
+  <text x="20" y="70" font-size="11" font-weight="700" fill="#6b7280" letter-spacing="0.5">SERIES</text>
+
+  <!-- Botón L10 (activo) -->
+  <rect x="70" y="58" width="52" height="26" rx="6" fill="#2563eb"/>
+  <text x="96" y="75" text-anchor="middle" font-size="12" font-weight="600" fill="#ffffff">L₁₀</text>
+  <!-- Select ángulo 1 -->
+  <rect x="126" y="58" width="50" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="151" y="75" text-anchor="middle" font-size="11" fill="#374151">0° ▾</text>
+
+  <!-- Botón L (activo) -->
+  <rect x="184" y="58" width="42" height="26" rx="6" fill="#ff6b00"/>
+  <text x="205" y="75" text-anchor="middle" font-size="12" font-weight="600" fill="#ffffff">L</text>
+  <rect x="230" y="58" width="50" height="26" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="255" y="75" text-anchor="middle" font-size="11" fill="#374151">-30° ▾</text>
+
+  <!-- Botón D (desactivado - solo borde) -->
+  <rect x="288" y="58" width="42" height="26" rx="6" fill="#ffffff" stroke="#9ca3af"/>
+  <text x="309" y="75" text-anchor="middle" font-size="12" font-weight="600" fill="#6b7280">D</text>
+  <rect x="334" y="58" width="50" height="26" rx="4" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="359" y="75" text-anchor="middle" font-size="11" fill="#9ca3af">-45° ▾</text>
+
+  <!-- Botón R (desactivado) -->
+  <rect x="392" y="58" width="42" height="26" rx="6" fill="#ffffff" stroke="#9ca3af"/>
+  <text x="413" y="75" text-anchor="middle" font-size="12" font-weight="600" fill="#6b7280">R</text>
+  <rect x="438" y="58" width="50" height="26" rx="4" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="463" y="75" text-anchor="middle" font-size="11" fill="#9ca3af">90° ▾</text>
+
+  <!-- Botones de vista -->
+  <rect x="510" y="58" width="60" height="26" rx="4" fill="#e5e7eb"/>
+  <text x="540" y="75" text-anchor="middle" font-size="11" fill="#374151">Rejilla</text>
+  <rect x="578" y="58" width="60" height="26" rx="4" fill="#e5e7eb"/>
+  <text x="608" y="75" text-anchor="middle" font-size="11" fill="#374151">Curva</text>
+  <rect x="646" y="58" width="50" height="26" rx="4" fill="#e5e7eb"/>
+  <text x="671" y="75" text-anchor="middle" font-size="11" fill="#374151">Puntos</text>
+  <rect x="704" y="58" width="50" height="26" rx="4" fill="#e5e7eb"/>
+  <text x="729" y="75" text-anchor="middle" font-size="11" fill="#374151">Tags</text>
+  <rect x="762" y="58" width="30" height="26" rx="4" fill="#e5e7eb"/>
+  <text x="777" y="75" text-anchor="middle" font-size="13" fill="#374151">+</text>
+  <rect x="800" y="58" width="80" height="26" rx="4" fill="#e5e7eb"/>
+  <text x="840" y="75" text-anchor="middle" font-size="10" fill="#374151">Zoom reset</text>
+
+  <!-- ===== Barra 2: ETIQUETAS ===== -->
+  <text x="20" y="118" font-size="11" font-weight="700" fill="#6b7280" letter-spacing="0.5">ETIQUETAS</text>
+
+  <!-- Checkbox Y -->
+  <rect x="106" y="105" width="14" height="14" rx="3" fill="#ff6b00"/>
+  <text x="113" y="116" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">✓</text>
+  <text x="126" y="117" font-size="12" fill="#374151">Y</text>
+
+  <!-- Checkbox X -->
+  <rect x="150" y="105" width="14" height="14" rx="3" fill="#ff6b00"/>
+  <text x="157" y="116" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">✓</text>
+  <text x="170" y="117" font-size="12" fill="#374151">X</text>
+
+  <!-- Ángulo Y -->
+  <text x="210" y="117" font-size="12" fill="#374151">∠ Y</text>
+  <rect x="240" y="103" width="60" height="22" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="270" y="118" text-anchor="middle" font-size="11" fill="#374151">-45° ▾</text>
+
+  <!-- Densidad -->
+  <text x="320" y="117" font-size="12" fill="#374151">densidad</text>
+  <rect x="385" y="103" width="70" height="22" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+  <text x="420" y="118" text-anchor="middle" font-size="11" fill="#374151">auto ▾</text>
+
+  <!-- ===== Chart mock ===== -->
+  <rect x="70" y="145" width="760" height="260" rx="6" fill="#fafafa" stroke="#e5e7eb"/>
+
+  <!-- Grid -->
+  <g stroke="#eef0f2" stroke-width="1">
+    <line x1="100" y1="170" x2="810" y2="170"/>
+    <line x1="100" y1="220" x2="810" y2="220"/>
+    <line x1="100" y1="270" x2="810" y2="270"/>
+    <line x1="100" y1="320" x2="810" y2="320"/>
+    <line x1="100" y1="370" x2="810" y2="370"/>
+  </g>
+
+  <!-- Eje Y -->
+  <line x1="100" y1="160" x2="100" y2="395" stroke="#333" stroke-width="1.5"/>
+  <!-- Eje X -->
+  <line x1="100" y1="395" x2="810" y2="395" stroke="#333" stroke-width="1.5"/>
+
+  <!-- Etiquetas Y -->
+  <g font-size="10" fill="#333" text-anchor="end">
+    <text x="92" y="173">4532</text>
+    <text x="92" y="223">4531</text>
+    <text x="92" y="273">4530</text>
+    <text x="92" y="323">4529</text>
+    <text x="92" y="373">4528</text>
+  </g>
+
+  <!-- Etiquetas X -->
+  <g font-size="10" fill="#333" text-anchor="middle">
+    <text x="100" y="412">0</text>
+    <text x="240" y="412">10</text>
+    <text x="380" y="412">20</text>
+    <text x="520" y="412">30</text>
+    <text x="660" y="412">40</text>
+    <text x="800" y="412">50</text>
+  </g>
+
+  <!-- Curva L10 (azul) -->
+  <path d="M 100 370 Q 200 320 300 280 T 500 200 T 700 160 L 800 155"
+        fill="none" stroke="#2563eb" stroke-width="2.5"/>
+
+  <!-- Curva L (naranja) -->
+  <path d="M 100 385 Q 200 340 300 305 T 500 240 T 700 200 L 800 195"
+        fill="none" stroke="#ff6b00" stroke-width="2.5"/>
+
+  <!-- Puntos L10 con etiquetas rotadas -->
+  <g fill="#2563eb">
+    <circle cx="100" cy="370" r="3"/>
+    <circle cx="240" cy="305" r="3"/>
+    <circle cx="380" cy="262" r="3"/>
+    <circle cx="520" cy="212" r="3"/>
+    <circle cx="660" cy="170" r="3"/>
+    <circle cx="800" cy="155" r="3"/>
+  </g>
+  <g font-size="9" font-weight="700" fill="#2563eb" text-anchor="middle">
+    <text x="100" y="362">L10:0</text>
+    <text x="240" y="297">L10:10</text>
+    <text x="380" y="254">L10:20</text>
+    <text x="520" y="204">L10:30</text>
+    <text x="660" y="162">L10:40</text>
+    <text x="800" y="147">L10:50</text>
+  </g>
+
+  <!-- Puntos L con etiquetas rotadas -->
+  <g font-size="9" font-weight="700" fill="#ff6b00" text-anchor="middle">
+    <text x="240" y="330">L10</text>
+    <text x="380" y="290">L20</text>
+  </g>
+
+  <!-- ===== Botón PDF ===== -->
+  <rect x="650" y="425" width="180" height="34" rx="8" fill="#d1fae5" stroke="#10b981"/>
+  <text x="740" y="447" text-anchor="middle" font-size="12" font-weight="600" fill="#065f46">📊 Actualizar gráfico</text>
+
+  <!-- ===== Anotaciones ===== -->
+  <!-- 1. Series toggle -->
+  <circle cx="96" cy="48" r="11" fill="#dc2626"/>
+  <text x="96" y="52" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">1</text>
+  <line x1="96" y1="59" x2="96" y2="58" stroke="#888" stroke-dasharray="2 2"/>
+
+  <!-- 2. Ángulo por serie -->
+  <circle cx="255" cy="48" r="11" fill="#dc2626"/>
+  <text x="255" y="52" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">2</text>
+
+  <!-- 3. Etiquetas Y/X y ángulos -->
+  <circle cx="270" cy="94" r="11" fill="#dc2626"/>
+  <text x="270" y="98" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">3</text>
+  <line x1="270" y1="105" x2="270" y2="103" stroke="#888" stroke-dasharray="2 2"/>
+
+  <!-- 4. Controles de vista -->
+  <circle cx="540" cy="48" r="11" fill="#dc2626"/>
+  <text x="540" y="52" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">4</text>
+
+  <!-- 5. Etiquetas de puntos -->
+  <circle cx="520" cy="195" r="11" fill="#dc2626"/>
+  <text x="520" y="199" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">5</text>
+
+  <!-- 6. Botón actualizar gráfico -->
+  <circle cx="630" cy="442" r="11" fill="#dc2626"/>
+  <text x="630" y="446" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">6</text>
+  <line x1="641" y1="442" x2="650" y2="442" stroke="#888" stroke-dasharray="2 2"/>
+
+  <!-- ===== Leyenda inferior ===== -->
+  <g font-size="12" fill="#111">
+    <circle cx="25" cy="495" r="9" fill="#dc2626"/>
+    <text x="25" y="499" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">1</text>
+    <text x="45" y="499">Activa o desactiva cada serie haciendo clic sobre su botón de color (L₁₀, L, D, R)</text>
+
+    <circle cx="25" cy="519" r="9" fill="#dc2626"/>
+    <text x="25" y="523" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">2</text>
+    <text x="45" y="523">Ángulo de rotación de las etiquetas de puntos, distinto para cada serie</text>
+
+    <circle cx="25" cy="543" r="9" fill="#dc2626"/>
+    <text x="25" y="547" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">3</text>
+    <text x="45" y="547">Mostrar/ocultar ejes Y y X, y ajustar el ángulo y la densidad del eje Y</text>
+
+    <circle cx="25" cy="567" r="9" fill="#dc2626"/>
+    <text x="25" y="571" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">4</text>
+    <text x="45" y="571">Rejilla, curvas suavizadas vs rectas, puntos, etiquetas y control de zoom</text>
+
+    <circle cx="470" cy="495" r="9" fill="#dc2626"/>
+    <text x="470" y="499" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">5</text>
+    <text x="490" y="499">Etiquetas sobre cada punto de la curva (L10:0, L10:10, …)</text>
+
+    <circle cx="470" cy="519" r="9" fill="#dc2626"/>
+    <text x="470" y="523" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">6</text>
+    <text x="490" y="523">Recaptura los gráficos de la sesión con la configuración actual</text>
+  </g>
+</svg>

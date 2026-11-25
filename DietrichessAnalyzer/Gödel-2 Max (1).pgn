@@ -1,0 +1,12 @@
+[Event "20:08"]
+[Site "?"]
+[Date "2026.09.02"]
+[Round "1"]
+[White "S zieht"]
+[Black "gewinnt in 7"]
+[Result "0-1"]
+[SetUp "1"]
+[FEN "qqqqQKbk/qqqqQQnq/BbQQQQQQ/RRrrNNnB/8/8/8/8 b - - 0 1"]
+
+1...Q8xe8+ 2. Qfxe8 Qcxe8+ 3. Qexe8 Qbxe8+ 4. Qexe8 Qf7+ 5. Nxf7+ Qxf7+ 6. Qfxf7 Qxf7+ 7. Qgxf7 Qxf7+  0-1
+

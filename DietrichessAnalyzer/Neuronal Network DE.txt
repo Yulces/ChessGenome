@@ -1,0 +1,57 @@
+?? Vollständiger Ablauf
+1. Modell trainieren
+Daten aus der Datenbank auswählen
+
+Versteckte Schichten, Epochen, Batch-Größe konfigurieren
+
+Neuronales Netz trainieren
+
+Modell wird automatisch im Arbeitsspeicher erstellt
+
+2. Modell speichern
+Button "Modell speichern"
+
+4 Dateien werden in models/ erstellt
+
+Sie können es später ohne erneutes Training laden
+
+3. Modell laden
+Button "Modell laden"
+
+Eine .h5-Datei auswählen
+
+Alle Komponenten werden automatisch geladen (Scaler, Label Encoder, Metadaten)
+
+4. Geladenes Modell verwenden
+Nach dem Laden können Sie:
+
+Vorhersagen vom aktuellen Brett machen
+
+Mit Stockfish vergleichen
+
+Positionen automatisch analysieren
+
+?? Schnittstellenstruktur in neural_network.py
+python
+# Buttons in der Oberfläche
+self.btn_save_model = QPushButton("?? Modell speichern")
+self.btn_save_model.clicked.connect(self.save_model)
+self.btn_save_model.setEnabled(False)  # Nur nach Training aktiviert
+
+self.btn_load_model = QPushButton("?? Modell laden")
+self.btn_load_model.clicked.connect(self.load_model)
+
+self.btn_train = QPushButton("?? Trainieren")
+self.btn_train.clicked.connect(self.train_model)
+
+# Informationen zum geladenen Modell
+self.lbl_model_info = QLabel("Modell: Nicht geladen")
+?? Wichtige Tipps
+Speichern Sie immer alle 4 Dateien zusammen - Verschieben Sie keine Datei ohne die anderen
+
+Verwenden Sie aussagekräftige Namen - Z.B: modell_10000_positionen_85acc.h5
+
+Die Datenbank kann wachsen - positions.db speichert alle analysierten Positionen
+
+Stockfish wird zum Labeln verwendet - Positionen werden mit Stockfishs bestem Zug beschriftet
+

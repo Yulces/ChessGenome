@@ -1,0 +1,864 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "editor": "Editor",
+    "analyze": "Gödelización",
+    "search": "Buscar",
+    "save": "Guardar",
+    "explore": "Explorar",
+    "contribute": "Contribuir",
+    "oeis": "OEIS",
+    "help": "Ayuda",
+    "session": "Exportar informe",
+    "exchange": "Intercambio",
+    "neural": "Red Neuronal"
+  },
+  "brand": {
+    "title": "The ChessGenome",
+    "footer": "The ChessGenome · 2026"
+  },
+  "lang": {
+    "es": "🇪🇸 Español",
+    "en": "🇬🇧 English",
+    "de": "🇩🇪 Deutsch",
+    "label": "Idioma"
+  },
+  "common": {
+    "loading": "Cargando…",
+    "error": "Error",
+    "reset": "Reset",
+    "apply": "Aplicar",
+    "analyze": "Analizar",
+    "analyzing": "Analizando…",
+    "search": "Buscar",
+    "save": "Guardar",
+    "saveIfNew": "Guardar si es nueva",
+    "fen": "FEN",
+    "result": "Resultado del Genoma",
+    "boardNav": {
+      "first": "Inicio",
+      "prev": "Anterior",
+      "next": "Siguiente",
+      "last": "Final",
+      "aria": "Navegación de jugadas"
+    },
+    "copy": "Copiar",
+    "copied": "Copiado"
+  },
+  "home": {
+    "title": "El Genoma del Ajedrez",
+    "subtitle": "Cada posición legal se codifica como un entero único mediante los primeros 64 primos. Ordenamos el espacio completo con la función logarítmica L y construimos colaborativamente el catálogo de posiciones alcanzables.",
+    "cta_calculate": "Calcular una posición",
+    "cta_explore": "Explorar el Genoma",
+    "title_pre": "El",
+    "title_mid": "Genoma",
+    "title_post": "del Ajedrez",
+    "stat_total": "Posiciones en la base",
+    "stat_admissible": "Admisibles estáticas",
+    "stat_maxL": "Mayor L registrado",
+    "how_title": "Cómo funciona",
+    "how_1": "Cada casilla del tablero recibe uno de los primeros 64 números primos (a1 = 2, …, h8 = 311).",
+    "how_2": "Cada tipo de pieza recibe un exponente 0–12 (peón blanco = 1, rey negro = 12, …).",
+    "how_3": "La posición se codifica como S = ∏ pᵢ^vᵢ.",
+    "how_4": "Ordenamos con L = Σ vᵢ · log pᵢ sin calcular enteros de cientos de dígitos.",
+    "how_5": "La comunidad aporta posiciones alcanzables; construimos el Genoma ordenado.",
+    "contribute_hint": "¿Tienes partidas o posiciones interesantes?",
+    "contribute_btn": "Contribuir al Genoma",
+    "backend_error": "No se pudo conectar con el backend",
+    "viewPosition": "Ver posición",
+    "viewAuthor": "Ver autor",
+    "claimAuthor": "Soy el autor",
+    "stat_maxL10": "Mayor L10 registrado con partida legal asociada",
+    "cifras": "cifras"
+  },
+  "calculate": {
+    "title": "Calcular posición",
+    "subtitle": "Mueve piezas o pega un FEN. Usa la barra bajo el tablero para recorrer las jugadas.",
+    "analyzeBtn": "Analizar posición",
+    "invalidFen": "FEN inválido"
+  },
+  "editor": {
+    "title": "Editor de posiciones",
+    "subtitle": "Modo jugar / editar piezas. Navega las jugadas con los botones bajo el tablero.",
+    "play": "Jugar movimientos",
+    "edit": "Editar piezas",
+    "editHint": "Navegación desactivada en modo edición",
+    "clear": "Limpiar tablero",
+    "paletteHint": "Elige una pieza y haz clic en una casilla (🗑 para borrar)",
+    "calculate": "Calcular",
+    "movesLabel": "Jugadas (SAN)",
+    "movesPlaceholder": "Ej: 1. e4 e5 2. Nf3 Nc6 3. Bb5",
+    "replay": "Reproducir",
+    "generatePgn": "Generar PGN",
+    "copyPgn": "Copiar PGN",
+    "pgnNoMoves": "Pega al menos una jugada",
+    "pgnInvalidMove": "Jugada {{n}} inválida: {{move}}",
+    "pgnOk": "PGN generado con {{count}} jugadas",
+    "replayOk": "{{count}} jugadas reproducidas",
+    "acceptPosition": "Aceptar posición",
+    "editPosition": "Editar posición",
+    "copyFen": "Copiar FEN",
+    "movesCount": "jugadas",
+    "noMoves": "Sin jugadas todavía. Mueve piezas en modo Jugar.",
+    "pgnPreview": "Vista previa PGN"
+  },
+  "analyze": {
+    "title": "Analizar FEN y Partidas (PGN)",
+    "subtitle": "Calcula S, L y L10 en cada jugada. Navega con los botones bajo el tablero.",
+    "placeholder": "Pega aquí un PGN completo...",
+    "btn": "Analizar partida",
+    "halfMoves": "medias jugadas",
+    "startPos": "Posición inicial",
+    "chartTitle": "Evolución de L (ln S)",
+    "parseError": "No se pudo parsear el PGN",
+    "loadFile": "Cargar archivo PGN…",
+    "games": "partidas",
+    "selectGame": "Elegir partida",
+    "fileError": "No se pudo leer el archivo",
+    "gameList": "Ventana de partidas",
+    "gameListHint": "Haz clic en una partida de la lista para cargarla. Luego pulsa Analizar partida para el genoma y el gráfico.",
+    "filterGames": "Filtrar por jugador, evento…",
+    "noGamesMatch": "Ninguna partida coincide",
+    "showMore": "Mostrar más",
+    "filterHit": "coincidencias",
+    "chunkMenuFull": "Ver gráfico completo",
+    "chunkMenuTramos": "Tramos",
+    "chunkFullItem": "1. Gráfico completo ({{count}} puntos)",
+    "chunkItem": "{{n}}. Plies {{label}}",
+    "chunkShowingAll": "Mostrando todos los plies",
+    "chunkShowing": "Mostrando plies {{start}}–{{end}}",
+    "bulkSaveBtn": "💾 Guardar partida completa en el Genoma",
+    "bulkSaveSaving": "⏳ Guardando…",
+    "bulkSaveStoreNew": "Guardar posiciones nuevas",
+    "bulkSaveTransitions": "Guardar transiciones",
+    "bulkResultTitle": "{{total}} posiciones procesadas",
+    "bulkResultStored": "Nuevas",
+    "bulkResultUpdated": "Actualizadas",
+    "bulkResultSkipped": "Omitidas",
+    "bulkResultTransitions": "Transiciones",
+    "fenTitle": "Analizar una posición (FEN)",
+    "fenHint": "Pega un FEN para analizar una sola posición sin partida.",
+    "analyzeFenBtn": "Analizar FEN",
+    "pgnTitle": "Analizar partidas (PGN)",
+    "pastePgn": "Pegar",
+    "autoSaveLabel": "Guardar automáticamente en la base de datos",
+    "autoSaving": "💾 Guardando en la base de datos…",
+    "autoSaved": "✅ Guardado: {{stored}} nuevas, {{updated}} actualizadas",
+    "refreshCharts": "Actualizar gráfico en la sesión",
+    "capturingCharts": "Capturando gráficos…",
+    "pasteUnsupported": "Tu navegador no soporta el pegado automático. Mantén pulsado el campo de texto y elige Pegar.",
+    "pasteEmpty": "El portapapeles está vacío. Copia un PGN primero.",
+    "pasteFailed": "No se pudo leer el portapapeles. Mantén pulsado el campo de texto y elige Pegar.",
+    "analyzePlyBtn": "Análisis neuronal + Stockfish",
+    "analyzePlyActive": "Análisis neuronal activo",
+    "addCurrentChart": "➕ Añadir gráfico actual",
+    "splitIntoChunks": "📊 Partir en tramos",
+    "capturing": "⏳ Capturando…"
+  },
+  "search": {
+    "title": "Buscar posiciones",
+    "subtitle": "FEN, tablero, top por frecuencia y transiciones.",
+    "topTitle": "Top por frecuencia",
+    "transitions": "Transiciones",
+    "found": "Encontrada",
+    "notFound": "No encontrada",
+    "searchBtn": "Buscar",
+    "byFen": "Buscar por FEN",
+    "advancedTitle": "Filtros avanzados",
+    "minL10": "L₁₀ mínimo",
+    "maxL10": "L₁₀ máximo",
+    "minPieces": "Piezas mínimo",
+    "maxPieces": "Piezas máximo",
+    "minTimesSeen": "Vistas mínimo",
+    "admissibleOnly": "Solo admisibles",
+    "sortBy": "Ordenar por",
+    "order": "Orden",
+    "asc": "Ascendente",
+    "desc": "Descendente",
+    "applyFilters": "Aplicar filtros",
+    "results": "Resultados",
+    "cifras": "Cifras",
+    "pieces": "Piezas",
+    "timesSeen": "Vistas",
+    "noResults": "Sin resultados",
+    "preview": "Vista previa",
+    "copyFen": "Copiar FEN",
+    "clickRow": "Haz clic en una fila",
+    "tabSearch": "Búsqueda avanzada",
+    "tabExplore": "Explorar Genoma"
+  },
+  "explore": {
+    "title": "Explorar el Genoma",
+    "subtitle": "Primeros términos ordenados por L",
+    "loadError": "No se pudieron cargar los términos",
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "pieces": "piezas",
+    "seen": "vistas",
+    "empty": "La base aún no tiene términos. Analiza y guarda posiciones desde Calcular o Contribuir.",
+    "first": "Inicio",
+    "last": "Final",
+    "preview": "Posición",
+    "copyFen": "Copiar FEN",
+    "copied": "FEN copiada",
+    "clickRow": "Clic en una fila para ver el tablero",
+    "totalTerms": "Términos admisibles"
+  },
+  "contribute": {
+    "title": "Contribuir",
+    "subtitle": "Envía posiciones y partidas al Genoma colaborativo.",
+    "coming": "Formulario de contribución en desarrollo. Mientras tanto usa Calcular con «Guardar si es nueva» o Analizar partida.",
+    "submitFen": "Guardar posición en el Genoma",
+    "submitPgn": "Analizar y guardar partida",
+    "notePlaceholder": "Nota opcional (evento, fuente…)",
+    "storedOk": "Posición guardada en la base de datos.",
+    "alreadyStored": "La posición ya estaba en la base (contador actualizado).",
+    "pgnStored": "Partida procesada. Posiciones guardadas/actualizadas: {{count}}.",
+    "loadFile": "Cargar archivo PGN…",
+    "pgnHint": "Se guarda la primera partida del archivo o del texto. Para bases grandes usa la pestaña Partida.",
+    "multiGameHint": "Archivo con {{count}} partidas: se usará la primera. El resto puedes analizarlo en Partida.",
+    "gameListHint": "Elige la partida en la lista (como en Partida). Luego guarda esa partida o todas.",
+    "submitAll": "Guardar las {{count}} partidas",
+    "allStored": "Procesadas {{games}} partidas · {{positions}} posiciones guardadas"
+  },
+  "stockfish": {
+    "title": "Stockfish",
+    "status": "Estado",
+    "analyze": "Analizar con motor",
+    "exe": "stockfish.exe (servidor)",
+    "wasm": "WASM (navegador)",
+    "analyzing": "Analizando…",
+    "depth": "Profundidad",
+    "bestMove": "Mejor jugada",
+    "eval": "Evaluación",
+    "notConfigured": "Motor no configurado",
+    "ready": "Listo"
+  },
+  "neural": {
+    "title": "Red neuronal",
+    "models": "Modelos",
+    "notLoaded": "Modelo no cargado en el servidor",
+    "run": "Extraer features / predecir",
+    "features": "Vector de features",
+    "modelsFound": "{{count}} modelo(s) detectado(s) en disco",
+    "notConfigured": "Sin modelos configurados",
+    "msg": {
+      "modelsDetected": "{{count}} modelo(s) detectado(s)",
+      "pathMissing": "Define NEURAL_MODELS_PATH hacia DietrichessAnalyzer/models",
+      "modelFoundStub": "Modelo listo para inferencia real.",
+      "noModels": "No hay modelos en NEURAL_MODELS_PATH. Coloca .h5 en DietrichessAnalyzer/models.",
+      "inferenceReady": "Modelo listo para inferencia real."
+    },
+    "corpus": "Corpus Genome (MongoDB): {{count}} posiciones — misma base que rellena la app",
+    "legalMoves": "Jugadas legales",
+    "showMoves": "Ver jugadas",
+    "hideMoves": "Ocultar jugadas",
+    "noMoves": "Sin jugadas legales",
+    "evalMoves": "Evaluar jugadas (Stockfish)",
+    "eval": "Eval",
+    "statusModels": "{{count}} modelo(s) detectado(s)",
+    "statusCorpus": "{{count}} posiciones — en la misma base",
+    "inferenceReady": "Modelo listo para inferencia real."
+  },
+  "result": {
+    "title": "Resultado del Genoma",
+    "loading": "Calculando…",
+    "empty": "Analiza una posición para ver S, L y L10.",
+    "sExact": "S exacto",
+    "digits": "dígitos",
+    "pieces": "Piezas",
+    "rank": "Rango aprox.",
+    "factorization": "Factorización",
+    "hash": "Hash",
+    "admissible": "Admisible",
+    "yes": "Sí",
+    "no": "No",
+    "engineLocal": "motor local",
+    "alreadySaved": "Ya está guardada en la base de datos",
+    "notSaved": "No está guardada. Marca \"Guardar si es nueva\" y analiza de nuevo.",
+    "storedAtRank": "Guardada en la posición"
+  },
+  "oeis": {
+    "title": "Secuencias propuestas para la OEIS",
+    "subtitle": "Genera los términos del Chess Genome a partir de una FEN.",
+    "generate": "Generar secuencias",
+    "useStart": "Posición inicial",
+    "useEmpty": "Tablero vacío",
+    "axxxxxx": "a(n) = p_n^{v_n} para n = 1…64 (producto = S).",
+    "axxxxxy": "Vector de valores de pieza (64 términos) de la posición actual.",
+    "axxxxxz": "Tablero vacío: 64 ceros.",
+    "axxxxxw": "Vectores concatenados de los primeros plies de 1.e4 e5 (demostración).",
+    "extended": "Codificación FIDE extendida (67 términos) con primos de turno, enroque y en passant.",
+    "s3_pieces": "Número de posiciones estáticamente admisibles con exactamente m piezas (requiere barrido de la base).",
+    "s3_first": "Primer índice del Genoma donde aparece un tipo de pieza dado (requiere Genoma ordenado).",
+    "s3_interleave": "Índices de intercalado capa k+1 vs k (requiere Genoma ordenado).",
+    "s3_note": "Los puntos 3–5 se completan cuando la base ordenada por L crece (Explorar / Contribuir).",
+    "boardLabel": "Posición del tablero (origen de las sucesiones)",
+    "realSeqTitle": "Sucesiones de esta posición",
+    "sExact": "Producto ∏ p_n^{v_n} = S(B) (cadena exacta).",
+    "termTable": "Tabla de términos n = 1…64",
+    "termTableHint": "Solo las casillas con v_n > 0 intervienen en S; el resto aporta factor 1.",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "extendedTitle": "Codificación FIDE extendida — b(n) = p^e (67 términos)",
+    "extendedExplain": "n=1…64 casillas; n=65 turno (313^t, t=1 blancas / 2 negras); n=66 enroque (317^c); n=67 al paso (331^e). Derecho ausente → factor 1.",
+    "extendedExpTitle": "Exponentes extendidos e(1…67)",
+    "extendedExpExplain": "Turno={{turn}} · enroque={{castle}} · al paso={{ep}}",
+    "orderedTitle": "Desde el Genoma ordenado (valores disponibles)",
+    "admissibleTotal": "Posiciones estáticamente admisibles en la base"
+  },
+  "charts": {
+    "title": "Análisis gráfico",
+    "empty": "Analiza una partida para ver las curvas.",
+    "series": "Series",
+    "seriesL": "L",
+    "seriesL10": "L₁₀",
+    "seriesDigits": "dígitos S",
+    "seriesDiff": "ΔL",
+    "gridOn": "Rejilla",
+    "gridOff": "Sin rejilla",
+    "smooth": "Curva",
+    "linear": "Lineal",
+    "dots": "Puntos",
+    "area": "Área",
+    "resetZoom": "Todo",
+    "hint": "Clic en la curva o puntos para ir a esa jugada · ← → en el teclado · zoom + / Todo",
+    "fromLine": "Gráfico de la línea de jugadas",
+    "seriesD": "D",
+    "seriesR": "R",
+    "tags": "Etiquetas",
+    "scaleNote": "L = ln S · L₁₀ = log₁₀ S. Dₖ = Lₖ−Lₖ₋₁ = ln(Sₖ/Sₖ₋₁). Rₖ = Sₖ/Sₖ₋₁ = 10^(L₁₀ₖ−L₁₀ₖ₋₁). S exacto va en la tabla (abreviado si tiene muchas cifras). Cada curva tiene su eje Y.",
+    "scrollHint": "Desplaza horizontalmente para ver todos los plies 0…n",
+    "labels": "Etiquetas",
+    "options": "Opciones de gráficos",
+    "axisY": "Eje Y",
+    "axisX": "Eje X",
+    "angle": "Ángulo",
+    "density": "Densidad",
+    "onePagePerTramo": "Una página por tramo",
+    "pointAngle": "Ángulo de etiquetas en puntos (por serie)"
+  },
+  "fenPaste": {
+    "title": "Pegar FEN del portapapeles",
+    "button": "Pegar",
+    "ok": "Pegada",
+    "empty": "Portapapeles vacío",
+    "denied": "Sin permiso de portapapeles",
+    "unsupported": "Portapapeles no disponible"
+  },
+  "help": {
+    "title": "Ayuda — ChessGenome",
+    "close": "Cerrar",
+    "intro": "Guía completa de cada sección. El idioma del texto sigue el selector ES / EN / DE.",
+    "footer": "ChessGenome · codificación primo-exponencial de posiciones · 2026",
+    "sections": {
+      "home": {
+        "title": "Inicio",
+        "blocks": [
+          {
+            "type": "text",
+            "content": "La página de inicio resume el proyecto y muestra las estadísticas globales de la base de datos."
+          },
+          {
+            "type": "subtitle",
+            "content": "Estadísticas"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Posiciones totales: número de posiciones almacenadas en MongoDB.",
+              "Posiciones admisibles: las que pasan los chequeos estáticos básicos.",
+              "Mayor L₁₀ registrado con partida legal asociada: el récord más alto alcanzable mediante jugadas legales FIDE."
+            ]
+          },
+          {
+            "type": "callout",
+            "variant": "info",
+            "content": "El récord L₁₀ solo cuenta partidas con PGN asociado. Posiciones teóricas inalcanzables no aparecen en esta tarjeta."
+          },
+          {
+            "type": "subtitle",
+            "content": "Ver posición / Ver autor"
+          },
+          {
+            "type": "text",
+            "content": "El botón 'Ver posición' carga el PGN que conduce a esa posición máxima en la pestaña Gödelización, donde se auto-analiza. 'Ver autor' muestra quién reclamó la autoría de esa posición récord."
+          },
+          {
+            "type": "image",
+            "src": "/help/es/home-record.svg",
+            "caption": "Tarjeta de récord L₁₀ en la página de inicio"
+          }
+        ]
+      },
+      "editor": {
+        "title": "Editor",
+        "blocks": [
+          {
+            "type": "text",
+            "content": "El Editor permite construir posiciones y jugar variantes desde cualquier FEN base."
+          },
+          {
+            "type": "subtitle",
+            "content": "Modo Jugar"
+          },
+          {
+            "type": "text",
+            "content": "Arrastra piezas con el ratón o haz click origen → destino. Cada jugada se registra automáticamente en el cuadro de jugadas de la derecha."
+          },
+          {
+            "type": "subtitle",
+            "content": "Modo Editar"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Selecciona una pieza de la paleta y haz click en una casilla para colocarla.",
+              "Usa 🗑 para borrar piezas.",
+              "El botón 'Vaciar' deja el tablero completamente vacío.",
+              "El botón 'Reset' vuelve a la posición inicial."
+            ]
+          },
+          {
+            "type": "callout",
+            "variant": "tip",
+            "content": "Pega una FEN en el campo inferior y pulsa Aplicar para cargar cualquier posición."
+          },
+          {
+            "type": "subtitle",
+            "content": "Copiar PGN"
+          },
+          {
+            "type": "text",
+            "content": "El botón 📋 Copiar PGN copia toda la variante jugada con headers + FEN base. Pégalo en Gödelización para analizarlo."
+          }
+        ]
+      },
+      "analyze": {
+        "title": "Gödelización",
+        "blocks": [
+          {
+            "type": "text",
+            "content": "Gödelización permite analizar tanto una posición suelta (FEN) como partidas completas (PGN)."
+          },
+          {
+            "type": "subtitle",
+            "content": "Analizar FEN"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Pega un FEN en el campo azul.",
+              "El tablero pequeño muestra la posición en vivo.",
+              "Pulsa '🔍 Analizar FEN' para ver L, L₁₀, S, Stockfish y features neuronales."
+            ]
+          },
+          {
+            "type": "subtitle",
+            "content": "Analizar partidas (PGN)"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Pega un PGN o carga un archivo .pgn.",
+              "Pulsa '📋 Pegar' para pegar del portapapeles.",
+              "Pulsa 'Analizar partida' para procesar ply a ply.",
+              "El checkbox 'Auto-guardar' envía las posiciones a MongoDB automáticamente."
+            ]
+          },
+          {
+            "type": "callout",
+            "variant": "success",
+            "content": "Con Auto-guardar activo, cada partida analizada alimenta la base de datos y el récord global de PGNs."
+          },
+          {
+            "type": "subtitle",
+            "content": "Gráficos"
+          },
+          {
+            "type": "text",
+            "content": "Tras analizar, se muestra un gráfico con las series L₁₀, L, D(k) y R(k). Puedes filtrar series, cambiar ángulos de etiquetas y pulsar '📊 Actualizar gráfico' para recapturar con tu configuración."
+          }
+        ]
+      },
+      "search": {
+        "title": "Buscar",
+        "blocks": [
+          {
+            "type": "text",
+            "content": "Busca posiciones ya almacenadas por FEN o parte del tablero."
+          },
+          {
+            "type": "list",
+            "items": [
+              "Consulta transiciones entre posiciones.",
+              "Filtra por L₁₀, número de piezas, frecuencia.",
+              "Ordena por L₁₀, L, timesSeen o pieceCount."
+            ]
+          }
+        ]
+      },
+      "explore": {
+        "title": "Explorar",
+        "blocks": [
+          {
+            "type": "text",
+            "content": "Recorre los términos del genoma ordenados por L (Inicio / Anterior / Siguiente / Final)."
+          },
+          {
+            "type": "text",
+            "content": "Haz click en una fila para ver el minitablero y copiar la FEN."
+          }
+        ]
+      },
+      "contribute": {
+        "title": "Contribuir",
+        "blocks": [
+          {
+            "type": "text",
+            "content": "Envía una FEN o un PGN para analizar y guardar posiciones en la base compartida."
+          },
+          {
+            "type": "list",
+            "items": [
+              "Modo FEN: pega una posición y guárdala.",
+              "Modo PGN: carga una partida y guárdala ply a ply.",
+              "Usa la lista de partidas igual que en Gödelización."
+            ]
+          }
+        ]
+      },
+      "oeis": {
+        "title": "OEIS",
+        "blocks": [
+          {
+            "type": "text",
+            "content": "Genera sucesiones candidatas para registrar en la OEIS a partir de la posición actual:"
+          },
+          {
+            "type": "list",
+            "items": [
+              "v(n): vectores de exponentes.",
+              "pⁿ: potencias de primos.",
+              "S exacto: el número de Gödel completo.",
+              "Codificación FIDE extendida (67 términos).",
+              "⌊L·10ᵏ⌋ y dígitos de S."
+            ]
+          }
+        ]
+      },
+      "session": {
+        "title": "Exportar informe",
+        "blocks": [
+          {
+            "type": "text",
+            "content": "Aquí se acumulan los análisis, partidas, búsquedas y gráficos de tu sesión."
+          },
+          {
+            "type": "list",
+            "items": [
+              "Cada item se puede eliminar individualmente con 🗑️.",
+              "El botón '🗑 Limpiar todo' borra toda la sesión de una vez.",
+              "Añade notas personales a cada item.",
+              "Pulsa 'Exportar informe' para generar un PDF completo."
+            ]
+          },
+          {
+            "type": "callout",
+            "variant": "info",
+            "content": "El PDF incluye portada, análisis con tableros, partidas con tablas y gráficos, y búsquedas."
+          }
+        ]
+      },
+      "exchange": {
+        "title": "Intercambio",
+        "blocks": [
+          {
+            "type": "text",
+            "content": "Espacio para comentarios, sugerencias, preguntas y discusiones entre usuarios."
+          },
+          {
+            "type": "list",
+            "items": [
+              "Regístrate con un nick y contraseña.",
+              "Publica comentarios y responde a otros usuarios.",
+              "Etiqueta por tipo: bug, sugerencia, pregunta, discusión."
+            ]
+          }
+        ]
+      },
+      "charts": {
+        "title": "Gráficos",
+        "blocks": [
+          {
+            "type": "text",
+            "content": "Los gráficos muestran la evolución de las magnitudes del genoma a lo largo de una partida."
+          },
+          {
+            "type": "subtitle",
+            "content": "Series disponibles"
+          },
+          {
+            "type": "list",
+            "items": [
+              "L₁₀ (azul): log₁₀ del número de Gödel S. Es la magnitud principal.",
+              "L (naranja): logaritmo natural ln(S).",
+              "D(k) (rosa): diferencia Lₖ − Lₖ₋₁ entre plies consecutivos.",
+              "R(k) (violeta): ratio Sₖ / Sₖ₋₁ = exp(D(k)) = 10^(log₁₀ Sₖ − log₁₀ Sₖ₋₁)."
+            ]
+          },
+          {
+            "type": "callout",
+            "variant": "tip",
+            "content": "Cada serie se puede activar/desactivar con su botón de color. Los ángulos de las etiquetas se ajustan individualmente."
+          },
+          {
+            "type": "image",
+            "src": "/help/es/chart-anatomy.svg",
+            "caption": "Anatomía completa de un gráfico"
+          },
+          {
+            "type": "image",
+            "src": "/help/es/chart-controls.svg",
+            "caption": "Controles del gráfico: qué puedes configurar"
+          }
+        ]
+      },
+      "neural": {
+        "title": "Red neuronal",
+        "blocks": [
+          {
+            "type": "text",
+            "content": "Panel disponible en Editor y Gödelización."
+          },
+          {
+            "type": "list",
+            "items": [
+              "Detecta modelos .h5/.keras en disco.",
+              "Muestra el tamaño del corpus MongoDB disponible para entrenar.",
+              "Extrae features del tablero (64 exponentes + metadatos).",
+              "Lista jugadas legales con evaluación Stockfish."
+            ]
+          }
+        ]
+      },
+      "stockfish": {
+        "title": "Stockfish",
+        "blocks": [
+          {
+            "type": "text",
+            "content": "Motor UCI integrado en el backend."
+          },
+          {
+            "type": "list",
+            "items": [
+              "Analiza la posición actual del tablero.",
+              "Devuelve mejor jugada, evaluación y profundidad.",
+              "Soporta multipv cuando está disponible."
+            ]
+          }
+        ]
+      },
+      "pgns": {
+        "title": "Récord global",
+        "blocks": [
+          {
+            "type": "text",
+            "content": "Cada vez que se analiza una partida con Auto-guardar activo, se registra su L₁₀ máximo en la colección 'pgns' de MongoDB."
+          },
+          {
+            "type": "list",
+            "items": [
+              "El récord global es la partida con mayor L₁₀ alcanzable legalmente.",
+              "Se deduplican PGNs por hash (subir la misma partida solo incrementa timesSeen).",
+              "El autor de la posición récord puede reclamar la autoría desde Inicio."
+            ]
+          },
+          {
+            "type": "callout",
+            "variant": "info",
+            "content": "Este sistema garantiza que solo posiciones alcanzables mediante jugadas legales FIDE opten al récord."
+          }
+        ]
+      }
+    },
+    "switchToDark": "Cambiar a tema oscuro",
+    "switchToLight": "Cambiar a tema claro"
+  },
+  "author": {
+    "claimTitle": "Reclamar autoría",
+    "claimSubtitle": "Si has descubierto esta posición, regístrala como tuya.",
+    "name": "Nombre",
+    "email": "Email",
+    "emailHint": "Solo para verificar tu identidad. No se publica.",
+    "country": "País",
+    "note": "Nota",
+    "notePlaceholder": "Contexto, fuente, cómo la encontraste…",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "close": "Cerrar",
+    "requiredFields": "Nombre y email son obligatorios",
+    "recordHolderTitle": "Récord actual",
+    "authorTitle": "Autor de la posición",
+    "noAuthorTitle": "Sin autor registrado",
+    "discoveredBy": "Posición descubierta por:",
+    "noAuthorYet": "Aún no hay autor para esta posición.",
+    "beTheFirst": "¿Eres tú quien la descubrió? Regístrate como autor.",
+    "claimBtn": "Soy el autor",
+    "registeredOn": "Registrado el",
+    "countryLabel": "País",
+    "nameLabel": "Nombre",
+    "noteLabel": "Nota"
+  },
+  "session": {
+    "title": "Mi sesión",
+    "subtitle": "Todo lo que has calculado, graficado y buscado en esta sesión.",
+    "empty": "Aún no has añadido nada a tu sesión.",
+    "emptyHint": "Ve a Calcular, Editor, Partida o Buscar y empieza a generar contenido.",
+    "items": "elementos",
+    "positions": "Posiciones",
+    "charts": "Gráficos",
+    "searches": "Búsquedas",
+    "games": "Partidas",
+    "position": "Posición",
+    "chart": "Gráfico",
+    "search": "Búsqueda",
+    "game": "Partida",
+    "pieces": "piezas",
+    "digits": "dígitos",
+    "plies": "medias jugadas",
+    "filters": "Filtros",
+    "results": "Resultados",
+    "remove": "Eliminar",
+    "addNote": "Añadir nota…",
+    "exportBtn": "Guardar informe .pdf",
+    "exportHint": "Se descargará como PDF y se limpiará la sesión.",
+    "confirmTitle": "¿Generar el informe?",
+    "confirmBody": "Se generará un documento con los {{count}} elementos de tu sesión. Después, la sesión se vaciará automáticamente.",
+    "confirmExport": "Sí, generar",
+    "cancel": "Cancelar",
+    "added": "Añadido",
+    "addChart": "Añadir a sesión",
+    "source": {
+      "calculate": "Calculado",
+      "editor": "Editor",
+      "analyze": "Partida",
+      "search": "Búsqueda"
+    },
+    "authorLabel": "Autor",
+    "authorPlaceholder": "Tu nombre",
+    "titleLabel": "Título del documento",
+    "titlePlaceholder": "Mi sesión de trabajo",
+    "notesLabel": "Notas iniciales",
+    "notesPlaceholder": "Comentarios o contexto…",
+    "clearAll": "Limpiar todo",
+    "clearConfirmTitle": "¿Limpiar toda la sesión?",
+    "clearConfirmBody": "Se eliminarán {{count}} elementos (análisis, partidas, búsquedas y gráficos). Esta acción no se puede deshacer.",
+    "clearConfirmBtn": "Sí, limpiar todo",
+    "exportDocBtn": "📄 Exportar a Word"
+  },
+  "auth": {
+    "loginTitle": "Iniciar sesión",
+    "loginSubtitle": "Introduce tu nick y contraseña",
+    "registerTitle": "Crear cuenta",
+    "registerSubtitle": "Elige un nick único y una contraseña. Tu cuenta será permanente.",
+    "nick": "Nick",
+    "password": "Contraseña",
+    "passwordConfirm": "Confirmar contraseña",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
+    "requiredFields": "Nick y contraseña son obligatorios",
+    "loginBtn": "Entrar",
+    "registerBtn": "Crear cuenta",
+    "switchToRegister": "¿No tienes cuenta? Crear una",
+    "switchToLogin": "¿Ya tienes cuenta? Iniciar sesión",
+    "cancel": "Cancelar",
+    "logout": "Cerrar sesión",
+    "loggedAs": "Conectado como",
+    "loginOrRegister": "Iniciar sesión / Registrarse"
+  },
+  "exchange": {
+    "title": "Intercambio",
+    "subtitle": "Comentarios, sugerencias y opiniones sobre ChessGenome.",
+    "newComment": "Nuevo comentario",
+    "commentPlaceholder": "Escribe tu comentario…",
+    "post": "Publicar",
+    "loginToPost": "Inicia sesión o regístrate para comentar.",
+    "noComments": "Aún no hay comentarios. ¡Sé el primero!",
+    "reply": "Responder",
+    "cancelReply": "Cancelar",
+    "replyPlaceholder": "Escribe tu respuesta…",
+    "sendReply": "Responder",
+    "delete": "Eliminar",
+    "confirmDelete": "¿Seguro que quieres eliminar este comentario?",
+    "tagLabel": "Tipo",
+    "filterLabel": "Filtrar:",
+    "filterAll": "Todos",
+    "tags": {
+      "bug": "🐛 Bug",
+      "suggestion": "💡 Sugerencia",
+      "question": "❓ Pregunta",
+      "discussion": "💬 Discusión"
+    }
+  },
+  "pdf": {
+    "analysisSection": "Análisis completos",
+    "gamesSection": "Partidas",
+    "searchSection": "Búsquedas",
+    "chartsSection": "Gráficos sueltos",
+    "coverSubtitle": "Sesión de trabajo ChessGenome",
+    "coverAuthor": "Autor",
+    "coverDate": "Fecha",
+    "coverSummary": "{{analyses}} análisis · {{games}} partidas · {{searches}} búsquedas · {{charts}} gráficos",
+    "game": "Partida",
+    "halfMoves": "Medias jugadas",
+    "initialPosition": "Posición inicial",
+    "initialFen": "FEN inicial",
+    "initialL10": "L₁₀ inicial",
+    "initialS": "S inicial (sci)",
+    "completeChart": "Gráfico completo",
+    "chunk": "Tramo plies {{start}}–{{end}}",
+    "fen": "FEN",
+    "l": "L (ln)",
+    "l10": "L₁₀ (log₁₀)",
+    "pieces": "Piezas",
+    "admissible": "Admisible",
+    "rankApprox": "Rango aprox",
+    "timesSeen": "Vistas",
+    "sGodel": "S (Gödel)",
+    "hash": "Hash",
+    "factorization": "Factorización",
+    "sfTitle": "Stockfish",
+    "sfBestMove": "Mejor jugada",
+    "sfEval": "Evaluación",
+    "sfDepth": "Profundidad",
+    "sfPonder": "Ponder",
+    "sfPv": "PV",
+    "nnTitle": "Red Neuronal",
+    "nnFeatures": "Features extraídas",
+    "nnModels": "Modelos",
+    "nnCorpus": "Corpus MongoDB",
+    "nnPreview": "Primeras features",
+    "searchFilters": "Filtros",
+    "searchResults": "Resultados",
+    "footer": "Generado por ChessGenome · {{date}}",
+    "yes": "Sí",
+    "no": "No",
+    "empty": "—",
+    "search": "Búsqueda",
+    "chartTitle": "Gráfico",
+    "cifras": "cifras",
+    "chartTitlePattern": "Evolución L₁₀ · plies {{first}}–{{last}} ({{n}} posiciones)",
+    "gameChartsTitle": "Gráfico",
+    "pgnBlock": "PGN de la partida"
+  },
+  "states": {
+    "sciLabel": "Notación científica S~ ({{n}}) = ",
+    "sExactByState": "S completo por State",
+    "digits": "dígitos",
+    "downloadDocx": "Descargar S (.docx)",
+    "sciNotationByState": "Notación científica S~ por State",
+    "copyAllSci": "Copiar todos los S~",
+    "downloadSciDocx": "Descargar S~ (.docx)"
+  }
+}

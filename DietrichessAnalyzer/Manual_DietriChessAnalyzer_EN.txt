@@ -1,0 +1,1314 @@
+-------------------------------------------------------------------------------
+                    DIETRICHESSANALYZER - USER MANUAL
+                          Version 3.0 - COMPLETE
+-------------------------------------------------------------------------------
+
+                Chess Analysis System with Gödelian Representation
+                                © 2026 DietriChessAnalyzer
+
+
++-----------------------------------------------------------------------------+
+¦                               TABLE OF CONTENTS                            ¦
++-----------------------------------------------------------------------------¦
+¦ 1.  INTRODUCTION                                                           ¦
+¦ 2.  INSTALLATION AND REQUIREMENTS                                          ¦
+¦ 3.  USER INTERFACE                                                         ¦
+¦ 4.  LOADING AND NAVIGATING PGN                                             ¦
+¦ 5.  GAME ANALYSIS                                                          ¦
+¦ 6.  DETAILED VALUES                                                        ¦
+¦ 7.  GRAPHS AND VISUALIZATION                                               ¦
+¦ 8.  POSITION EDITOR                                                        ¦
+¦ 9.  POSITION SEARCH                                                        ¦
+¦ 10. MULTIPLE PGN ANALYSIS                                                  ¦
+¦ 11. NEURAL NETWORK - COMPLETE GUIDE                                        ¦
+¦ 12. EXPORT TO DOCX                                                         ¦
+¦ 13. TROUBLESHOOTING                                                        ¦
+¦ 14. GLOSSARY OF TERMS                                                      ¦
+¦ 15. REFERENCES AND RESOURCES                                               ¦
++-----------------------------------------------------------------------------+
+
+
+-------------------------------------------------------------------------------
+1. INTRODUCTION
+-------------------------------------------------------------------------------
+
+1.1 What is DietriChessAnalyzer?
+--------------------------------
+
+DietriChessAnalyzer is a chess analysis software that uses the Gödelian
+representation of positions to quantify each position into a single unique
+number called the S VALUE (S Value).
+
+This representation converts any chess position into a unique natural number,
+enabling:
+
+  • Mathematical analysis of positions
+  • Quantitative comparison between moves
+  • Graphical visualization of game evolution
+  • Prediction through neural networks
+  • Database of positions with their S values
+
+
+1.2 Program Philosophy
+----------------------
+
+The program is based on the idea that every chess position can be represented
+as a unique number using the PRODUCT OF PRIME NUMBERS RAISED TO EXPONENTS
+that represent pieces and squares.
+
+
+1.3 Fundamental Concepts
+------------------------
+
++-----------------------------------------------------------------------------+
+¦ CONCEPT       ¦ EXPLANATION                                               ¦
++---------------+-------------------------------------------------------------¦
+¦ S VALUE       ¦ Unique number representing the complete position.        ¦
+¦ (S Value)     ¦ Calculated as the product of (Square Value ^             ¦
+¦               ¦ Piece Value) for each piece on the board.                ¦
++---------------+-------------------------------------------------------------¦
+¦ Log10(S)      ¦ Base-10 logarithm of the S Value. Allows working with    ¦
+¦               ¦ more manageable numbers and visualizing trends.          ¦
++---------------+-------------------------------------------------------------¦
+¦ VPo(k)        ¦ Position value at move k. This is the S Value at a       ¦
+¦               ¦ specific moment.                                         ¦
++---------------+-------------------------------------------------------------¦
+¦ D(k)          ¦ Difference between VPo(k) and VPo(k-1). Measures the     ¦
+¦               ¦ change in value between consecutive moves.               ¦
++---------------+-------------------------------------------------------------¦
+¦ R(k)          ¦ Ratio between VPo(k) and VPo(k-1). Measures the          ¦
+¦               ¦ rate of change between moves.                            ¦
++---------------+-------------------------------------------------------------¦
+¦ SQUARE        ¦ Each square has an associated prime number:              ¦
+¦ MAPPING       ¦ a1=2, b1=3, c1=5, d1=7, e1=11, ... h8=311              ¦
++---------------+-------------------------------------------------------------¦
+¦ PIECE VALUES  ¦ Each piece has an exponent value:                        ¦
+¦               ¦ Pawn=1, Knight=5, Bishop=7, Rook=3, Queen=9, King=11    ¦
++-----------------------------------------------------------------------------+
+
+
+1.4 File Structure
+------------------
+
+Your Folder/
++-- chess_analyzer_local.py      ? Main application
++-- neural_network.py            ? Neural network module
++-- engines/
+¦   +-- stockfish.exe            ? Chess engine (download separately)
++-- data/
+¦   +-- positions.db             ? SQLite database (auto-created)
++-- exports/                     ? Exported documents
++-- logs/                        ? Log files
++-- models/                      ? Saved neural network models
+
+
+-------------------------------------------------------------------------------
+2. INSTALLATION AND REQUIREMENTS
+-------------------------------------------------------------------------------
+
+2.1 System Requirements
+-----------------------
+
++-----------------------------------------------------------------------------+
+¦ REQUIREMENT   ¦ MINIMUM        ¦ RECOMMENDED                               ¦
++---------------+----------------+-------------------------------------------¦
+¦ OS            ¦ Windows 7/10/11¦ Windows 10/11                            ¦
+¦ Python        ¦ 3.8            ¦ 3.11.6                                   ¦
+¦ RAM           ¦ 4 GB           ¦ 8 GB                                     ¦
+¦ Disk          ¦ 500 MB         ¦ 1 GB                                     ¦
+¦ Processor     ¦ Dual Core      ¦ Quad Core                                ¦
++----------------------------------------------------------------------------+
+
+
+2.2 Required Dependencies
+-------------------------
+
+BASIC INSTALLATION:
+  pip install PyQt5 chess python-chess numpy matplotlib scipy python-docx
+
+FOR THE NEURAL NETWORK:
+  pip install tensorflow scikit-learn joblib
+
+
+2.3 Installing Stockfish
+------------------------
+
+1. Download Stockfish from: https://stockfishchess.org/download/
+2. Place the stockfish.exe file in the engines/ folder
+3. The program will detect it automatically
+
+
+-------------------------------------------------------------------------------
+3. USER INTERFACE
+-------------------------------------------------------------------------------
+
+3.1 General Overview
+--------------------
+
+When you open the application, you will see a window divided into several
+sections:
+
++-----------------------------------------------------------------------------+
+¦  DIETRICHESSANALYZER - Version 3.0                                         ¦
++-----------------------------------------------------------------------------¦
+¦  [PGN Analysis]  [Multiple PGN Analysis]                                  ¦
++-----------------------------------------------------------------------------¦
+¦  +---------------------------------------------------------------------+   ¦
+¦  ¦  [Load PGN] [Analyze] [Details] [Export] [Next Plays]             ¦   ¦
+¦  ¦  [Search] [DB Stats] [Neural Net] [Editor] [Help]  [Language ?]   ¦   ¦
+¦  +---------------------------------------------------------------------+   ¦
+¦  +---------------------------------------------------------------------+   ¦
+¦  ¦  +-------------------------+  ¦  +-----------------------------+   ¦   ¦
+¦  ¦  ¦  PGN TEXT EDITOR        ¦  ¦  ¦  CHESSBOARD                ¦   ¦   ¦
+¦  ¦  ¦  1. e4 e5 2. Nf3 Nc6   ¦  ¦  ¦      rnbqkbnr              ¦   ¦   ¦
+¦  ¦  ¦  3. Bb5 a6 ...         ¦  ¦  ¦      pppppppp              ¦   ¦   ¦
+¦  ¦  +-------------------------+  ¦  ¦  [<<] [<] [>] [>>]          ¦   ¦   ¦
+¦  +--------------------------------------------------------------------+   ¦
+¦  +---------------------------------------------------------------------+   ¦
+¦  ¦  [Open Graph Viewer]                                               ¦   ¦
+¦  +---------------------------------------------------------------------+   ¦
++-----------------------------------------------------------------------------+
+
+
+3.2 Main Tabs
+-------------
+
++-----------------------------------------------------------------------------+
+¦ TAB                    ¦ FUNCTION                                         ¦
++------------------------+--------------------------------------------------¦
+¦ PGN Analysis           ¦ Analysis of a single game                        ¦
+¦ Multiple PGN Analysis  ¦ Analysis of multiple games from one PGN file    ¦
++---------------------------------------------------------------------------+
+
+
+3.3 Main Buttons
+----------------
+
++-----------------------------------------------------------------------------+
+¦ BUTTON              ¦ FUNCTION                         ¦ SHORTCUT        ¦
++---------------------+----------------------------------+------------------¦
+¦ Load PGN            ¦ Loads a PGN file                 ¦ Ctrl+O           ¦
+¦ Analyze Game        ¦ Analyzes the loaded game         ¦ Ctrl+A           ¦
+¦ Detailed Values     ¦ Shows detailed value table       ¦ Ctrl+V           ¦
+¦ Export to DOCX      ¦ Exports analysis to Word         ¦ Ctrl+E           ¦
+¦ Next Plays          ¦ Analyzes moves from current pos. ¦ Ctrl+N           ¦
+¦ Search Positions    ¦ Searches positions in DB         ¦ Ctrl+S           ¦
+¦ DB Stats            ¦ Shows database statistics        ¦ -                ¦
+¦ Neural Network      ¦ Opens neural network analysis    ¦ Ctrl+R           ¦
+¦ Open Position Editor¦ Opens position editor            ¦ Ctrl+P           ¦
+¦ Help                ¦ Shows help                       ¦ F1               ¦
+¦ Language            ¦ Changes language (EN/ES/DE)      ¦ -                ¦
++---------------------------------------------------------------------------+
+
+
+3.4 PGN Text Area
+-----------------
+
+• Displays the content of the loaded PGN file
+• Allows manual editing of the PGN
+• After analysis, Gödel values are added
+
+
+3.5 Chessboard
+--------------
+
+• Shows the current position of the game
+• Navigation buttons:
+  - <<  : Go to first move
+  - <   : Previous move
+  - >   : Next move
+  - >>  : Go to last move
+
+
+-------------------------------------------------------------------------------
+4. LOADING AND NAVIGATING PGN
+-------------------------------------------------------------------------------
+
+4.1 Loading a PGN File
+----------------------
+
+STEP BY STEP:
+  1. Click on "Load PGN"
+  2. Select a PGN file (.pgn format)
+  3. The file loads in the text area
+  4. The board shows the starting position
+  5. Navigation buttons become active
+
+WHY DO IT?
+  • To import chess games in standard format
+  • To analyze saved games
+  • To work with tournament or database games
+
+HOW DOES IT WORK?
+  The program parses the PGN file using the chess.pgn library, extracts the
+  moves and stores them in self.move_list, saves the state (FEN) of each
+  position in self.board_states, and renders the board using chess.svg.
+
+
+4.2 Navigating Through the Game
+-------------------------------
+
++-----------------------------------------------------------------------------+
+¦ BUTTON ¦ ACTION                  ¦ WHEN TO USE                             ¦
++--------+-------------------------+-----------------------------------------¦
+¦ <<     ¦ Go to first move        ¦ To see the starting position           ¦
+¦ <      ¦ Previous move           ¦ To go back one move                    ¦
+¦ >      ¦ Next move               ¦ To advance one move                    ¦
+¦ >>     ¦ Go to last move         ¦ To see the final position              ¦
++---------------------------------------------------------------------------+
+
+HOW DOES NAVIGATION WORK?
+  self.current_move_index stores the current index. When navigating, the
+  corresponding FEN is loaded from self.board_states and the board is
+  re-rendered.
+
+
+4.3 The FEN Format (Forsyth-Edwards Notation)
+----------------------------------------------
+
+EXAMPLE:
+  rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+
+MEANING:
++-----------------------------------------------------------------------------+
+¦ PART            ¦ EXAMPLE        ¦ EXPLANATION                            ¦
++-----------------+----------------+----------------------------------------¦
+¦ Pieces          ¦ rnbqkbnr/pp... ¦ lowercase=black, uppercase=white      ¦
+¦ Turn            ¦ w              ¦ w=white, b=black                     ¦
+¦ Castling        ¦ KQkq           ¦ Castling availability                 ¦
+¦ En passant      ¦ -              ¦ En passant target square              ¦
+¦ Halfmove clock  ¦ 0              ¦ Halfmoves since last capture          ¦
+¦ Move number     ¦ 1              ¦ Current move number                   ¦
++---------------------------------------------------------------------------+
+
+
+-------------------------------------------------------------------------------
+5. GAME ANALYSIS
+-------------------------------------------------------------------------------
+
+5.1 What Does Analysis Do?
+--------------------------
+
+The analysis converts each position of the game into a GÖDEL VALUE (G) and
+calculates derived metrics to understand the evolution of the game.
+
+
+5.2 Analysis Process
+--------------------
+
+STEP BY STEP:
+  1. Load a PGN (Load PGN)
+  2. Click on "Analyze Game"
+  3. The program processes each position of the game
+  4. It calculates for each position:
+       - S Value (exact) ? Product of (square^piece)
+       - VPo(k) ? Position value
+       - D(k) ? Difference from previous position
+       - R(k) ? Ratio to previous position
+  5. Saves positions in the database
+  6. Shows a message with statistics
+
+WHY DO IT?
+  • To quantitatively understand the evolution of the game
+  • To identify moves that drastically change the value
+  • To compare different games or moves
+
+
+5.3 Calculating the S Value
+---------------------------
+
+FORMULA:
+  S = ?(Vs ^ Vp)
+
+Where:
+  • Vs = Square value (prime number assigned to each square)
+  • Vp = Piece value (exponent)
+
+PRACTICAL EXAMPLE:
+  White pawn on e4:
+    - Square e4 ? value 109
+    - Piece P (white pawn) ? value 1
+    - Contribution = 109^1 = 109
+
+  Black knight on f6:
+    - Square f6 ? value 199
+    - Piece n (black knight) ? value 6
+    - Contribution = 199^6
+
+  The total S Value is the product of all these contributions.
+
+
+5.4 Derived Metrics
+-------------------
+
++-----------------------------------------------------------------------------+
+¦ METRIC    ¦ FORMULA                   ¦ WHAT IT MEASURES                   ¦
++-----------+---------------------------+------------------------------------¦
+¦ VPo(k)    ¦ S at move k               ¦ Absolute position value           ¦
+¦ D(k)      ¦ VPo(k) - VPo(k-1)         ¦ Change between moves              ¦
+¦ R(k)      ¦ VPo(k) / VPo(k-1)         ¦ Rate of change                    ¦
++----------------------------------------------------------------------------+
+
+INTERPRETATION:
+  • D(k) positive ? Position has improved
+  • D(k) negative ? Position has worsened
+  • R(k) > 1 ? Position has improved
+  • R(k) < 1 ? Position has worsened
+
+
+5.5 Analysis Example
+--------------------
+
+  Starting position: S = 2.45e+150
+  After 1.e4: S = 3.12e+152
+  D(1) = 3.10e+152 (significant improvement)
+  R(1) = 127.3 (large improvement)
+
+
+-------------------------------------------------------------------------------
+6. DETAILED VALUES
+-------------------------------------------------------------------------------
+
+6.1 What Does the Value Table Show?
+-----------------------------------
+
+When clicking on "Detailed Values", a window opens with a table showing all
+the values calculated during the analysis.
+
+
+6.2 Table Columns
+-----------------
+
++-----------------------------------------------------------------------------+
+¦ COLUMN          ¦ DESCRIPTION                                             ¦
++-----------------+---------------------------------------------------------¦
+¦ #Play           ¦ Move number (0 = starting position)                     ¦
+¦ Move            ¦ Move notation in SAN                                   ¦
+¦ VPo(k)          ¦ Position value (Gödelian)                              ¦
+¦ Exact Value     ¦ Exact S Value (product of square^piece)                ¦
+¦ Factors         ¦ Decomposition into factors (square^piece)              ¦
+¦ D(k)            ¦ Difference from previous position                      ¦
+¦ R(k)            ¦ Ratio to previous position                             ¦
+¦ FEN             ¦ Complete FEN of the position                           ¦
+¦ SF Best         ¦ Best move according to Stockfish                       ¦
+¦ SF Score        ¦ Stockfish score (centipawns)                           ¦
++---------------------------------------------------------------------------+
+
+
+6.3 View Modes
+--------------
+
+The "Show:" dropdown allows filtering the information:
+
++-----------------------------------------------------------------------------+
+¦ MODE                            ¦ DISPLAY                                 ¦
++---------------------------------+-----------------------------------------¦
+¦ 1. All data                     ¦ All columns                            ¦
+¦ 2. Value only                   ¦ Only VPo(k) and factors                ¦
+¦ 3. Value and full               ¦ VPo(k) and exact value                 ¦
+¦ 4. FEN only                     ¦ Only FEN of each position              ¦
+¦ 5. Ratio only                   ¦ Only R(k) between positions            ¦
+¦ 6. Diff only                    ¦ Only D(k) between positions            ¦
++---------------------------------------------------------------------------+
+
+
+6.4 Interpreting Factors
+------------------------
+
+Example: 2^1 x 3^5 x 5^7 x 7^3 x 11^9
+
+  • 2^1   ? White pawn on a1 (square 2, piece 1)
+  • 3^5   ? White knight on b1 (square 3, piece 5)
+  • 5^7   ? White bishop on c1 (square 5, piece 7)
+  • 7^3   ? White rook on d1 (square 7, piece 3)
+  • 11^9  ? White queen on e1 (square 11, piece 9)
+
+The product of all these factors gives the exact S Value.
+
+
+-------------------------------------------------------------------------------
+7. GRAPHS AND VISUALIZATION
+-------------------------------------------------------------------------------
+
+7.1 What Does the Graph Viewer Show?
+------------------------------------
+
+When clicking on "Open Graph Viewer", a window opens with graphs that
+visualize the evolution of values throughout the game.
+
+
+7.2 Graph Types
+---------------
+
++-----------------------------------------------------------------------------+
+¦ GRAPH     ¦ BUTTON     ¦ WHAT IT SHOWS                                   ¦
++-----------+------------+-------------------------------------------------¦
+¦ VPo(k)    ¦ "VPo(k)"   ¦ Evolution of position value                     ¦
+¦ D(k)      ¦ "D(k)"     ¦ Evolution of differences between positions     ¦
+¦ R(k)      ¦ "R(k)"     ¦ Evolution of ratios between positions          ¦
++---------------------------------------------------------------------------+
+
+
+7.3 Graph Options
+-----------------
+
++-----------------------------------------------------------------------------+
+¦ OPTION                ¦ FUNCTION                                          ¦
++-----------------------+---------------------------------------------------¦
+¦ Graph type            ¦ Graph type (Line, Scatter, Bar)                  ¦
+¦ Safe Mode (log10)     ¦ Uses logarithmic scale to prevent overflow       ¦
++---------------------------------------------------------------------------+
+
+SAFE MODE (log10):
+  Since values can be extremely large, safe mode applies base-10 logarithm
+  to all values, making graphs more readable.
+
+
+7.4 Navigating Graphs
+---------------------
+
+  • Horizontal scroll: Moves the graph along the game
+  • Vertical scroll: Adjusts the vertical scale
+  • Zoom: Use mouse wheel or toolbar buttons
+
+
+7.5 Interpreting Graphs
+-----------------------
+
+VPo(k) GRAPH:
+  • Ascending line ? Position is improving
+  • Descending line ? Position is worsening
+  • Peaks ? Moves that drastically change the position
+  • Valleys ? Moves that worsen the position
+
+D(k) GRAPH:
+  • Positive points ? Moves that improve the position
+  • Negative points ? Moves that worsen the position
+  • Large points ? Moves with significant impact
+
+R(k) GRAPH:
+  • Value > 1 ? Improvement of position
+  • Value < 1 ? Worsening of position
+  • Extreme values ? Very significant moves
+
+
+-------------------------------------------------------------------------------
+8. POSITION EDITOR
+-------------------------------------------------------------------------------
+
+8.1 What Does the Position Editor Do?
+-------------------------------------
+
+Allows editing any chess position to build variations or analyze specific
+positions.
+
+
+8.2 How to Open the Editor
+--------------------------
+
+  • "Open Position Editor" button in the main window
+  • "Search (Open Editor)" button in the search dialog
+
+
+8.3 Editor Modes
+----------------
+
++-----------------------------------------------------------------------------+
+¦ MODE          ¦ FUNCTION                                                  ¦
++---------------+-----------------------------------------------------------¦
+¦ Play Moves    ¦ Play moves on the board (game mode)                      ¦
+¦ Edit Pieces   ¦ Place or remove pieces on the board                      ¦
++----------------------------------------------------------------------------+
+
+
+8.4 Editing Tools
+-----------------
+
++-----------------------------------------------------------------------------+
+¦ TOOL              ¦ FUNCTION                                              ¦
++-------------------+-------------------------------------------------------¦
+¦ White pieces      ¦ K, Q, R, B, N, P ? Place white pieces                ¦
+¦ Black pieces      ¦ k, q, r, b, n, p ? Place black pieces                ¦
+¦ Delete (X)        ¦ Delete pieces by clicking on the board               ¦
+¦ Undo Move         ¦ Undo the last move                                   ¦
+¦ Clear Board       ¦ Clear the entire board                               ¦
+¦ Initial Pos       ¦ Return to starting position                          ¦
+¦ Reset All         ¦ Complete reset                                       ¦
++---------------------------------------------------------------------------+
+
+
+8.5 PGN Headers
+---------------
+
++-----------------------------------------------------------------------------+
+¦ FIELD     ¦ DESCRIPTION                                                  ¦
++-----------+--------------------------------------------------------------¦
+¦ Event     ¦ Event name                                                  ¦
+¦ Site      ¦ Location where played                                       ¦
+¦ Date      ¦ Date of the game                                            ¦
+¦ Round     ¦ Tournament round                                            ¦
+¦ White     ¦ White player name                                           ¦
+¦ Black     ¦ Black player name                                           ¦
+¦ Result    ¦ Result (1-0, 0-1, 1/2-1/2, *)                              ¦
++---------------------------------------------------------------------------+
+
+
+8.6 PGN Preview
+---------------
+
+The editor shows a preview of the generated PGN with headers and the moves
+played.
+
+
+8.7 Practical Use - Creating a Variation
+----------------------------------------
+
+  1. Open the editor
+  2. Place pieces in the desired position
+  3. Play the variation by moving pieces
+  4. Accept to send the position to the main application
+  5. Analyze the variation with "Analyze Game"
+
+
+-------------------------------------------------------------------------------
+9. POSITION SEARCH
+-------------------------------------------------------------------------------
+
+9.1 What Does Search Do?
+------------------------
+
+Allows searching for positions in the database and viewing statistics about
+them.
+
+
+9.2 How to Open Search
+----------------------
+
+  • "Search Positions" button in the main window
+  • Shortcut Ctrl+S
+
+
+9.9 Analysis with Stockfish
+---------------------------
+
+  • "Analyze with Stockfish" button ? Analyzes the position with Stockfish
+  • Shows:
+    - Best Move: Best move according to Stockfish
+    - Score: Score in centipawns (positive = advantage for White)
+    - Depth: Analysis depth
+    - Top Moves: Best moves with their scores
+
+
+9.10 Database Statistics
+------------------------
+
++-----------------------------------------------------------------------------+
+¦ METRIC                  ¦ DESCRIPTION                                     ¦
++-------------------------+-------------------------------------------------¦
+¦ Total unique positions  ¦ Number of unique positions in DB               ¦
+¦ Total occurrences       ¦ Total number of registered positions           ¦
+¦ Total transitions       ¦ Number of transitions between positions        ¦
+¦ Average frequency       ¦ Average frequency of appearance                ¦
+¦ Positions with Stockfish¦ Positions with Stockfish analysis              ¦
+¦ Database size           ¦ Database size in MB                           ¦
++---------------------------------------------------------------------------+
+
+
+9.11 Most Frequent Positions
+----------------------------
+
+Table showing the most common positions in the database:
+
++-----------------------------------------------------------------------------+
+¦ COLUMN      ¦ DESCRIPTION                                                ¦
++-------------+------------------------------------------------------------¦
+¦ Rank        ¦ Position in ranking                                        ¦
+¦ FEN         ¦ Complete FEN of the position                               ¦
+¦ S Value     ¦ Gödel value                                                ¦
+¦ Frequency   ¦ Number of appearances                                      ¦
+¦ Winrate     ¦ Win rate                                                   ¦
+¦ SF Best     ¦ Best move according to Stockfish                          ¦
+¦ SF Score    ¦ Stockfish score                                            ¦
++---------------------------------------------------------------------------+
+
+DOUBLE CLICK on a row ? Loads the position into the search board.
+
+
+-------------------------------------------------------------------------------
+10. MULTIPLE PGN ANALYSIS
+-------------------------------------------------------------------------------
+
+10.1 What Does It Do?
+---------------------
+
+Analyzes multiple games from a single PGN file, storing all positions in the
+database.
+
+
+10.2 Process
+------------
+
+  1. Load a PGN file with multiple games
+  2. View the list of loaded games
+  3. Click "Analyze All Games"
+  4. The program processes each game:
+       - Extracts all moves
+       - Calculates the S Value of each position
+       - Saves to the database
+       - Records transitions between positions
+  5. The status of each game is updated
+  6. The final summary is shown
+
+
+10.3 Table Columns
+------------------
+
++-----------------------------------------------------------------------------+
+¦ COLUMN      ¦ DESCRIPTION                                                ¦
++-------------+------------------------------------------------------------¦
+¦ #           ¦ Game number                                                ¦
+¦ Event       ¦ Event name                                                 ¦
+¦ White       ¦ White player                                               ¦
+¦ Black       ¦ Black player                                               ¦
+¦ Result      ¦ Result (1-0, 0-1, 1/2-1/2, *)                             ¦
+¦ Moves       ¦ Number of moves                                            ¦
+¦ Status      ¦ Status (Pending, Analyzed, Error)                          ¦
++---------------------------------------------------------------------------+
+
+
+10.4 Double Click on a Game
+---------------------------
+
+Shows detailed information about the game:
+
+  Game 1:
+  Event: World Chess Championship
+  Site: Dubai
+  Date: 2024.12.15
+  Round: 12
+  White: Carlsen
+  Black: Nakamura
+  Result: 1-0
+  Moves: 45
+
+
+-------------------------------------------------------------------------------
+11. NEURAL NETWORK - COMPLETE GUIDE
+-------------------------------------------------------------------------------
+
+11.1 What is the Neural Network?
+--------------------------------
+
+It is a MACHINE LEARNING system that learns to evaluate chess positions based
+on data stored in the database.
+
+
+11.2 What Is It Used For?
+-------------------------
+
++-----------------------------------------------------------------------------+
+¦ FUNCTION    ¦ DESCRIPTION                                               ¦
++-------------+-----------------------------------------------------------¦
+¦ Predict     ¦ Evaluates the quality of moves from a given position     ¦
+¦ Learn       ¦ Improves with more data from analyzed games              ¦
+¦ Compare     ¦ Compares its predictions with Stockfish                  ¦
+¦ Visualize   ¦ Graphically shows predictions for each move              ¦
++---------------------------------------------------------------------------+
+
+
+11.3 How to Open the Neural Network
+-----------------------------------
+
+  1. Click on "Neural Network" in the main button bar
+  2. The neural network analysis dialog opens
+  3. The current position from the main board loads automatically
+
+
+11.4 Neural Network Interface
+-----------------------------
+
++-----------------------------------------------------------------------------+
+¦  NEURAL NETWORK ANALYSIS                                                  ¦
++-----------------------------------------------------------------------------¦
+¦  +-----------------------------------------------------------------------+ ¦
+¦  ¦  BOARD                         ¦  NETWORK STATUS                   ¦ ¦
+¦  ¦                                 ¦  ? Not trained                   ¦ ¦
+¦  ¦      rnbqkbnr                  ¦                                   ¦ ¦
+¦  ¦      pppppppp                  ¦  POSITION INFO                    ¦ ¦
+¦  ¦                                 ¦  FEN: rnbqkbnr/pppppppp/8/...    ¦ ¦
+¦  ¦  [<<] [<] [>] [>>]             ¦  Moves: 0                        ¦ ¦
+¦  ¦  Move: 0/0                     ¦  Pieces: White: 16 | Black: 16   ¦ ¦
+¦  ¦                                 ¦  S Value: 2.45e+150              ¦ ¦
+¦  ¦  [Refresh Board]               ¦  Log10(S): 150.389               ¦ ¦
+¦  ¦                                 ¦                                   ¦ ¦
+¦  ¦                                 ¦  STOCKFISH REFERENCE             ¦ ¦
+¦  ¦                                 ¦  Best: e2e4 (e4)                 ¦ ¦
+¦  ¦                                 ¦  Score: 45 cp                    ¦ ¦
+¦  ¦                                 ¦  [Compare with Stockfish]        ¦ ¦
+¦  ¦                                 ¦                                   ¦ ¦
+¦  ¦                                 ¦  TRAINING                        ¦ ¦
+¦  ¦                                 ¦  [Train Network] [Analyze Pos]   ¦ ¦
+¦  ¦                                 ¦  [Save Model] [Load Model]       ¦ ¦
+¦  ¦                                 ¦  ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦ ¦ ¦
+¦  +-----------------------------------------------------------------------+ ¦
+¦  +----------------------------------------------------------------------+ ¦
+¦  ¦  MOVE PREDICTIONS                                                    ¦ ¦
+¦  ¦  +----------------------------------------------------------------+ ¦ ¦
+¦  ¦  ¦ # ¦ Move(UCI)¦ Move(SAN)¦ S Value  ¦ Log10(S)¦ NN Score ¦Conf.¦ ¦ ¦
+¦  ¦  +---+---------+---------+----------+---------+---------+--------¦ ¦ ¦
+¦  ¦  ¦ 1 ¦ e2e4    ¦ e4      ¦ 1.23e+160¦ 160.090 ¦ 0.8234  ¦ 82.3%  ¦ ¦ ¦
+¦  ¦  ¦ 2 ¦ d2d4    ¦ d4      ¦ 8.45e+158¦ 158.927 ¦ 0.7651  ¦ 76.5%  ¦ ¦ ¦
+¦  ¦  ¦ 3 ¦ g1f3    ¦ Nf3     ¦ 3.67e+157¦ 157.565 ¦ 0.7012  ¦ 70.1%  ¦ ¦ ¦
+¦  ¦  +----------------------------------------------------------------+ ¦ ¦
+¦  ¦  Best Move: e4 (e2e4)    Confidence: 82.3%   [Show Comparison Graph] ¦ ¦
+¦  +----------------------------------------------------------------------+ ¦
+¦  +----------------------------------------------------------------------+ ¦
+¦  ¦  DETAILED ANALYSIS                                                   ¦ ¦
+¦  ¦  ============================================================        ¦ ¦
+¦  ¦  NEURAL NETWORK PREDICTIONS                                          ¦ ¦
+¦  ¦  ============================================================        ¦ ¦
+¦  ¦  Position: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1¦ ¦
+¦  ¦  Legal moves: 20                                                    ¦ ¦
+¦  ¦  Current S Value: 2.45e+150                                         ¦ ¦
+¦  ¦  Current Log10(S): 150.389                                          ¦ ¦
+¦  ¦  Top 5 NN Predictions:                                              ¦ ¦
+¦  ¦  1. e4         | NN: 82.3% | S: 1.23e+160 | Log: 160.090           ¦ ¦
+¦  ¦  2. d4         | NN: 76.5% | S: 8.45e+158 | Log: 158.927           ¦ ¦
+¦  ¦  3. Nf3        | NN: 70.1% | S: 3.67e+157 | Log: 157.565           ¦ ¦
+¦  +----------------------------------------------------------------------+ ¦
+¦                                                                           ¦
+¦  [Close]                                                                  ¦
++-----------------------------------------------------------------------------+
+
+
+11.5 DETAILED EXPLANATION OF EACH SECTION
+-----------------------------------------
+
+11.5.1 BOARD AND NAVIGATION
+
++-----------------------------------------------------------------------------+
+¦ ELEMENT         ¦ FUNCTION                     ¦ HOW IT WORKS             ¦
++-----------------+-----------------------------+---------------------------¦
+¦ Board           ¦ Shows current position      ¦ chess.svg + QSvgWidget    ¦
+¦ <<              ¦ First move                  ¦ current_move_index = 0    ¦
+¦ <               ¦ Previous move               ¦ current_move_index -= 1   ¦
+¦ >               ¦ Next move                   ¦ current_move_index += 1   ¦
+¦ >>              ¦ Last move                   ¦ current_move_index = len  ¦
+¦ Move: X/Y       ¦ Shows current move          ¦ f"Move: {cur}/{tot}"      ¦
+¦ Refresh Board   ¦ Updates the board           ¦ Re-renders SVG            ¦
++---------------------------------------------------------------------------+
+
+WHY DOES NAVIGATION EXIST?
+  • Allows stepping through the historical game
+  • Facilitates comparison between positions
+  • Allows analyzing how the network's evaluation changes with each move
+
+
+11.5.2 NETWORK STATUS
+
++-----------------------------------------------------------------------------+
+¦ ELEMENT   ¦ WHAT IS SHOWN         ¦ INTERPRETATION                         ¦
++-----------+-----------------------+----------------------------------------¦
+¦ Status    ¦ Network status        ¦ ? Not trained / ? Trained            ¦
+¦ Accuracy  ¦ Model accuracy        ¦ Percentage accuracy (e.g., 72.4%)     ¦
++---------------------------------------------------------------------------+
+
+WHAT DOES "TRAINED" MEAN?
+  • The network has been trained with data from the database
+  • The model has learned to evaluate positions
+  • Accuracy indicates how well it generalizes
+
+HOW IS ACCURACY CALCULATED?
+  • Trained with 80% of the data
+  • Tested with the remaining 20%
+  • Accuracy is the percentage of correct predictions in the test
+
+
+11.5.3 POSITION INFO
+
++-----------------------------------------------------------------------------+
+¦ FIELD        ¦ DESCRIPTION                 ¦ INTERPRETATION                ¦
++--------------+-----------------------------+-------------------------------¦
+¦ FEN          ¦ Complete FEN of position    ¦ Unique identifier            ¦
+¦ Moves        ¦ Number of moves in game     ¦ How many moves played        ¦
+¦ Pieces       ¦ White/black piece count     ¦ Material on the board        ¦
+¦ S Value      ¦ Gödel value of position     ¦ Unique position number       ¦
+¦ Log10(S)     ¦ Logarithm of S Value        ¦ Compressed version           ¦
++----------------------------------------------------------------------------+
+
+WHAT IS THE S VALUE?
+  S = ?(Vs ^ Vp)
+
+  Example (starting position, partial):
+    - Pawn on a2: 23^1
+    - Pawn on b2: 29^1
+    - ...
+    - King on e1: 283^11
+  S = 23^1 × 29^1 × ... × 283^11 = 2.45e+150
+
+WHY USE Log10(S)?
+  • The S Value is astronomically large
+  • Log10(S) compresses it to a manageable number
+  • Facilitates visualization in graphs
+  • Allows comparing positions on a logarithmic scale
+
+
+11.5.4 STOCKFISH REFERENCE
+
++-----------------------------------------------------------------------------+
+¦ ELEMENT               ¦ DESCRIPTION                ¦ INTERPRETATION        ¦
++-----------------------+----------------------------+-----------------------¦
+¦ Best                  ¦ Best move by Stockfish     ¦ Quality reference    ¦
+¦ Score                 ¦ Score in centipawns        ¦ 100 = 1 pawn advantage¦
+¦ Compare with Stockfish¦ Compares predictions       ¦ Validates the network ¦
++----------------------------------------------------------------------------+
+
+WHAT IS A CENTIPAWN?
+  • 1 centipawn = 1/100 of a pawn
+  • Positive score = advantage for White
+  • Negative score = advantage for Black
+
+EXAMPLE SCORES:
+  +45  = 0.45 pawn advantage for White
+  -23  = 0.23 pawn advantage for Black
+  +300 = Decisive advantage (won)
+
+
+11.5.5 TRAINING SECTION
+
++-----------------------------------------------------------------------------+
+¦ BUTTON              ¦ FUNCTION                 ¦ WHEN TO USE              ¦
++---------------------+--------------------------+--------------------------¦
+¦ Train Network       ¦ Trains the network       ¦ First time or after     ¦
+¦                     ¦                          ¦ adding data             ¦
+¦ Analyze Position    ¦ Analyzes current position¦ After training          ¦
+¦ Save Model          ¦ Saves the trained model  ¦ For reuse               ¦
+¦ Load Model          ¦ Loads a saved model      ¦ To use a previous model ¦
++---------------------------------------------------------------------------+
+
+TRAINING PROCESS:
+  1. Extract data: The network gets positions from the database
+  2. Features: For each position, it extracts:
+       - White/black material
+       - Material balance
+       - Piece count
+       - Center control
+       - Mobility
+       - King safety
+       - Pawn structure
+  3. Normalize: Scales the features
+  4. Train: The network adjusts its weights to minimize error
+  5. Validate: Tests the model with unseen data
+
+NEURAL NETWORK ARCHITECTURE:
+  Input (features) ? Layer 1 (64 neurons) ? Dropout (20%)
+  ? Layer 2 (32 neurons) ? Dropout (20%) ? Layer 3 (16 neurons)
+  ? Output (1 neuron - position evaluation)
+
+
+11.5.6 MOVE PREDICTIONS - THE MOST IMPORTANT SECTION!
+
+TABLE STRUCTURE:
+
++-----------------------------------------------------------------------------+
+¦ COLUMN       ¦ WHAT IS SHOWN             ¦ HOW IT IS CALCULATED          ¦
++--------------+---------------------------+-------------------------------¦
+¦ #            ¦ Ranking order             ¦ Sorted by score               ¦
+¦ Move (UCI)   ¦ Move in UCI format        ¦ e2e4 (source-destination)    ¦
+¦ Move (SAN)   ¦ Move in algebraic notation¦ e4 (human-readable)           ¦
+¦ S Value      ¦ Gödel value after move    ¦ S_after                       ¦
+¦ Log10(S)     ¦ Logarithm of S Value      ¦ log10(S_after)                ¦
+¦ NN Score     ¦ Network score             ¦ Evaluation of position        ¦
+¦ Confidence   ¦ Confidence in prediction  ¦ NN_Score × 100               ¦
+¦ SF Match     ¦ Matches Stockfish         ¦ ? Match / ? No match         ¦
++---------------------------------------------------------------------------+
+
+INTERPRETATION OF EACH COLUMN:
+
+# (Ranking)
+  • WHAT IT IS: The ranking of moves according to the neural network
+  • INTERPRETATION: Move #1 is the best according to the network
+  • COLOR: Blue highlighted row for the best move
+
+Move (UCI)
+  • WHAT IT IS: Move in UCI (Universal Chess Interface) format
+  • FORMAT: e2e4 (from e2 to e4)
+  • WHY: This is the standard format for chess engines
+
+Move (SAN)
+  • WHAT IT IS: Move in standard algebraic notation
+  • FORMAT: e4, Nf3, O-O
+  • WHY: This is human-readable
+
+S Value
+  • WHAT IT IS: The Gödel value of the position after the move
+  • INTERPRETATION:
+      - Higher value = more control/material
+      - Not directly better or worse
+      - Depends on the phase of the game
+
+Log10(S)
+  • WHAT IT IS: Base-10 logarithm of the S Value
+  • INTERPRETATION:
+      - More manageable number
+      - Facilitates comparison
+      - Compressed version of the value
+
+NN Score
+  • WHAT IT IS: Neural network evaluation of the position
+  • RANGE: 0.0 to 1.0 (normalized)
+  • INTERPRETATION:
+      - > 0.7  ? Good position (GREEN)
+      - 0.5-0.7 ? Balanced position (YELLOW)
+      - 0.3-0.5 ? Unfavorable position (ORANGE)
+      - < 0.3  ? Bad position (RED)
+
+Confidence
+  • WHAT IT IS: NN Score expressed as a percentage
+  • INTERPRETATION:
+      - > 70% ? High confidence (GREEN)
+      - 50-70% ? Medium confidence (YELLOW)
+      - < 50% ? Low confidence (RED)
+
+SF Match
+  • WHAT IT IS: Indicates if the move matches Stockfish
+  • INTERPRETATION:
+      - ? Match ? Network matches Stockfish (good sign)
+      - ? No match ? Network differs from Stockfish
+
+
+11.5.6.3 PRACTICAL INTERPRETATION EXAMPLE
+
+Position: Starting position (rnbqkbnr/pppppppp/8/...)
+
+Analyzed moves:
+
+1. e4 (NN Score: 0.82, Confidence: 82%)
+   - S Value: 1.23e+160
+   - Log10(S): 160.09
+   - SF Match: ?
+   - INTERPRETATION: Excellent move, network is confident, Stockfish agrees
+
+2. d4 (NN Score: 0.76, Confidence: 76%)
+   - S Value: 8.45e+158
+   - Log10(S): 158.93
+   - SF Match: ?
+   - INTERPRETATION: Good move, network is confident, Stockfish prefers e4
+
+3. Nf3 (NN Score: 0.70, Confidence: 70%)
+   - S Value: 3.67e+157
+   - Log10(S): 157.56
+   - SF Match: ?
+   - INTERPRETATION: Solid move, less impact than e4/d4
+
+
+11.5.7 BEST MOVE AND CONFIDENCE
+
++-----------------------------------------------------------------------------+
+¦ ELEMENT     ¦ WHAT IS SHOWN           ¦ INTERPRETATION                    ¦
++-------------+-------------------------+-----------------------------------¦
+¦ Best Move   ¦ Best move according to  ¦ e4 (e2e4)                         ¦
+¦             ¦ the neural network      ¦                                   ¦
++-------------+-------------------------+-----------------------------------¦
+¦ Confidence  ¦ Confidence in prediction¦ 82.3%                             ¦
++----------------------------------------------------------------------------+
+
+WHAT DOES CONFIDENCE INDICATE?
+  • High (>70%): The network is confident this is the best move
+  • Medium (50-70%): The network has doubts, several moves are similar
+  • Low (<50%): The network is unsure, the position may be complex
+
+
+11.5.8 SHOW COMPARISON GRAPH
+
+Shows a bar chart comparing all moves:
+
+  100% ¦  ¦¦¦¦
+   90% ¦  ¦¦¦¦
+   80% ¦  ¦¦¦¦  ¦¦¦¦
+   70% ¦  ¦¦¦¦  ¦¦¦¦  ¦¦¦¦
+   60% ¦  ¦¦¦¦  ¦¦¦¦  ¦¦¦¦
+   50% ¦  ¦¦¦¦  ¦¦¦¦  ¦¦¦¦
+   40% ¦  ¦¦¦¦  ¦¦¦¦  ¦¦¦¦
+   30% ¦  ¦¦¦¦  ¦¦¦¦  ¦¦¦¦  ¦¦¦¦
+   20% ¦  ¦¦¦¦  ¦¦¦¦  ¦¦¦¦  ¦¦¦¦
+   10% ¦  ¦¦¦¦  ¦¦¦¦  ¦¦¦¦  ¦¦¦¦
+    0% +--------------------------
+         e4    d4    Nf3   Nc3
+
+INTERPRETATION OF THE GRAPH:
+  • GREEN bars (>70%): Moves the network considers GOOD
+  • ORANGE bars (50-70%): Moves the network considers ACCEPTABLE
+  • RED bars (<50%): Moves the network considers BAD
+
+
+11.5.9 DETAILED ANALYSIS
+
+Shows a textual summary of the analysis:
+
+============================================================
+NEURAL NETWORK PREDICTIONS
+============================================================
+
+Position: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+Legal moves: 20
+Current S Value: 2.45e+150
+Current Log10(S): 150.389
+
+Top 5 NN Predictions:
+------------------------------------------------------------
+1. e4         | NN: 82.3% | S: 1.23e+160 | Log: 160.090
+2. d4         | NN: 76.5% | S: 8.45e+158 | Log: 158.927
+3. Nf3        | NN: 70.1% | S: 3.67e+157 | Log: 157.565
+4. Nc3        | NN: 65.4% | S: 4.12e+157 | Log: 157.615
+5. e3         | NN: 58.2% | S: 2.34e+156 | Log: 156.369
+
+
+11.6 WORKFLOW WITH THE NEURAL NETWORK
+-------------------------------------
+
+11.6.1 FIRST TIME
+
+  1. Load games ? Use "Multiple PGN Analysis" to fill the database
+  2. Open neural network ? "Neural Network" button
+  3. Train the network ? "Train Network" button
+  4. Analyze position ? "Analyze Position" button
+  5. View predictions ? Move table
+  6. Save model ? "Save Model" button (optional)
+
+11.6.2 NORMAL USE
+
+  1. Open neural network ? Current position loads automatically
+  2. Analyze position ? "Analyze Position" button
+  3. Explore moves ? View prediction table
+  4. Compare with Stockfish ? "Compare with Stockfish" button
+  5. View graph ? "Show Comparison Graph" button
+
+11.6.3 RETRAINING
+
+  1. Add more data ? Analyze more games
+  2. Open neural network
+  3. Train again ? "Train Network" button
+  4. The network improves with more data
+
+
+11.7 COLOR MEANINGS
+-------------------
+
++-----------------------------------------------------------------------------+
+¦ COLOR             ¦ MEANING                 ¦ WHERE IT APPEARS             ¦
++-------------------+-------------------------+-----------------------------¦
+¦ GREEN             ¦ Good evaluation         ¦ NN Score > 0.7              ¦
+¦ YELLOW            ¦ Medium evaluation       ¦ NN Score 0.5-0.7            ¦
+¦ ORANGE            ¦ Low evaluation          ¦ NN Score 0.3-0.5            ¦
+¦ RED               ¦ Bad evaluation          ¦ NN Score < 0.3              ¦
+¦ BLUE              ¦ Best move               ¦ Row #1                      ¦
+¦ LIGHT GREEN       ¦ Matches Stockfish       ¦ SF Match ?                  ¦
++---------------------------------------------------------------------------+
+
+
+11.8 FREQUENTLY ASKED QUESTIONS ABOUT THE NEURAL NETWORK
+--------------------------------------------------------
+
+HOW MUCH DATA DOES IT NEED TO BE ACCURATE?
+  • Minimum: 50 positions
+  • Recommended: 1000+ positions
+  • Ideal: 5000+ positions
+
+WHAT DOES LOW ACCURACY MEAN?
+  • There may not be enough data
+  • The data may be noisy
+  • The network may need more training
+
+WHY DOESN'T THE NETWORK MATCH STOCKFISH?
+  • The network may be right (Stockfish is not infallible)
+  • The network may be wrong (needs more data)
+  • Different evaluation criteria
+
+HOW TO IMPROVE ACCURACY?
+  • Analyze more games
+  • Include games of different levels
+  • Ensure data is of good quality
+
+WHAT DOES SAFE MODE DO?
+  • Applies logarithm to values
+  • Prevents overflow from very large numbers
+  • Facilitates visualization in graphs
+
+
+-------------------------------------------------------------------------------
+12. EXPORT TO DOCX
+-------------------------------------------------------------------------------
+
+12.1 What Is Exported?
+----------------------
+
+A Word document with:
+  1. Title "Position Value Analysis"
+  2. Game metadata (Event, White, Black, etc.)
+  3. Original PGN
+  4. Table of Gödel values
+  5. Graphs of VPo(k), D(k), and R(k)
+
+
+12.2 Export Process
+-------------------
+
+  1. Analyze the game ? "Analyze Game" button
+  2. Click "Export to DOCX"
+  3. Wait while the document is generated
+  4. The file is saved in the exports/ folder
+  5. Filename: [pgn_name]_[date].docx
+
+
+12.3 Document Structure
+-----------------------
+
+  Position Value Analysis
+  =======================
+
+  Event: World Chess Championship
+  White: Magnus Carlsen
+  Black: Ian Nepomniachtchi
+  Date: 2024.12.15
+  Result: 1-0
+
+  Original PGN:
+  -------------
+  1. e4 e5 2. Nf3 Nc6 ...
+
+  Godel Values:
+  -------------
+  G(0) = 2.45e+150
+  G(1) = 3.12e+152
+  G(2) = 2.98e+152
+  ...
+
+  Visualization:
+  --------------
+  [Graph VPo(k)]
+  [Graph D(k)]
+  [Graph R(k)]
+
+
+12.4 Graph Configuration
+------------------------
+
+Graphs are automatically generated with:
+  • Title: Indicating the graph type
+  • X-axis: Move number
+  • Y-axis: Corresponding value
+  • Segments: Divided every 20 moves for readability
+
+
+-------------------------------------------------------------------------------
+13. TROUBLESHOOTING
+-------------------------------------------------------------------------------
+
+13.1 Log Files
+--------------
+
+The program generates logs in the logs/ folder:
+  • chess_analyzer.log ? General application log
+  • Contains useful information for debugging
+
+
+13.2 Common Error Messages
+--------------------------
+
++-----------------------------------------------------------------------------+
+¦ ERROR                           ¦ CAUSE           ¦ SOLUTION                ¦
++---------------------------------+-----------------+-------------------------¦
+¦ ModuleNotFoundError: No module ¦ TensorFlow not  ¦ pip install tensorflow  ¦
+¦ named 'tensorflow'              ¦ installed       ¦                         ¦
++---------------------------------+-----------------+-------------------------¦
+¦ Stockfish not found             ¦ Stockfish not   ¦ Download and place in   ¦
+¦                                 ¦ in folder       ¦ engines/                ¦
++---------------------------------+-----------------+-------------------------¦
+¦ Error loading PGN               ¦ Corrupt or      ¦ Verify the PGN file     ¦
+¦                                 ¦ invalid PGN     ¦                         ¦
++---------------------------------+-----------------+-------------------------¦
+¦ OverflowWarning                 ¦ S Value too     ¦ Use Safe Mode in graphs ¦
+¦                                 ¦ large           ¦                         ¦
++---------------------------------------------------------------------------+
+
+
+13.3 Performance
+----------------
+
++-----------------------------------------------------------------------------+
+¦ OPERATION                         ¦ ESTIMATED TIME                       ¦
++-----------------------------------+--------------------------------------¦
+¦ Load PGN                          ¦ < 1 second                          ¦
+¦ Analyze game (100 moves)          ¦ 2-5 seconds                         ¦
+¦ Train network (1000 positions)    ¦ 10-30 seconds                       ¦
+¦ Export to DOCX (100 moves)        ¦ 5-10 seconds                        ¦
+¦ Analyze 100 PGN games             ¦ 1-2 minutes                         ¦
++---------------------------------------------------------------------------+
+
+
+13.4 Tips to Improve Performance
+--------------------------------
+
+  1. Database: Occasionally clean the database
+  2. Network models: Save trained models to avoid retraining every time
+  3. Large PGNs: Split large PGN files into smaller parts
+  4. Memory: Close other programs while training the neural network
+
+
+-------------------------------------------------------------------------------
+14. GLOSSARY OF TERMS
+-------------------------------------------------------------------------------
+
++-----------------------------------------------------------------------------+
+¦ TERM            ¦ DEFINITION                                              ¦
++-----------------+---------------------------------------------------------¦
+¦ FEN              ¦ Standard notation for chess positions                  ¦
+¦ PGN              ¦ Standard format for chess games                       ¦
+¦ UCI              ¦ Communication protocol for chess engines              ¦
+¦ SAN              ¦ Standard algebraic notation                           ¦
+¦ S Value          ¦ Gödel value of the position                           ¦
+¦ VPo(k)           ¦ Position value at move k                              ¦
+¦ D(k)             ¦ Difference between VPo(k) and VPo(k-1)               ¦
+¦ R(k)             ¦ Ratio between VPo(k) and VPo(k-1)                    ¦
+¦ Centipawn        ¦ Unit of advantage (1/100 of a pawn)                  ¦
+¦ Stockfish        ¦ Open-source chess engine                              ¦
+¦ Neural Network   ¦ Machine learning system                               ¦
+¦ Log10(S)         ¦ Base-10 logarithm of the S Value                     ¦
+¦ NN Score         ¦ Neural network evaluation (0-1)                      ¦
+¦ Confidence       ¦ Confidence in prediction (%)                         ¦
+¦ SF Match         ¦ Match with Stockfish                                  ¦
+¦ Square mapping   ¦ Assignment of prime numbers to squares               ¦
+¦ Piece values     ¦ Exponents assigned to each piece type                ¦
++---------------------------------------------------------------------------+
+
+
+-------------------------------------------------------------------------------
+15. REFERENCES AND RESOURCES
+-------------------------------------------------------------------------------
+
+15.1 Useful Links
+-----------------
+
+  • Stockfish: https://stockfishchess.org/download/
+  • Python Chess: https://python-chess.readthedocs.io/
+  • TensorFlow: https://www.tensorflow.org/
+  • PyQt5: https://www.riverbankcomputing.com/software/pyqt/
+
+
+15.2 Useful Commands
+--------------------
+
+  # Install dependencies
+  pip install PyQt5 chess python-chess numpy matplotlib scipy python-docx tensorflow scikit-learn joblib
+
+  # Run the program
+  python chess_analyzer_local.py
+
+  # View logs
+  cat logs/chess_analyzer.log
+
+
+-------------------------------------------------------------------------------
+                    © 2026 DietriChessAnalyzer - All rights reserved
+-------------------------------------------------------------------------------

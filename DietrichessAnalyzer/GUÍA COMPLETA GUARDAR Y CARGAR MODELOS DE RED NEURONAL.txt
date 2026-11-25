@@ -1,0 +1,299 @@
+ÍNDICE
+¿Qué es un modelo de red neuronal?
+
+¿Por qué guardar un modelo?
+
+¿Cómo guardar un modelo?
+
+¿Cómo cargar un modelo?
+
+Estructura de archivos
+
+Mejores prácticas
+
+Solución de problemas
+
+Preguntas frecuentes
+
+1. ¿QUÉ ES UN MODELO DE RED NEURONAL?
+Un modelo de red neuronal es un archivo que contiene toda la "inteligencia" que la red ha aprendido durante el entrenamiento. Piensa en ello como el cerebro de la red neuronal después de haber sido entrenada.
+
+1.1 ¿Qué contiene el modelo?
+Componente	Descripción	Ejemplo
+Pesos sinápticos	Valores numéricos que determinan cómo se procesa la información	Matrices de números entre neuronas
+Estructura de la red	Número de capas y neuronas en cada capa	[64, 32, 16, 1] neuronas
+Normalización	Parámetros para escalar los datos de entrada	Media y desviación estándar
+Hiperparámetros	Configuración del entrenamiento	Tasa de aprendizaje, épocas
+1.2 Formatos de archivo
+Formato	Extensión	Cuándo usarlo
+HDF5 (H5)	.h5	Cuando usas TensorFlow/Keras
+Joblib	.joblib	Cuando usas scikit-learn (RandomForest)
+2. ¿POR QUÉ GUARDAR UN MODELO?
+2.1 Beneficios principales
+Beneficio	Explicación	Ejemplo práctico
+Ahorro de tiempo	No necesitas reentrenar cada vez	Entrenar toma 10-30 minutos; cargar toma 1-2 segundos
+Consistencia	Usas exactamente el mismo modelo	Mismos resultados en diferentes sesiones
+Portabilidad	Puedes compartir el modelo	Enviar a otro usuario o computadora
+Experimentación	Puedes tener múltiples versiones	Modelo_v1.h5, Modelo_v2.h5, Modelo_v3.h5
+Backup	No pierdes el entrenamiento	Si el programa falla, recuperas el modelo
+2.2 ¿Cuándo deberías guardar un modelo?
+Situación	Acción	Razón
+Después de entrenar	Guardar inmediatamente	No perder el trabajo realizado
+Antes de hacer cambios	Guardar copia de seguridad	Poder volver atrás si algo falla
+Cuando alcanzas buena precisión	Guardar como versión estable	Tener un modelo de referencia
+Antes de cerrar el programa	Guardar siempre	Usar el modelo en la próxima sesión
+3. ¿CÓMO GUARDAR UN MODELO?
+3.1 Proceso paso a paso
+text
++-----------------------------------------------------------------------------+
+¦                       PROCESO DE GUARDADO                                 ¦
++-----------------------------------------------------------------------------¦
+¦                                                                           ¦
+¦  1. ENTRENAR LA RED                                                       ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦     ¦  Haz clic en "Train Network"                                   ¦   ¦
+¦     ¦  Espera a que termine el entrenamiento                         ¦   ¦
+¦     ¦  Verifica que la precisión sea aceptable (>60%)               ¦   ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦                              ?                                            ¦
+¦  2. HABILITAR BOTÓN "SAVE MODEL"                                          ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦     ¦  Después del entrenamiento exitoso, el botón se activa         ¦   ¦
+¦     ¦  Si el botón no se activa, el entrenamiento falló             ¦   ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦                              ?                                            ¦
+¦  3. HACER CLIC EN "SAVE MODEL"                                            ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦     ¦  Se abre un diálogo para seleccionar ubicación                 ¦   ¦
+¦     ¦  La carpeta por defecto es "models/"                           ¦   ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦                              ?                                            ¦
+¦  4. NOMBRAR EL ARCHIVO                                                    ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦     ¦  Usa un nombre descriptivo:                                     ¦   ¦
+¦     ¦  ? chess_model_2024_12_15_accuracy_82.h5                      ¦   ¦
+¦     ¦  ? model_v2_1000_games.h5                                     ¦   ¦
+¦     ¦  ? modelo.h5 (demasiado genérico)                             ¦   ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦                              ?                                            ¦
+¦  5. CONFIRMAR GUARDADO                                                    ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦     ¦  El programa muestra un mensaje de éxito                       ¦   ¦
+¦     ¦  "Model saved successfully to: models/modelo.h5"              ¦   ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦                                                                           ¦
++-----------------------------------------------------------------------------+
+3.2 Ejemplo práctico de guardado
+Escenario: Has entrenado la red con 1000 posiciones y la precisión es del 78%.
+
+Pasos:
+
+? La red está entrenada (botón "Analyze Position" activo)
+
+? Haces clic en "Save Model"
+
+? Aparece el diálogo de guardado
+
+? Escribes: chess_model_78percent_1000games_2024_12_15.h5
+
+? El archivo se guarda en models/chess_model_78percent_1000games_2024_12_15.h5
+
+Resultado: Ahora puedes cerrar el programa y volver a cargar este modelo cuando quieras.
+
+3.3 Estructura de nombres recomendada
+Patrón	Ejemplo	Explicación
+modelo_v{version}_{fecha}_{precision}.h5	model_v3_20241215_82.h5	Versión, fecha y precisión
+modelo_{n_games}_{fecha}.h5	model_2000games_20241215.h5	Número de juegos y fecha
+experimento_{descripcion}_{fecha}.h5	exp_centro_control_20241215.h5	Para experimentos específicos
+4. ¿CÓMO CARGAR UN MODELO?
+4.1 Proceso paso a paso
+text
++-----------------------------------------------------------------------------+
+¦                       PROCESO DE CARGA                                    ¦
++-----------------------------------------------------------------------------¦
+¦                                                                           ¦
+¦  1. HACER CLIC EN "LOAD MODEL"                                            ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦     ¦  Se abre un diálogo para seleccionar el archivo                ¦   ¦
+¦     ¦  Filtra por extensiones .h5 y .joblib                         ¦   ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦                              ?                                            ¦
+¦  2. SELECCIONAR EL ARCHIVO                                                ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦     ¦  Navega a la carpeta donde guardaste los modelos               ¦   ¦
+¦     ¦  Selecciona el archivo deseado                                 ¦   ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦                              ?                                            ¦
+¦  3. CONFIRMAR CARGA                                                       ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦     ¦  El programa carga el modelo y muestra un mensaje de éxito    ¦   ¦
+¦     ¦  "Model loaded successfully!"                                 ¦   ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦                              ?                                            ¦
+¦  4. VERIFICAR ESTADO                                                      ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦     ¦  El estado cambia a "Trained"                                 ¦   ¦
+¦     ¦  El botón "Analyze Position" se activa                        ¦   ¦
+¦     ¦  Puedes empezar a usar el modelo inmediatamente               ¦   ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦                                                                           ¦
++-----------------------------------------------------------------------------+
+4.2 ¿Qué sucede al cargar un modelo?
+Acción	Resultado
+Carga de pesos	Los valores aprendidos se restauran
+Reconstrucción de la red	La estructura de la red se recrea
+Restauración de normalización	Los parámetros de escala se restauran
+Activación del análisis	El botón "Analyze Position" se habilita
+4.3 Compatibilidad de modelos
+Modelo guardado con	Se puede cargar con	Observaciones
+TensorFlow (Keras)	TensorFlow (Keras)	? Compatible si la versión es similar
+scikit-learn (Joblib)	scikit-learn (Joblib)	? Compatible
+TensorFlow ? scikit-learn	? No	Formatos incompatibles
+scikit-learn ? TensorFlow	? No	Formatos incompatibles
+5. ESTRUCTURA DE ARCHIVOS
+5.1 Ubicación por defecto
+
+Tu carpeta/
++-- models/                          ? Carpeta de modelos (se crea automáticamente)
+    +-- chess_model_20241215_82.h5   ? Modelo guardado con TensorFlow
+    +-- chess_model_20241216_78.h5   ? Otro modelo guardado
+    +-- random_forest_model.joblib   ? Modelo guardado con scikit-learn
+    +-- backups/                     ? Carpeta para copias de seguridad
+        +-- chess_model_backup.h5    ? Copia de seguridad
+5.2 Tamaño de los archivos
+Tipo de modelo	Tamaño típico	Lo que contiene
+H5 (Keras/TensorFlow)	50 KB - 5 MB	Pesos sinápticos y estructura
+Joblib (scikit-learn)	10 KB - 500 KB	Parámetros del árbol de decisión
+5.3 Buenas prácticas de organización
+Práctica	Descripción
+Crear subcarpetas por fecha	models/2024/12/modelo_15_12.h5
+Crear subcarpetas por versión	models/v2/modelo_v2.h5
+Mantener un archivo README	models/README.txt con descripciones
+Respaldo automático	Configurar para guardar backups
+6. MEJORES PRÁCTICAS
+6.1 Cuándo guardar
+Momento	Por qué
+Inmediatamente después de entrenar	No perder el trabajo realizado
+Antes de cerrar el programa	Tener el modelo para la próxima sesión
+Después de mejorar la precisión	Guardar la mejor versión
+Antes de experimentar con cambios	Tener un punto de restauración
+6.2 Cuándo cargar
+Momento	Por qué
+Al abrir el programa	Usar el modelo de la sesión anterior
+Después de un fallo	Recuperar el trabajo perdido
+Para comparar versiones	Probar diferentes modelos
+Para compartir con otros	Usar modelos creados por otros
+6.3 Estrategia de versionado
+
+v1.0 ? Modelo inicial (50% precisión)
+v1.1 ? Modelo mejorado con más datos (65% precisión)
+v2.0 ? Modelo con arquitectura mejorada (78% precisión)
+v2.1 ? Modelo con datos de partidas de torneo (82% precisión)
+v3.0 ? Modelo con nuevas características (85% precisión)
+6.4 Recomendaciones de nomenclatura
+Componente	Ejemplo	Formato sugerido
+Versión	v2	v{N}
+Fecha	2024-12-15	YYYY-MM-DD
+Precisión	82	{accuracy}%
+Datos	2000games	{N}games
+Arquitectura	64-32-16	{N1}-{N2}-{N3}
+Ejemplo completo: model_v2_2024-12-15_82_2000games_64-32-16.h5
+
+7. SOLUCIÓN DE PROBLEMAS
+7.1 Problemas comunes al guardar
+Problema	Causa	Solución
+El botón "Save Model" no se activa	El modelo no está entrenado	Entrenar primero la red
+Error al guardar	Permisos de escritura	Ejecutar como administrador
+Espacio en disco insuficiente	Disco lleno	Liberar espacio o guardar en otro disco
+El archivo no se guarda	Carpeta no existe	Crear la carpeta models/ manualmente
+7.2 Problemas comunes al cargar
+Problema	Causa	Solución
+Error de formato	Archivo corrupto	Usar un backup
+Error de versión	TensorFlow/sklearn diferente	Actualizar las librerías
+El archivo no se encuentra	Ruta incorrecta	Buscar en la carpeta correcta
+Error de memoria	Modelo demasiado grande	Cargar con más RAM disponible
+7.3 Mensajes de error comunes
+Error	Significado	Solución
+"No trained model to save"	El modelo no está entrenado	Entrenar la red primero
+"Could not load model. Check the file format."	Archivo corrupto o formato incorrecto	Verificar el archivo
+"Save failed: Permission denied"	Sin permisos de escritura	Cambiar permisos o ubicación
+"Load failed: No module named 'tensorflow'"	TensorFlow no instalado	pip install tensorflow
+8. PREGUNTAS FRECUENTES
+8.1 ¿Puedo compartir mi modelo con otros?
+Sí, el archivo .h5 o .joblib es completamente portátil. Solo necesitas:
+
+Copiar el archivo del modelo
+
+Enviarlo por correo o compartirlo
+
+La otra persona debe tener instaladas las mismas librerías
+
+8.2 ¿Qué pasa si cambio la arquitectura de la red?
+Si cambias la arquitectura (número de neuronas, capas), el modelo guardado no será compatible. Debes:
+
+Guardar el modelo actual antes de hacer cambios
+
+Entrenar el nuevo modelo desde cero
+
+Guardar el nuevo modelo con un nombre diferente
+
+8.3 ¿Cuánto ocupa un modelo guardado?
+Cantidad de datos	Tamaño típico
+100 posiciones	< 100 KB
+1,000 posiciones	~ 200 KB
+10,000 posiciones	~ 1-2 MB
+100,000 posiciones	~ 5-10 MB
+8.4 ¿Puedo cargar un modelo sin entrenar?
+No, para usar el botón "Load Model" primero debes tener un archivo de modelo guardado de una sesión anterior.
+
+8.5 ¿Cómo sé si el modelo se cargó correctamente?
+? El estado cambia a "Trained"
+
+? El botón "Analyze Position" se activa
+
+? Puedes analizar posiciones
+
+? No hay mensajes de error
+
+8.6 ¿Puedo tener varios modelos guardados?
+Sí, puedes tener tantos modelos como quieras. Cada uno debe tener un nombre único.
+
+8.7 ¿Qué modelo es mejor: H5 o Joblib?
+Formato	Ventajas	Desventajas
+H5 (TensorFlow)	Más potente, mejor precisión	Requiere TensorFlow, más pesado
+Joblib (scikit-learn)	Más rápido, más ligero	Menos preciso, menos potente
+8.8 ¿Cómo sé qué modelo cargar?
+Situación	Recomendación
+Mayor precisión	Cargar el modelo con la precisión más alta
+Más reciente	Cargar el modelo más reciente
+Más datos	Cargar el modelo entrenado con más datos
+
+9. EJEMPLO PRÁCTICO COMPLETO
+9.1 Guardar un modelo
+
+1. Abrir el programa
+2. Cargar un PGN con múltiples partidas
+3. Analizar todas las partidas
+4. Abrir la red neuronal
+5. Entrenar la red ? "Train Network"
+6. Verificar precisión: 82.4%
+7. Guardar modelo ? "Save Model"
+8. Nombrar: "model_v1_82pct_2024-12-15.h5"
+9. Confirmar guardado
+10. Cerrar el programa
+9.2 Cargar un modelo
+
+1. Abrir el programa
+2. Abrir la red neuronal
+3. Cargar modelo ? "Load Model"
+4. Seleccionar: "model_v1_82pct_2024-12-15.h5"
+5. Confirmar carga
+6. Verificar estado: "Trained"
+7. Analizar posición ? "Analyze Position"
+8. Ver resultados de las predicciones
+
+?? RESUMEN RÁPIDO
+Acción	Cuándo	Cómo	Qué pasa
+Guardar	Después de entrenar	Botón "Save Model"	Crea archivo .h5 o .joblib
+Cargar	Al abrir el programa	Botón "Load Model"	Restaura el modelo entrenado
+No guardar	Antes de cerrar	Sin guardar	Pierdes el modelo entrenado

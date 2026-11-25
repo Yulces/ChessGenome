@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: chessgenome-mongodb
+    restart: unless-stopped
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - chessgenome-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: chessgenome-redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - chessgenome-network
+
+  backend:
+    build:
+      context: ./chessgenome-backend
+      dockerfile: Dockerfile
+    container_name: chessgenome-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - MONGODB_URI=mongodb://mongodb:27017/chessgenome
+      - REDIS_URL=redis://redis:6379
+      - STOCKFISH_PATH=/usr/bin/stockfish
+      - STOCKFISH_DEPTH=15
+      - NEURAL_MODELS_PATH=/app/models
+      - DIETRICHESS_ENABLED=false
+      - CORS_ORIGIN=https://chessgenome.srv742144.hstgr.cloud,http://chessgenome.srv742144.hstgr.cloud,http://82.25.69.91
+    depends_on:
+      - mongodb
+      - redis
+    ports:
+      - "127.0.0.1:3011:3001"
+    networks:
+      - chessgenome-network
+    volumes:
+      - ./DietrichessAnalyzer:/app/DietrichessAnalyzer
+      - ./models:/app/models
+
+  frontend:
+    build:
+      context: ./chessgenome-frontend
+      dockerfile: Dockerfile
+    container_name: chessgenome-frontend
+    restart: unless-stopped
+    ports:
+      - "3002:80"
+    depends_on:
+      - backend
+    networks:
+      - chessgenome-network
+
+volumes:
+  mongodb_data:
+  redis_data:
+
+networks:
+  chessgenome-network:
+    driver: bridge

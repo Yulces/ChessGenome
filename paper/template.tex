@@ -1,0 +1,1109 @@
+\documentclass[12pt,reqno]{article}
+\usepackage[usenames]{color}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{fullpage}
+\usepackage{float}
+\usepackage[colorlinks=true,linkcolor=webgreen,filecolor=webbrown,citecolor=webgreen]{hyperref}
+\definecolor{webgreen}{rgb}{0,.5,0}
+\definecolor{webbrown}{rgb}{.6,0,0}
+
+\newcommand{\seqnum}[1]{\href{https://oeis.org/#1}{\rm \underline{#1}}}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\adm}{\mathcal{A}}
+\newcommand{\rea}{\mathcal{R}}
+\newcommand{\sq}[1]{\mathrm{#1}}
+
+\begin{document}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{conjecture}[theorem]{Conjecture}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\begin{center}
+\vskip 1cm{\LARGE\bf Prime Codes of Chess Positions \\
+\vskip .1in
+and the Chess Genome Sequence}
+\vskip 1cm
+\large
+Jos\'e Angel C\'espedes Bejerano\\
+\href{mailto:yulcesbeje@gmail.com}{\tt yulcesbeje@gmail.com}\\
+\ \\
+Dietrich Luebbert\\
+\href{mailto:dilueb@web.de}{\tt dilueb@web.de}
+\end{center}
+
+\vskip .2 in
+
+\begin{abstract}
+We encode a chess position by assigning the first sixty-four primes to the squares of the
+board and the integers from one to twelve to the piece types, and by taking the corresponding
+product of prime powers. Listed in increasing order, the codes form a finite integer sequence
+that we call the chess genome. For placements satisfying three simple necessary conditions for legality, we determine
+the smallest code, which has twelve digits, and the largest, which has 614 digits. We give the exact number of such placements, a
+fifty-digit integer, by number of men on the board, and we list the first
+terms of the genome together with the number of terms below successive powers of ten. A
+counting lemma relating promotions to captures, combined with elementary facts about checks,
+turns the search for the largest code of a position reachable in a legal game into an integer
+program; its solution has 543 digits and is attained by an explicit game. Two codes can
+have logarithms that agree to seventy-four decimal places, so the logarithm is not a reliable
+sorting key in floating point. We also compare the encoding with iterated Cantor pairing and
+with base-thirteen numerals.
+\end{abstract}
+
+\section{Introduction}\label{secintro}
+
+Shannon~\cite{shannon} estimated the number of chess positions to be roughly $10^{43}$ and
+the number of possible games to be at least $10^{120}$. Tromp~\cite{tromp} estimates the number of legal positions at about
+$4.8\cdot 10^{44}$. For positions without promoted men, Steinerberger~\cite{steinerberger} and
+Gourion~\cite{gourion} proved upper bounds, the latter below $4\cdot 10^{37}$ diagrams.
+
+This paper is about writing positions as integers. Number the squares from
+$1$ to $64$, attach the $i$-th prime $p_i$ to square $i$, label the twelve kinds of men by
+$1,2,\ldots,12$ and the empty square by $0$, and send a placement with labels
+$(v_1,\ldots,v_{64})$ to the integer $\prod_i p_i^{v_i}$. G\"odel~\cite{godel} coded finite
+sequences in this way; here the sequence is a word of length $64$ over an alphabet of $13$
+letters, and the primes are sequence \seqnum{A000040} of the OEIS~\cite{oeis}. By unique
+factorization the code is injective, and the contents of each square can be read from it as a
+$p$-adic valuation.
+
+Listing the codes in increasing order turns the set of positions into a finite increasing
+sequence of integers, which we call the chess genome. We study this sequence: how long it
+is, how it begins, how large its terms become, and how close together they lie.
+
+A difficulty appears at once. Whether a given placement can occur in a game is a question of
+retrograde analysis, for which no simple test is known. We therefore work with the larger set
+$\adm$ of statically admissible placements, defined by three conditions that are checked
+at a glance (Definition~\ref{defadm}), and we treat the reachable placements separately.
+
+On $\adm$ the basic quantities can be computed exactly. The code $S$ and its logarithm $L$ are injective and
+define the same order (Theorems~\ref{thminj} and~\ref{thmorder}). The smallest code is
+$2^{12}\cdot 5^{11}=2\cdot 10^{11}$ (Theorem~\ref{thmmin}), and the largest is a $614$-digit
+integer belonging to one placement with nine queens on each side (Theorem~\ref{thmmax}). The
+set $\adm$ has exactly
+\begin{displaymath}
+N=@@NTOTAL@@
+\end{displaymath}
+elements, and Theorem~\ref{thmcount} gives the number $c(m)$ of them with $m$ men. Its first
+value, $c(2)=3612$, is the term of index $8$ of \seqnum{A035286}. Tables~\ref{tabfirst}
+and~\ref{tabcount} list the first terms of the genome and the number of terms up to $10^k$ for
+$k\leq @@KMAX@@$.
+
+For reachable placements we can also find the largest code. It has $543$ digits and belongs to
+a placement with $26$ men, which an explicit game of $272$ plies reaches
+(Theorem~\ref{thmreach}). The proof rests on two facts about games. The first concerns
+promotions: after $a$ captures of pawns and $b$ captures of other men, at most
+$\min(3a+2b,16-a)$ pawns have been promoted, and for every possible pair $(a,b)$ some game
+reaches this bound (Lemma~\ref{lemcap} and Theorem~\ref{thmsharp}). The second is a short list of
+constraints on checks (Lemma~\ref{lemcheck}). Together they turn the search into an integer
+program, which we solve by computer. The same program bounds the code for each number of men
+(Proposition~\ref{propmen}). Among the first $433$ terms of the genome, all but two belong to
+reachable placements, and the two exceptions are ruled out by the constraints on checks
+(Proposition~\ref{propreach}). On an $n\times n$ board, the number of placements with the two
+kings and one more man is a polynomial of degree $6$ in $n$ (Proposition~\ref{propnn}).
+
+Finally, we ask how well $L$ separates placements. The smallest difference between two values of
+$L$ on $\adm$ lies between $10^{-138}$ and $1.91\cdot 10^{-75}$ (Proposition~\ref{propgap}), so a
+floating-point value of $L$ cannot be trusted as a sorting key.
+
+Section~\ref{secenc} fixes the encoding and Section~\ref{secorder} the order. Sections~\ref{secext}
+and~\ref{seccap} contain the extreme values and the bound for reachable positions.
+Section~\ref{secgenome} treats the genome as a sequence, Section~\ref{secother} compares the
+code with two other encodings, and Section~\ref{secopen} contains concluding remarks.
+
+\section{The encoding}\label{secenc}
+
+\subsection{Squares, labels, and codes}
+
+Squares are numbered row by row starting from $\sq{a1}$, so that $\sq{a1},\sq{b1},\ldots,\sq{h1}$
+are squares $1,\ldots,8$, square $9$ is $\sq{a2}$, and square $64$ is $\sq{h8}$. Square $i$ carries
+the prime $p_i$; thus $p_1=2$, $p_2=3$, $p_3=5$, and $p_{64}=311$. The contents of a square are
+recorded by the labels of Table~\ref{tablabels}. White men have odd labels, black men even ones,
+and we call rooks, knights, bishops, and queens officers.
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{l|ccccccccccccc}
+contents & empty & P & p & R & r & N & n & B & b & Q & q & K & k\\ \hline
+label & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12
+\end{tabular}
+\end{center}
+\caption{Labels of the men. Capital letters denote white men and lower-case letters black men.}
+\label{tablabels}
+\end{table}
+
+A placement is a vector $B=(v_1,\ldots,v_{64})\in\{0,1,\ldots,12\}^{64}$. Its code
+and its logarithmic code are
+\begin{equation}\label{eqcode}
+S(B)=\prod_{i=1}^{64}p_i^{v_i}
+\qquad\text{and}\qquad
+L(B)=\ln S(B)=\sum_{i=1}^{64}v_i\ln p_i .
+\end{equation}
+We write placements in the form $\sq{ka1},\sq{Kc1},\sq{Pa2}$, meaning a black king on
+$\sq{a1}$, a white king on $\sq{c1}$, and a white pawn on $\sq{a2}$.
+
+\begin{remark}
+Moves act on the code in a simple way. The contents of square $i$ are
+the exponent of $p_i$ in $S(B)$. Moving a man with label $v$ from square $i$ to an empty
+square $j$ multiplies the code by $(p_j/p_i)^v$, and a capture on square $j$ of a man with
+label $u$ divides it further by $p_j^u$. In logarithmic form a move is a translation of $L$ by
+$v(\ln p_j-\ln p_i)$.
+\end{remark}
+
+\subsection{Static admissibility}
+
+\begin{definition}\label{defadm}
+A placement $B$ is statically admissible if the following three conditions hold.
+\begin{itemize}
+\item[(S1)] Exactly one entry equals $11$ and exactly one equals $12$, and the two squares carrying
+them are not adjacent, diagonal neighbors included.
+\item[(S2)] The entries $1$ and $2$ occur only on squares $9,\ldots,56$, that is, pawns stand on ranks
+$2$ to $7$.
+\item[(S3)] For each color, if $P$ denotes the number of pawns and $R$, $N$, $B$, $Q$ the numbers
+of rooks, knights, bishops, and queens of that color, then
+\begin{equation}\label{eqexcess}
+e=\max(R-2,0)+\max(N-2,0)+\max(B-2,0)+\max(Q-1,0)\leq 8-P .
+\end{equation}
+\end{itemize}
+We denote by $\adm$ the set of statically admissible placements and by $\rea$ the set of
+reachable placements, those occurring in some game played from the initial array
+according to the laws of chess~\cite{fide}.
+\end{definition}
+
+The integer $e$ in~\eqref{eqexcess} is the excess of the color: it counts officers that
+cannot belong to the original complement and must therefore be promoted pawns. A promotion
+uses up a pawn, so a reachable placement satisfies (S3); it satisfies (S1) and (S2) by the
+rules for kings and pawns. Hence $\rea\subseteq\adm$. The two sets are far from equal. The
+conditions say nothing about checks, about the colors of the squares of the bishops, or about
+pawn structure, and they ignore that promotions require captures. We come back to captures and
+checks in Section~\ref{seccap}.
+Condition (S3) also bounds the number of men of a color by $1+P+7+e\leq 16$.
+
+\subsection{The complete position}
+
+A position in the sense of the laws of chess consists of a placement together with the side to
+move, the castling rights, and a possible en passant capture. We record the side to move by
+$t\in\{0,1\}$, with $t=1$ if Black is to move. We record the castling rights by a pair
+$(w,b)\in\{0,1,2,3\}^2$, with the value $0$ for no right, $1$ for the right to castle on the
+king's side only, $2$ for the queen's side only, and $3$ for both; $w$ refers to White and
+$b$ to Black. Finally $j\in\{0,1,\ldots,16\}$ records the en passant situation: $j=0$ if there
+is none, $j\in\{1,\ldots,8\}$ if the white pawn of file $j$ (with $\sq{a}=1$, \ldots, $\sq{h}=8$) has
+just advanced two squares, and $j\in\{9,\ldots,16\}$ if the black pawn of file $j-8$ has. The
+complete code is
+\begin{equation}\label{eqtotal}
+S_{\mathrm{tot}}=S(B)\cdot 313^{t}\cdot \gamma(w,b)\cdot\varepsilon(j),
+\end{equation}
+with $\gamma(0,0)=\varepsilon(0)=1$, and otherwise
+\begin{displaymath}
+\gamma(w,b)=p_{65+w+4b},\qquad \varepsilon(j)=p_{80+j} .
+\end{displaymath}
+Thus $313=p_{65}$ marks the side to move, the fifteen primes from $p_{66}=317$ to $p_{80}=409$
+mark the castling rights (Table~\ref{tabcastle}), and the sixteen primes from $p_{81}=419$ to
+$p_{96}=503$ mark the en passant file. The largest possible factor is
+$313\cdot 409\cdot 503=64392551<10^{8}$.
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{l|cccc}
+ & $w=0$ & $w=1$ & $w=2$ & $w=3$\\ \hline
+$b=0$ & $1$ & $317$ & $331$ & $337$\\
+$b=1$ & $347$ & $349$ & $353$ & $359$\\
+$b=2$ & $367$ & $373$ & $379$ & $383$\\
+$b=3$ & $389$ & $397$ & $401$ & $409$
+\end{tabular}
+\end{center}
+\caption{The castling factor $\gamma(w,b)$.}
+\label{tabcastle}
+\end{table}
+
+\section{Injectivity and the logarithmic order}\label{secorder}
+
+\begin{theorem}\label{thminj}
+The map $B\mapsto S(B)$ is a bijection from $\{0,1,\ldots,12\}^{64}$ onto the set of positive
+integers all of whose prime factors are at most $311$ and occur with exponent at most $12$.
+The map $(B,t,w,b,j)\mapsto S_{\mathrm{tot}}$ is injective.
+\end{theorem}
+
+\begin{proof}
+By the fundamental theorem of arithmetic~\cite[Thm.\ 2]{hardy}, a positive integer determines
+the exponent of each prime in its factorization. Applied to $p_1,\ldots,p_{64}$ this gives both
+assertions about $S$. In $S_{\mathrm{tot}}$ the primes $p_{65},\ldots,p_{96}$ do not divide
+$S(B)$, and the three factors $313^t$, $\gamma(w,b)$, and $\varepsilon(j)$ involve disjoint sets
+of primes, each value of $(w,b)$ and of $j$ corresponding to a different prime or to $1$. So
+$S_{\mathrm{tot}}$ determines $S(B)$, $t$, $(w,b)$, and $j$.
+\end{proof}
+
+\begin{theorem}\label{thmorder}
+For placements $A$ and $B$ we have $S(A)<S(B)$ if and only if $L(A)<L(B)$. The map $L$ is also
+injective, so that $A\prec B$ defined by $L(A)<L(B)$ is a strict total order on placements.
+\end{theorem}
+
+\begin{proof}
+The first assertion holds because $L=\ln S$ and the logarithm is strictly increasing. If
+$L(A)=L(B)$, then $S(A)=S(B)$ and $A=B$ by Theorem~\ref{thminj}.
+\end{proof}
+
+The proof uses nothing beyond unique factorization, which also shows that the numbers
+$\ln p_1,\ldots,\ln p_{64}$ are linearly independent over $\QQ$. How close two values of $L$
+can be is another question, to which we return in Proposition~\ref{propgap}.
+
+\section{The smallest and the largest code}\label{secext}
+
+\begin{theorem}\label{thmmin}
+The minimum of $S$ on $\adm$ is $2^{12}\cdot 5^{11}=200000000000$. It is attained only by the
+placement $\sq{ka1},\sq{Kc1}$.
+\end{theorem}
+
+\begin{proof}
+Let $B\in\adm$ have its black king on a square with prime $q$ and its white king on a square
+with prime $r$. Then $S(B)\geq q^{12}r^{11}$, with equality exactly when there are no other men.
+If neither king stands on $\sq{a1}$, then $q$ and $r$ are distinct primes not smaller than $3$, so
+$q^{12}r^{11}\geq 3\cdot 15^{11}>2^{12}\cdot 5^{11}$. If a king stands on $\sq{a1}$, the other one is
+not on $\sq{b1}$, $\sq{a2}$, or $\sq{b2}$ by (S1), so its prime is at least $5$, the prime of $\sq{c1}$.
+The two possibilities give $S(B)\geq 2^{12}\cdot 5^{11}$ if the black king is on $\sq{a1}$ and
+$S(B)\geq 2^{11}\cdot 5^{12}>2^{12}\cdot 5^{11}$ if the white king is.
+\end{proof}
+
+The maximum takes more work. We find the material first and the squares afterwards. The
+material can be settled first because a man may be replaced, on the square where it stands, by
+one with a larger label, and this raises the code whatever the rest of the board looks like.
+Lemma~\ref{lemmat} shows that condition (S3) allows such replacements until a single material
+is left. With the material fixed, placing the men is a sorting problem
+(Lemma~\ref{lemplace}), except for the two kings: they must not be adjacent, and we simply try
+all pairs of squares for them.
+
+\begin{lemma}\label{lemmat}
+If $B$ maximizes $S$ on $\adm$, then each color has a king, nine queens, two rooks, two bishops,
+two knights, and no pawn.
+\end{lemma}
+
+\begin{proof}
+We show that any other material can be improved inside $\adm$. Conditions (S1) and (S2) are not
+affected by adding an officer on an empty square or by replacing a man by an officer on the same
+square, so only (S3) needs attention.
+
+Suppose first that some color has fewer than $16$ men. If it has fewer than two rooks, two
+knights, two bishops, or no queen, we add an officer of such a kind on an empty square; the
+excess $e$ does not change. Otherwise the color has $7+e$ officers, hence $8+P+e<16$ men, so
+that $e+1\leq 8-P$ and we may add a queen. In both cases $S$ increases.
+
+Suppose next that some color has a pawn. Replacing it by a queen of the same color lowers $P$
+by one and raises $e$ by at most one, so~\eqref{eqexcess} persists, and the label of the square
+increases.
+
+We are left with $P=0$ and $15$ officers for each color. At most seven of them are counted
+outside $e$, so $e\geq 8$, and~\eqref{eqexcess} forces $e=8$ together with $R\geq 2$, $N\geq 2$,
+$B\geq 2$, and $Q\geq 1$. If $R\geq 3$, we replace a rook by a queen of the same color: $e$ is
+unchanged and the label increases. The same applies to knights and bishops. Hence
+$R=N=B=2$ and $Q=9$.
+\end{proof}
+
+\begin{lemma}\label{lemplace}
+Fix two non-adjacent squares for the kings and, for each color, numbers of pawns and of officers
+of each kind. Among the placements with these data, if there are any, $S$ is largest for the
+following one: the officers, sorted by decreasing label, occupy the free squares in decreasing
+order of the index, and then the pawns, black ones first, occupy in decreasing order the
+remaining free squares of ranks $2$ to $7$.
+\end{lemma}
+
+\begin{proof}
+Let $B$ be a maximizer. An officer cannot have an empty square above it in the numbering,
+since moving it there would increase $S$. In particular no officer stands on rank $1$: otherwise
+all $56$ squares of ranks $2$ to $8$ would be occupied, while there are at most $32$ men. If a
+pawn stood on a square $y$ and an officer on a square $x<y$, then $x$ would lie on ranks $2$ to
+$7$ and exchanging the two men would increase $S$, the label of an officer being at least $3$ and
+that of a pawn at most $2$. So the officers fill the largest free squares. Exchanging two officers,
+or two pawns, that are not in decreasing order of labels increases $S$ as well, and a pawn
+cannot have an empty square of ranks $2$ to $7$ above it.
+\end{proof}
+
+\begin{theorem}\label{thmmax}
+The maximum of $S$ on $\adm$ is attained only by the placement $B_{\max}$ with
+\begin{displaymath}
+\begin{array}{ll}
+\sq{k}\colon \sq{h8}, & \sq{K}\colon \sq{f8},\\
+\sq{q}\colon \sq{g8},\sq{e8},\sq{d8},\sq{c8},\sq{b8},\sq{a8},\sq{h7},\sq{g7},\sq{f7}, &
+\sq{Q}\colon \sq{e7},\sq{d7},\sq{c7},\sq{b7},\sq{a7},\sq{h6},\sq{g6},\sq{f6},\sq{e6},\\
+\sq{b}\colon \sq{d6},\sq{c6}, & \sq{B}\colon \sq{b6},\sq{a6},\\
+\sq{n}\colon \sq{h5},\sq{g5}, & \sq{N}\colon \sq{f5},\sq{e5},\\
+\sq{r}\colon \sq{d5},\sq{c5}, & \sq{R}\colon \sq{b5},\sq{a5} .
+\end{array}
+\end{displaymath}
+Its code $S_{\max}=S(B_{\max})$ has $614$ decimal digits, and
+\begin{displaymath}
+\log_{10}S_{\max}=613.41778\ldots,\qquad L(B_{\max})=1412.44664\ldots .
+\end{displaymath}
+\end{theorem}
+
+\begin{proof}
+By Lemma~\ref{lemmat} the material is that of $B_{\max}$, and by Lemma~\ref{lemplace} the
+placement is determined by the squares of the two kings. There are $3612$ ordered pairs of
+non-adjacent squares. We evaluated the code of the corresponding placement for each of them
+in exact integer arithmetic; the largest value occurs for the black king on $\sq{h8}$ and the
+white king on $\sq{f8}$. Uniqueness follows from Theorem~\ref{thminj}.
+\end{proof}
+
+\begin{corollary}\label{corbounds}
+For every $B\in\adm$ we have $2\cdot 10^{11}\leq S(B)<10^{614}$ and
+$26.02<L(B)<1412.45$. Every complete code satisfies $S_{\mathrm{tot}}<10^{622}$.
+\end{corollary}
+
+\begin{proof}
+The bounds for $S$ and $L$ restate Theorems~\ref{thmmin} and~\ref{thmmax}. For the complete
+code, $\log_{10}S_{\mathrm{tot}}\leq \log_{10}S_{\max}+\log_{10}64392551<613.42+7.81$.
+\end{proof}
+
+\begin{example}
+The initial array has a code with $239$ digits, $\log_{10}S=238.09547\ldots$, and
+$L=548.23509\ldots$.
+\end{example}
+
+The placement $B_{\max}$ cannot occur in a game. Its white king is attacked by four queens,
+whereas in a game a king is never attacked by more than two men (Lemma~\ref{lemcheck}). In the next section we find out
+how large the code of a reachable placement can be.
+
+\section{Promotions, captures, and reachable positions}\label{seccap}
+
+\begin{lemma}\label{lemcap}
+Consider a game played from the initial array, and at some moment of it let $a$ be the number
+of captures made so far in which the captured man was a pawn, $b$ the number of other
+captures, $\pi$ the number of promotions, and $P$ the number of pawns on the board. Then
+\begin{equation}\label{eqcap}
+P+\pi+a=16\qquad\text{and}\qquad \pi\leq 3a+2b .
+\end{equation}
+The inequality cannot be improved: there is a game with $a=1$, $b=0$, and $\pi=3$.
+\end{lemma}
+
+\begin{proof}
+Each of the $16$ original pawns is still a pawn on the board, or has been promoted, or was
+captured while it was a pawn. This is the equality.
+
+For $i=1,\ldots,8$ let $W_i$ and $Z_i$ be the white and the black pawn that start on file $i$. We
+say that a capture touches the index $i$ if the capturing man or the captured man is
+$W_i$ or $Z_i$, still a pawn at that time. We claim that if $W_i$ or $Z_i$ has been promoted,
+then some capture touches $i$. Consider the first of the two pawns to be promoted, say $W_i$,
+at time $T$; the other case is symmetric. If $Z_i$ was captured before $T$, it was captured as
+a pawn and we are done. Otherwise $Z_i$ is a pawn on the board at time $T$. A pawn leaves its
+file only by capturing. If neither pawn had captured up to time $T$, both would have stayed
+on file $i$, with $W_i$ moving up, $Z_i$ moving down, and $W_i$ initially below $Z_i$; as they
+cannot pass each other, $W_i$ would still be below $Z_i$ at time $T$, which is absurd because
+$W_i$ is then on the eighth rank. So one of them has made a capture as a pawn.
+
+Now let $\pi_i\in\{0,1,2\}$ be the number of promoted pawns among $W_i$ and $Z_i$. For
+each $i$ with $\pi_i>0$ choose a capture touching $i$. A capture touches at most two indices,
+that of the capturing man and that of the captured man. If the captured man is a pawn with
+index $j$, it is never promoted, so $\pi_j\leq 1$; together with a second index $i\neq j$ this
+accounts for at most $1+2=3$ promotions. If the captured man is not a pawn, only the index
+of the capturing man is touched, which accounts for at most $2$ promotions. Summing over
+the chosen captures gives $\pi=\sum_i\pi_i\leq 3a+2b$.
+
+Sharpness is shown by the game
+1.\ a4 b5 2.\ axb5 Nc6 3.\ b6 a5 4.\ b7 a4 5.\ b8=Q a3 6.\ b3 Nf6 7.\ Nc3 Ng8 8.\ Rb1 a2
+9.\ Rb2 a1=Q 10.\ Qb4 Nf6 11.\ Qd4 Ng8 12.\ b4 Nf6 13.\ b5 Ng8 14.\ b6 Nf6 15.\ b7 Ng8
+16.\ b8=Q, in which the only capture is that of a pawn by a pawn and three pawns are
+promoted.
+\end{proof}
+
+The game in the proof shows where the constants $3$ and $2$ come from. After 2.\ axb5 the
+white pawn from the a-file stands on the b-file and the black b-pawn has disappeared, so three
+pawns have a free road at the price of one capture: the capturing pawn, the white b-pawn behind
+it, and the black a-pawn. Had the pawn taken a knight on b5 instead, the black b-pawn would
+still be in the way, and only the two pawns that started on the a-file could hope to profit.
+
+The equality in~\eqref{eqcap} also limits promotions: since $P\geq 0$, at most $16-a$ pawns are
+promoted. Together with Lemma~\ref{lemcap} this gives $\pi\leq\min(3a+2b,16-a)$, and this bound is
+the true maximum.
+
+\begin{theorem}\label{thmsharp}
+Let $a,b\geq 0$ be integers with $a\leq 16$ and $a+b\leq 30$. The largest number of promotions
+at a moment of a game played from the initial array, after $a$ captures of pawns and $b$ other
+captures, is $\min(3a+2b,16-a)$. In particular $3a+2b$ promotions occur if and only if
+$2a+b\leq 8$.
+\end{theorem}
+
+The conditions on $a$ and $b$ are needed for such a moment to exist at all, since there are
+$16$ pawns and $30$ men other than the kings. The first term of the minimum is the smaller one
+exactly when $2a+b\leq 8$.
+
+\begin{proof}
+The upper bound was shown above, so we must exhibit games. We use local patterns, each on a
+pair of adjacent files $f$ and $g$. In the first, the white pawn of file $f$ takes the black pawn of
+file $g$, as in the proof of Lemma~\ref{lemcap}; then file $f$ holds only a black pawn and file $g$
+only white pawns, and three pawns promote at the price of one capture of a pawn. In the
+second, the black pawn of file $g$ takes a white officer on file $f$, and the white pawn of file $f$
+takes a black officer on file $g$; then file $f$ holds two black pawns and file $g$ two white ones,
+and all four promote at the price of two captures of officers. In the third, the black pawn of
+file $g$ first advances until it stands in front of the white pawn of file $g$, and then the white
+pawn of file $f$ takes a black officer on file $g$, on a square beyond the black pawn; the capturing
+pawn and the black pawn of file $f$ promote, at the price of one capture of an officer. In the
+last, officers take $j\in\{2,3,4\}$ of the four pawns of the two files, chosen so that each remaining
+pawn has a free file; the $4-j$ remaining pawns promote.
+
+The board has four pairs of adjacent files, namely $\sq{a}\sq{b}$, $\sq{c}\sq{d}$, $\sq{e}\sq{f}$,
+and $\sq{g}\sq{h}$. Suppose first that $2a+b\leq 8$. Use the first pattern $a$ times, the second
+$\lfloor b/2\rfloor$ times, and the third once if $b$ is odd, each time on a new pair. This needs
+$a+\lceil b/2\rceil\leq 4$ pairs and gives $3a+4\lfloor b/2\rfloor+2(b-2\lfloor b/2\rfloor)=3a+2b$
+promotions.
+
+Suppose next that $2a+b>8$, so that the bound is $16-a$. If $a\leq 4$, play the game just
+described for the pair $(a,8-2a)$; at its end every pawn that was not captured has promoted, so
+there are $16-a$ promotions and no pawn is left, and we continue with $b-(8-2a)$ captures of
+officers. If $a\geq 4$, write $a=j_1+j_2+j_3+j_4$ with $1\leq j_k\leq 4$ and use, on the $k$-th pair,
+the first pattern if $j_k=1$ and the last one otherwise. Exactly $a$ pawns are captured and the
+other $16-a$ promote; we continue with $b$ captures of officers. Captures of officers never
+change $a$ or $\pi$, so one game serves all admissible values of $b$ for a given $a$.
+
+To turn the patterns into games, the other men must clear the way: the squares in front of the
+promoting pawns, the promotion squares, and the squares of the men to be taken. We did this by
+a search that treats one capture or one promotion at a time and forbids all other captures. This
+gave $24$ games for the pairs with $2a+b\leq 8$ and $(a,b)\neq(0,0)$, and $17$ games, one for
+each $a\leq 16$, that pass through moments with $a$, $b$, and $\min(3a+2b,16-a)$ for every
+admissible $b$ with $2a+b\geq 8$. The longest has $207$ plies. They are included with the
+programs~\cite{software}, and each was replayed with the python-chess library~\cite{pychess},
+which checks every move for legality, and recounted.
+\end{proof}
+
+The lemma is about games, but what it needs can be read off a placement: every missing man
+was captured, and every missing pawn was captured or promoted. For a placement $B$ let $m$ be the number of men, $P$ the total number of pawns,
+and $e$ the sum of the excesses~\eqref{eqexcess} of the two colors.
+
+\begin{corollary}\label{corcap}
+If $B\in\rea$, then there is an integer $a$ with
+\begin{equation}\label{eqfeas}
+0\leq a\leq 32-m,\qquad e\leq 16-P-a,\qquad 16-P-a\leq a+2(32-m) .
+\end{equation}
+In particular, a reachable placement with all $32$ men has no promoted man, and a reachable
+placement without pawns has at most $28$ men.
+\end{corollary}
+
+\begin{proof}
+A capture removes one man and nothing else does, so $a+b=32-m$ at the moment $B$
+occurs. At least $e$ of the officers on the board are promoted pawns, so
+$e\leq\pi=16-P-a$ by~\eqref{eqcap}, and $\pi\leq 3a+2b=a+2(32-m)$. For $m=32$ the first
+condition gives $a=0$, the third then gives $P\geq 16$, and the second $e\leq 0$. For $P=0$
+the third condition and $a\leq 32-m$ give $16\leq 2a+2(32-m)\leq 4(32-m)$.
+\end{proof}
+
+We now look for the largest code among the placements of $\adm$ that
+satisfy~\eqref{eqfeas}. This is a finite search, and one observation keeps it small. For one
+color, call $(P,O,e)$ its class, with $O$ the
+number of officers. Conditions (S3) and~\eqref{eqfeas} see an army only through its class, so
+inside a class we may take the officers that give the largest code. There is always a best choice,
+namely $e$ promoted queens together with the $O-e$ highest of the seven original officers in the
+order queen, bishops, knights, rooks: its labels, sorted decreasingly, are entry by entry at least
+those of any other army of the class. We checked this over the $8694$ admissible vectors
+$(P,R,N,B,Q)$, which fall into $324$ classes. Replacing an army by the dominant one of its class,
+man for man on the same squares, therefore does not decrease $S$ and changes neither $m$, $P$,
+nor $e$.
+
+\begin{proposition}\label{propcap}
+Let $B_{\ast}$ be the placement with $26$ men
+\begin{displaymath}
+\begin{array}{ll}
+\sq{k}\colon \sq{h8}, & \sq{K}\colon \sq{f8},\\
+\sq{q}\colon \sq{g8},\sq{e8},\sq{d8},\sq{c8},\sq{b8},\sq{a8},\sq{h7},\sq{g7},\sq{f7}, &
+\sq{Q}\colon \sq{e7},\sq{d7},\sq{c7},\sq{b7},\sq{a7},\sq{h6},\sq{g6},\\
+\sq{b}\colon \sq{f6},\sq{e6}, & \sq{B}\colon \sq{d6},\sq{c6},\\
+\sq{n}\colon \sq{b6},\sq{a6}, & \sq{N}\colon \sq{h5},\sq{g5} .
+\end{array}
+\end{displaymath}
+Every $B\in\adm$ satisfying~\eqref{eqfeas} for some integer $a$ has $S(B)\leq S(B_{\ast})$, and
+$\log_{10}S(B_{\ast})=542.99828\ldots$.
+\end{proposition}
+
+\begin{proof}
+By the preceding discussion it suffices to consider the $324^2=104976$ pairs of classes with
+dominant armies, of which $102672$ satisfy~\eqref{eqfeas} for some $a$. For such a pair, let $U$
+be the value of $L$ obtained by putting the labels, sorted decreasingly, on the squares
+$64,63,\ldots$, ignoring (S1) and (S2). By the rearrangement inequality $U$ is an upper bound
+for $L$ on the pair. For the pair formed by the classes $(0,11,6)$ for White and $(0,13,8)$ for
+Black, Lemma~\ref{lemplace} and a run over the $3612$ positions of the kings give the exact
+maximum, attained at $B_{\ast}$, with $L(B_{\ast})=1250.2997\ldots$. For every other pair we found
+$U\leq 1245.67$.
+\end{proof}
+
+The values $a=2$ and $b=4$ satisfy~\eqref{eqfeas} for $B_{\ast}$: two pawns and four rooks have
+been captured and fourteen pawns promoted. But $B_{\ast}$ is not reachable, for the same reason
+as $B_{\max}$: its white king is attacked by four queens. So we must also take checks into account,
+and the next lemma states the three facts we use. We say that a man gives a
+contact check if it attacks the enemy king from an adjacent square, or if it is a knight
+attacking the king.
+
+\begin{lemma}\label{lemcheck}
+Consider a position that occurs in a game, after at least one move.
+\begin{itemize}
+\item[(K1)] The king of the side that is not to move is not attacked.
+\item[(K2)] The king of the side to move is attacked by at most two men, and at most one of them
+gives a contact check.
+\item[(K3)] If a man on a square $t$ gives a contact check, then one of the following squares is
+empty: for a rook, bishop, or queen, a square adjacent to $t$ along one of its lines of movement;
+for a knight, a square at a knight's move from $t$; for a pawn, and also for an officer standing
+on the rank where its pawns are promoted, one of the three squares from which a pawn could have
+arrived at $t$ in one step, straight or by capturing.
+\end{itemize}
+\end{lemma}
+
+\begin{proof}
+A player may not leave his own king attacked; this is (K1). For the same reason the king of the
+side now to move was not attacked before the last move. So every man attacking it now either
+made that move, the new man created by a promotion and the rook in castling included, or is a
+rook, bishop, or queen whose line to the king was opened by the move. A line is opened by
+vacating a square strictly between the two men, so a man of the second kind is not adjacent to
+the king, and a contact check is always given by the man that moved. This proves the second
+half of (K2), the king giving no check in castling.
+
+We turn to the first half. A move vacates one square, which lies on at most one line through
+the king, so that at most one line is opened. There are two exceptions. Castling vacates two
+squares but opens no line: both lie on the back rank, and on that rank the castled king and rook
+stand between them. An en passant capture vacates two
+squares, that of the capturing pawn and that of the captured one, and may open two lines; but
+if the capturing pawn then gives check itself, the king stands diagonally in front of it, two
+ranks away from the captured pawn and on an adjacent file, and no line joins these two squares.
+In all cases at most two men attack the king.
+
+For (K3), the man giving the contact check has just moved, and the square it left is empty. It
+is not a rook that has just castled: the squares next to such a rook along its lines are the
+square of the castled king, the square that king has just left, and a square next to the castled
+king, and the enemy king can stand on none of them.
+For a rook, bishop, or queen, the square next to $t$ in the direction from which it came is the
+square it left or a square it passed over. A knight left a square at a knight's move. A pawn came
+from the adjacent rank or passed over it, in its own file, or it came from an adjacent file by
+capturing; the same holds for the pawn that has just been promoted on $t$.
+\end{proof}
+
+\begin{theorem}\label{thmreach}
+Let $B_{\circ}$ be the placement with $26$ men
+\begin{displaymath}
+\begin{array}{ll}
+\sq{k}\colon \sq{h8}, & \sq{K}\colon \sq{a8},\\
+\sq{q}\colon \sq{g8},\sq{f8},\sq{e8},\sq{d8},\sq{c8},\sq{h7},\sq{g7},\sq{f7},\sq{e7}, &
+\sq{Q}\colon \sq{b8},\sq{d7},\sq{c7},\sq{b7},\sq{a7},\sq{h6},\sq{g6},\\
+\sq{b}\colon \sq{f6},\sq{e6}, & \sq{B}\colon \sq{d6},\sq{c6},\\
+\sq{n}\colon \sq{b6},\sq{a6}, & \sq{N}\colon \sq{h5},\sq{g5} .
+\end{array}
+\end{displaymath}
+Then $B_{\circ}$ is reachable, and $S(B)<S(B_{\circ})$ for every other $B\in\rea$. The code
+$S(B_{\circ})$ has $543$ digits, with
+\begin{displaymath}
+\log_{10}S(B_{\circ})=542.91021\ldots,\qquad L(B_{\circ})=1250.09697\ldots .
+\end{displaymath}
+In particular $S(B)<10^{543}$ for every $B\in\rea$, and $S_{\mathrm{tot}}<10^{551}$ for every
+position occurring in a game.
+\end{theorem}
+
+\begin{proof}
+We begin with the upper bound. Describe a placement by the $832$ variables $x_{s,l}\in\{0,1\}$, with
+$x_{s,l}=1$ if square $s$ carries the label $l$. Conditions (S1) to (S3) and~\eqref{eqfeas}
+are linear in these variables, in the excesses, and in $a$. So are (K1) to (K3) once the side to
+move is fixed by a further variable: a queen on $t$ attacks a king on $k$ along a line with $j$
+squares between them exactly when the $j+2$ corresponding variables are all equal to $1$, which
+is expressed by one linear inequality and an auxiliary variable for each triple of a color and two
+squares; knights and pawns are simpler. Since $L$ is linear as well, maximizing $L$ under these
+necessary conditions for reachability is an integer linear program. We solved it with two
+independent programs. The solver HiGHS~\cite{highs}, working in floating point, returns
+$B_{\circ}$ with White to move. The solver CP-SAT~\cite{cpsat}, working in integer arithmetic with
+the coefficients $\ln p_i$ rounded to nine decimal places, returns $B_{\circ}$ as well, and when
+$B_{\circ}$ is excluded its optimum drops by more than $8\cdot 10^{-3}$. The rounding changes $L$
+by less than $1.3\cdot 10^{-7}$ on any element of $\adm$, the sum of the labels being at most
+$260$. Hence $L(B)<L(B_{\circ})$ for every reachable $B\neq B_{\circ}$.
+
+It remains to show that $B_{\circ}$ is reachable. A game of $272$ plies, with $6$ captures and
+$14$ promotions, ends in
+$B_{\circ}$ with White to move and in check from the knight on $\sq{b6}$. It was found in two
+stages by beam searches over legal moves, the first one leading to fourteen promotions and the
+second one rearranging the men without captures. The game is included with the
+programs~\cite{software}, and each of its moves was checked for legality with the python-chess
+library~\cite{pychess}.
+
+The last assertion follows from $542.911+7.809<551$.
+\end{proof}
+
+Compared with Proposition~\ref{propcap}, the check conditions lower $\log_{10}S$ by less than
+$0.09$. The material is still that of $B_{\ast}$. What changes is the place of the white king,
+which moves from $\sq{f8}$ to the corner $\sq{a8}$, behind three of its own queens.
+
+The same integer program, with the number of empty squares fixed, bounds the code of a
+reachable placement with a given number of men.
+
+\begin{proposition}\label{propmen}
+For $2\leq m\leq 32$, let $U(m)$ be the largest code of a placement of $\adm$ with exactly $m$
+men that satisfies~\eqref{eqfeas} for some integer $a$ and (K1) to (K3) for some side to move.
+Then every reachable placement with $m$ men has a code at most $U(m)$, and the values of
+$\log_{10}U(m)$ are those of Table~\ref{tabmen}. For $m=2$, $3$, and $26$ the bound is attained
+by a reachable placement.
+\end{proposition}
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{r|r||r|r||r|r}
+$m$ & $\log_{10}U(m)$ & $m$ & $\log_{10}U(m)$ & $m$ & $\log_{10}U(m)$\\ \hline
+$2$ & $57.04866$ & $13$ & $319.07923$ & $24$ & $534.27684$\\
+$3$ & $81.92005$ & $14$ & $340.38544$ & $25$ & $540.87677$\\
+$4$ & $106.42283$ & $15$ & $361.62396$ & $26$ & $542.91021$\\
+$5$ & $130.90681$ & $16$ & $382.77724$ & $27$ & $540.38361$\\
+$6$ & $155.32538$ & $17$ & $403.91198$ & $28$ & $533.33068$\\
+$7$ & $179.65357$ & $18$ & $424.83052$ & $29$ & $480.84857$\\
+$8$ & $203.95110$ & $19$ & $445.52020$ & $30$ & $427.25283$\\
+$9$ & $228.13943$ & $20$ & $466.17040$ & $31$ & $372.63932$\\
+$10$ & $252.23876$ & $21$ & $484.45485$ & $32$ & $317.31944$\\
+$11$ & $276.23550$ & $22$ & $502.70312$ &  & \\
+$12$ & $297.67365$ & $23$ & $518.50687$ &  & \\
+\end{tabular}
+\end{center}
+\caption{Upper bounds for the code of a reachable placement with $m$ men, rounded down to
+five decimal places.}
+\label{tabmen}
+\end{table}
+
+\begin{proof}
+The first assertion follows from Corollary~\ref{corcap} and Lemma~\ref{lemcheck}. We solved
+the integer program of Theorem~\ref{thmreach}, with the added condition that exactly $64-m$
+squares are empty, for each $m$, with HiGHS and with CP-SAT; the two programs return the
+same placement every time. For $m=32$ CP-SAT did not prove optimality within our time limit, so
+that value rests on HiGHS alone. For $m=26$ the bound is attained by Theorem~\ref{thmreach}. For
+$m=2$ the optimal placement has the white king on $\sq{f8}$ and the black king on $\sq{h8}$, and
+for $m=3$ a black queen stands between them on $\sq{g8}$; both are reached by games of about
+$50$ plies, found and checked as in Proposition~\ref{propreach} below.
+\end{proof}
+
+The bound grows with $m$ up to $m=26$ and then falls, because a full board leaves no room
+for promotions. Up to $m=11$ the optimal placement has a lone white king facing a black king
+and black queens on the two top ranks; white queens enter from $m=12$ on, and pawns from
+$m=29$ on.
+
+\begin{remark}
+Bounds of about $307$ and about $800$ digits for the code, and the bound $L<700$, have
+appeared in earlier versions of this work that were circulated informally. They are superseded
+by Theorems~\ref{thmmax} and~\ref{thmreach}: the first and the third are too small even for
+reachable placements, and the second is too large.
+\end{remark}
+
+\section{The genome}\label{secgenome}
+
+\begin{definition}
+Let $N$ be the number of elements of $\adm$. The chess genome is the increasing
+sequence $(a(n))_{1\leq n\leq N}$ of the codes $S(B)$, $B\in\adm$. We write $B_n$ for the
+placement with code $a(n)$, and $A(k)$ for the number of $n$ with $a(n)\leq 10^k$.
+\end{definition}
+
+By Theorem~\ref{thmorder} the placements $B_1,B_2,\ldots,B_N$ are also those of $\adm$ in
+increasing order of $L$. The codes of reachable placements form a subsequence. Its largest term is
+given by Theorem~\ref{thmreach}, and Proposition~\ref{propreach} below determines its terms up
+to $10^{15}$.
+
+\subsection{First terms and the counting function}
+
+An element of $\adm$ with code at most $X$ is obtained from a pair of kings by adding men one
+at a time on squares of increasing index, and every intermediate placement is again in $\adm$
+with a smaller code. A depth-first search with exact integer arithmetic therefore lists all codes
+up to $X$ in time proportional to their number. Table~\ref{tabfirst} shows the first sixteen terms
+and Table~\ref{tabcount} the values of $A(k)$.
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{r|r|l|c}
+$n$ & $a(n)$ & $B_n$ & $\log_{10}a(n)$\\ \hline
+@@TABFIRST@@
+\end{tabular}
+\end{center}
+\caption{The first sixteen terms of the genome.}
+\label{tabfirst}
+\end{table}
+
+The genome does not proceed by number of men. The second term is the first one with the kings
+exchanged, a white rook on $\sq{b1}$ comes before the white pawn on $\sq{b2}$ because
+$3^3<29$, and the placement of two kings on $\sq{a1}$ and $\sq{d1}$ occurs only at $n=8$,
+after five placements with three men.
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{r|r||r|r||r|r}
+$k$ & $A(k)$ & $k$ & $A(k)$ & $k$ & $A(k)$\\ \hline
+@@TABCOUNT@@
+\end{tabular}
+\end{center}
+\caption{The number $A(k)$ of terms of the genome not exceeding $10^k$.}
+\label{tabcount}
+\end{table}
+
+\subsection{The number of terms}
+
+The number of terms can be computed exactly. We count the placements by choosing the two
+kings first, then the pawns, which are confined to ranks $2$ to $7$, and last the officers, which
+may stand on any square that is left. The three choices interact only through condition (S3),
+which ties the pawns of a color to its officers.
+
+For one color, call a vector $(P,R,N,B,Q)$ of non-negative integers admissible if it
+satisfies~\eqref{eqexcess}, and for integers $P,O\geq 0$ put
+\begin{displaymath}
+g(P,O)=\sum \frac{1}{R!\,N!\,B!\,Q!},
+\end{displaymath}
+the sum being over the admissible vectors $(P,R,N,B,Q)$ with $R+N+B+Q=O$. Let $K_\kappa$
+be the number of ordered pairs of non-adjacent squares of which exactly $\kappa$ lie on ranks
+$2$ to $7$; a direct count gives $K_0=212$, $K_1=1448$, and $K_2=1952$.
+
+\begin{theorem}\label{thmcount}
+The number $c(m)$ of statically admissible placements with exactly $m$ men is
+\begin{equation}\label{eqcount}
+c(m)=\sum_{\kappa=0}^{2}K_\kappa\sum
+\binom{48-\kappa}{P}\binom{P}{P_1}\frac{(62-P)!}{(62-P-O)!}\,g(P_1,O_1)\,g(P_2,O_2),
+\end{equation}
+the inner sum being over the non-negative integers $P_1,O_1,P_2,O_2$ with
+$P_1+O_1+P_2+O_2=m-2$, and with $P=P_1+P_2$ and $O=O_1+O_2$. The values are given in
+Table~\ref{tablayers}, and
+\begin{displaymath}
+N=\sum_{m=2}^{32}c(m)=@@NTOTAL@@\approx 2.148\cdot 10^{49}.
+\end{displaymath}
+\end{theorem}
+
+\begin{proof}
+Choose the squares of the black and the white king; this can be done in $K_\kappa$ ways with
+$\kappa$ kings on ranks $2$ to $7$, and it leaves $62$ free squares, $48-\kappa$ of them
+available to pawns. Choose the $P$ squares of the pawns and then the $P_1$ white ones among
+them. For given numbers $n_1,\ldots,n_8$ of officers of the eight kinds, with sum $O$, the
+officers can be placed on the remaining $62-P$ squares in
+$(62-P)!/\bigl((62-P-O)!\,n_1!\cdots n_8!\bigr)$ ways. Summing over the admissible vectors
+of the two colors gives~\eqref{eqcount}. The evaluation was done in exact rational arithmetic.
+\end{proof}
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{r|r}
+$m$ & $c(m)$\\ \hline
+@@TABLAYERS@@
+\end{tabular}
+\end{center}
+\caption{The number $c(m)$ of statically admissible placements with $m$ men.}
+\label{tablayers}
+\end{table}
+
+The first value is $c(2)=K_0+K_1+K_2=3612$, the number of ways to place a white and a black
+king on non-adjacent squares. On an $n\times n$ board this number is
+$(n-1)(n-2)(n^2+3n-2)$, sequence \seqnum{A035286}. For comparison with $N$, Tromp's
+estimate~\cite{tromp} of the number of legal positions, which also distinguishes the side to
+move, castling rights, and en passant, is about $4.8\cdot 10^{44}$. Static admissibility is therefore
+a generous relaxation of legality.
+
+The next value also has a closed form on an $n\times n$ board with $n\geq 3$, if we keep the
+labels and conditions (S1) and (S2), with pawns allowed on ranks $2$ to $n-1$. Write
+$c_n(m)$ for the number of such placements with $m$ men, so that $c(m)=c_8(m)$ for $m\leq 3$
+and $c_n(2)=(n-1)(n-2)(n^2+3n-2)$.
+
+\begin{proposition}\label{propnn}
+For $n\geq 3$,
+\begin{displaymath}
+c_n(3)=10n^6-4n^5-110n^4+164n^3+92n^2-272n+112 .
+\end{displaymath}
+The first values, for $n=3,4,\ldots,10$, are $1960$, $19696$, $96552$, $330112$, $904120$,
+$2127600$, $4481176$, and $8670592$.
+\end{proposition}
+
+\begin{proof}
+A placement with three men consists of the two kings and one more man, and condition (S3)
+holds trivially. Fix the squares of the kings, and let $\kappa$ be the number of them on ranks $2$
+to $n-1$. The third man is one of the eight officers on any of the $n^2-2$ free squares, or one of
+the two pawns on any of the $n(n-2)-\kappa$ free squares of ranks $2$ to $n-1$. Summing over the
+$c_n(2)$ pairs of squares gives
+\begin{displaymath}
+c_n(3)=\bigl(8(n^2-2)+2n(n-2)\bigr)\,c_n(2)-2\sum\kappa ,
+\end{displaymath}
+the sum being over the pairs. A square $s$ on ranks $2$ to $n-1$ is the square of a given king in
+exactly $n^2-1-d(s)$ pairs, with $d(s)$ the number of squares adjacent to $s$. On each of these
+$n-2$ ranks, the two squares on the edge files have $d(s)=5$ and the other $n-2$ have $d(s)=8$.
+Counting both kings,
+\begin{displaymath}
+\sum\kappa=2\Bigl(n(n-2)(n^2-1)-(n-2)\bigl(10+8(n-2)\bigr)\Bigr)=2(n-2)(n^3-9n+6).
+\end{displaymath}
+Hence $c_n(3)=(10n^2-4n-16)(n-1)(n-2)(n^2+3n-2)-4(n-2)(n^3-9n+6)$, which expands to
+the stated polynomial. For $n=8$ it gives $2127600$, in agreement with Table~\ref{tablayers}.
+\end{proof}
+
+\subsection{Reachable terms}
+
+Far from the top, where the placements are sparse, reachability can be decided term by term:
+either a short game reaches the placement, or Lemma~\ref{lemcheck} rules it out. The first
+term that fails is $a(113)$.
+
+\begin{proposition}\label{propreach}
+Of the $433$ terms of the genome not exceeding $10^{15}$, exactly two are not codes of reachable
+placements:
+\begin{displaymath}
+\begin{array}{ll}
+a(113)=156600000000000 & (\sq{ka1},\sq{Rb1},\sq{Kc1},\sq{Pb2}),\\
+a(178)=391500000000000 & (\sq{Ka1},\sq{Rb1},\sq{kc1},\sq{Pb2}).
+\end{array}
+\end{displaymath}
+In particular, all terms of Table~\ref{tabfirst} are codes of reachable placements.
+\end{proposition}
+
+\begin{proof}
+In $B_{113}$ the white rook on $\sq{b1}$ attacks the black king on $\sq{a1}$. With White to move
+this violates (K1). With Black to move the rook gives a contact check, and the three squares
+next to $\sq{b1}$ along the lines of a rook, namely $\sq{a1}$, $\sq{c1}$, and $\sq{b2}$, are occupied;
+as White promotes on the eighth rank, this violates (K3). The placement $B_{178}$ is the same
+with the kings exchanged, and the same argument applies with the colors of the kings reversed.
+
+For each of the other $431$ terms we found a game that ends in the placement. The terms up to
+$10^{15}$ consist of the two kings and at most two other men, so the games mostly consist of
+captures. We found them by a beam search over legal moves that keeps the men needed for the
+target and steers the others toward capture. When the target contains two pawns on one file, or
+a man giving a contact check, the search starts instead from a predecessor obtained by taking
+back the last move. For example, $a(205)$, with a black rook on $\sq{b1}$ checking the white king
+on $\sq{c1}$, is reached by the move a2xb1=R. The games have at most $106$ plies, are included
+with the programs~\cite{software}, and were replayed with python-chess.
+\end{proof}
+
+A game for $B_1$ must end with a capture that leaves the two kings on $\sq{a1}$ and $\sq{c1}$,
+because a position with two bare kings ends the game at once.
+
+\subsection{Gaps}
+
+One reason to use $L$ is that it is a small real number, so that a database of positions can be
+sorted on a floating-point key instead of on integers with hundreds of digits. This works only
+if the key separates the placements. If two values of $L$ agree to the working precision, the
+two placements are merged or sorted in the wrong order. We therefore need to know how close two
+values can be. Small gaps appear early in the genome. The consecutive terms
+\begin{displaymath}
+\begin{array}{ll}
+91815791091791872 & (\sq{Ka1},\sq{kd1},\sq{Pe2},\sq{Pf3}),\\
+91815800000000000 & (\sq{ka1},\sq{Kc1},\sq{Pc2},\sq{Pa3},\sq{Pf7})
+\end{array}
+\end{displaymath}
+differ by $9.7\cdot 10^{-8}$ in $L$, the smallest gap among the $10282$ terms below $10^{17}$.
+Over the whole of $\adm$ the gaps become far smaller.
+
+\begin{proposition}\label{propgap}
+Let $\delta$ be the smallest value of $|L(A)-L(B)|$ over the pairs of distinct elements of
+$\adm$. Then
+\begin{displaymath}
+10^{-138}<\delta<1.91\cdot 10^{-75}.
+\end{displaymath}
+\end{proposition}
+
+\begin{proof}
+A first upper bound comes from counting: the $N$ values of $L$ on $\adm$ are distinct and lie in
+the interval from $L(B_1)$ to $L(B_{\max})$, of length less than $1386.43$ by
+Corollary~\ref{corbounds}, so two consecutive ones are at distance at most
+$1386.43/(N-1)<6.5\cdot 10^{-47}$. An explicit pair does better. The placements
+\begin{displaymath}
+\begin{array}{l}
+\texttt{1KB2NrR/1P2r3/1pqp1rR1/B3P1Q1/1P1r2B1/2k1N1Pp/1pbQ2R1/Nqbn2bn},\\
+\texttt{1kb4n/R1qP1RPr/p1n1P2N/1PrN3P/B1n1B1KP/qP1r4/p1Q1R3/3brr2},
+\end{array}
+\end{displaymath}
+with $32$ and $31$ men, are statically admissible, their codes have $302$ digits each, and their
+values of $L$ differ by $1.9018\ldots\cdot 10^{-75}$. We found them by looking for short vectors in the
+lattice described next, for several values of $C$ between $10^{50}$ and $10^{84}$, and by solving a small integer program that writes
+such a vector as the difference of the label vectors of two elements of $\adm$.
+
+For the lower bound, let $A\neq B$ be in $\adm$ with labels $v_i$ and $v_i'$, and put
+$c_i=v_i-v_i'$. The replacements used in the proof of Lemma~\ref{lemmat} increase labels, so
+$\sum_i v_i$ and $\sum_i v_i^2$ are largest on $\adm$ for the material of $B_{\max}$, with the
+values $260$ and $2292$. As $v_iv_i'\geq 0$, this gives
+\begin{displaymath}
+\sum_i c_i^2\leq 4584\qquad\text{and}\qquad \sum_i |c_i|\leq 520 .
+\end{displaymath}
+Take $M=256$ and $C=10^{141}$, let $w_i$ be the integer nearest to $C\ln p_i$, and let
+$\Lambda\subset\ZZ^{65}$ be the lattice spanned by the vectors $(Me_i,w_i)$ for $1\leq i\leq 64$,
+with $e_i$ the unit vectors of $\ZZ^{64}$. The vector $u=\sum_i c_i\,(Me_i,w_i)$ is a nonzero
+element of $\Lambda$. Its last coordinate differs from $C\bigl(L(A)-L(B)\bigr)$ by at most
+$\frac12\sum_i|c_i|\leq 260$. If we had $|L(A)-L(B)|\leq 1983/C$, the square of the norm of $u$
+would be at most $4584M^2+(1983+260)^2$. On the other hand, let $b_1,\ldots,b_{64}$ be any basis of
+$\Lambda$ and $b_1^{\ast},\ldots,b_{64}^{\ast}$ its Gram--Schmidt orthogonalization. A nonzero
+vector $\sum_i a_ib_i$ of $\Lambda$, with $a_k$ its last nonzero coefficient, has the component
+$a_kb_k^{\ast}$ along $b_k^{\ast}$ and is therefore at least as long as $b_k^{\ast}$. We reduced the
+basis above with the LLL algorithm~\cite{lll} and its blockwise variant BKZ, as implemented in
+fplll~\cite{fplll}, verified in integer arithmetic that the result is again a basis
+of $\Lambda$, and computed the squared Gram--Schmidt norms exactly, as quotients of consecutive
+leading principal minors of the Gram matrix, with FLINT~\cite{flint}. The smallest of them
+exceeds $4584M^2+2243^2$. Hence $\delta>1983\cdot 10^{-141}>10^{-138}$.
+\end{proof}
+
+The elementary argument, $S(A)\geq S(B)+1$ for codes in increasing order, only gives
+$\delta>1/S_{\max}>10^{-614}$, so the lattice computation gains $476$ orders of magnitude. The
+true order of $\delta$ is probably well below the explicit pair: there are about
+$2.3\cdot 10^{98}$ pairs of placements, and if their differences were spread evenly over an
+interval of length $1386$, the smallest would be about $6\cdot 10^{-96}$. This is only a heuristic.
+
+For computation this means that approximations of $L$ with an absolute error
+as small as $10^{-75}$ do not always determine the order of two placements, whereas an
+error below $5\cdot 10^{-139}$ always does. Double precision, or even seventy-four decimal places, is
+therefore not a safe sorting key for the whole of $\adm$. It is safe to compare floating-point
+values of $L$ that come with a rigorous error bound, and to compare the integers $S$ themselves
+when the two intervals overlap. These integers have at most $614$ digits, so the exact
+comparison costs little.
+
+\section{Comparison with other encodings}\label{secother}
+
+Any injective map from $\adm$ to the positive integers takes a value of at least
+$N>2\cdot 10^{49}$, so the code $S$, with values up to $10^{614}$, uses far more digits than necessary. We
+compare it with two standard encodings.
+
+The first is the base-$13$ numeral $D(B)=\sum_{i=1}^{64}v_i\,13^{i-1}$, which is a bijection from
+all placements onto the integers from $0$ to $13^{64}-1$, and $13^{64}<1.97\cdot 10^{71}$.
+
+The second uses the pairing function of Cantor~\cite{cantor},
+\begin{displaymath}
+\pi(x,y)=\frac{(x+y)(x+y+1)}{2}+y,
+\end{displaymath}
+a bijection from pairs of non-negative integers onto the non-negative integers. Starting from
+$c_0(i)=v_i$ for $1\leq i\leq 64$, put $c_{r+1}(i)=\pi\bigl(c_r(2i-1),c_r(2i)\bigr)$; six rounds
+reduce the $64$ labels to the single integer $C(B)=c_6(1)$, and $C$ is injective because $\pi$
+is. As $\pi$ is increasing in each argument, $C(B)$ is at most the value obtained for the
+constant vector with all entries $12$, which is less than $1.47\cdot 10^{89}$. The side to move,
+the castling rights, and the en passant file can be appended by one more pairing.
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{l|c|c|c}
+placement & $S$ & $C$ & $D$\\ \hline
+$B_1=(\sq{ka1},\sq{Kc1})$ & $2.0\cdot 10^{11}$ & $6.7\cdot 10^{59}$ & $1871$\\
+initial array & $1.2\cdot 10^{238}$ & $6.8\cdot 10^{72}$ & $6.8\cdot 10^{70}$\\
+$B_{\max}$ & $2.6\cdot 10^{613}$ & $3.2\cdot 10^{82}$ & $1.9\cdot 10^{71}$
+\end{tabular}
+\end{center}
+\caption{Three encodings of three placements.}
+\label{tabcompare}
+\end{table}
+
+Table~\ref{tabcompare} shows that neither $S$ nor $C$ is always the smaller one. Iterated pairing
+gives much smaller values than $S$ on a full board. But each round roughly squares its input, so
+that even two bare kings produce sixty digits, and on sparse boards $S$ is smaller. The numeral
+$D$ is smaller than both in the three examples. The advantage of $S$ lies elsewhere: the contents
+of a square are a $p$-adic valuation of the code, and a move multiplies the code by a rational
+number involving at most four primes. Neither $C$ nor $D$ behaves so simply under moves. For
+none of the three encodings does the numerical order have an evident meaning for the game.
+
+\section{Concluding remarks}\label{secopen}
+
+The prime code writes a chess position as an integer in a way that keeps the board visible:
+each square can be read off the code, and a move multiplies the code by a small rational
+number. Listing the codes in order gives a finite sequence whose basic invariants can be
+computed exactly on the statically admissible placements, namely its length, its extreme terms,
+its first terms, and the number of terms with a given number of men. For the placements that
+occur in games the questions are harder, and we could answer some of them only by combining
+short proofs with large searches.
+
+The question we find most interesting concerns the reachable terms. The genome and its
+reachable subsequence agree up to $a(112)$, and they still agree on all but two of the first $433$
+terms, the two exceptions being placements in which a contact check could not have been given
+by any last move. How fast does the reachable subsequence thin out after that? Among the
+$2548$ terms up to $10^{16}$, Lemma~\ref{lemcheck} rules out $15$, and for the others we have
+not settled the question. At the other end, Theorem~\ref{thmreach} shows that the largest
+reachable code has $71$ fewer digits than the largest admissible one. A description of the
+reachable terms between these two extremes, even an asymptotic one, would measure how much
+the rules of play add to the three static conditions.
+
+An implementation of the encoding, the programs behind the computations of this paper, and all
+games quoted in it are available from the repository~\cite{software}.
+
+\section{Acknowledgments}
+
+This paper is dedicated to the memory of Prof.\ Otto Kegel (1934--2025), who was the second
+author's tutor at the University of Freiburg.
+
+\begin{thebibliography}{99}
+
+\bibitem{cantor}
+G. Cantor, Ein Beitrag zur Mannigfaltigkeitslehre, \emph{J. Reine Angew. Math.} \textbf{84}
+(1878), 242--258.
+
+\bibitem{software}
+J. A. C\'espedes Bejerano and D. Luebbert, ChessGenome, software repository, 2026. Available at
+\url{https://github.com/Yulces/ChessGenome}.
+
+\bibitem{fide}
+FIDE, \emph{FIDE Handbook, E. Miscellaneous, 01. Laws of Chess}, 2023. Available at
+\url{https://handbook.fide.com}.
+
+\bibitem{pychess}
+N. Fiekas, python-chess, software library. Available at
+\url{https://github.com/niklasf/python-chess}.
+
+\bibitem{flint}
+The FLINT team, FLINT: Fast Library for Number Theory, software library. Available at
+\url{https://flintlib.org}.
+
+\bibitem{fplll}
+The FPLLL development team, fplll, a lattice reduction library, software library. Available at
+\url{https://github.com/fplll/fplll}.
+
+\bibitem{godel}
+K. G\"odel, \"Uber formal unentscheidbare S\"atze der Principia Mathematica und verwandter
+Systeme I, \emph{Monatsh. Math. Phys.} \textbf{38} (1931), 173--198.
+
+\bibitem{gourion}
+D. Gourion, An upper bound for the number of chess diagrams without promotion, \emph{ICGA J.}
+\textbf{44} (2022), 44--55.
+
+\bibitem{hardy}
+G. H. Hardy and E. M. Wright, \emph{An Introduction to the Theory of Numbers}, 6th edition,
+Oxford University Press, 2008.
+
+\bibitem{highs}
+Q. Huangfu and J. A. J. Hall, Parallelizing the dual revised simplex method, \emph{Math.
+Program. Comput.} \textbf{10} (2018), 119--142.
+
+\bibitem{lll}
+A. K. Lenstra, H. W. Lenstra, Jr., and L. Lov\'asz, Factoring polynomials with rational
+coefficients, \emph{Math. Ann.} \textbf{261} (1982), 515--534.
+
+\bibitem{oeis}
+OEIS Foundation Inc., The On-Line Encyclopedia of Integer Sequences, 2026. Available at
+\url{https://oeis.org}.
+
+\bibitem{cpsat}
+L. Perron and F. Didier, CP-SAT, software, Google OR-Tools. Available at
+\url{https://developers.google.com/optimization/cp/cp_solver}.
+
+\bibitem{shannon}
+C. E. Shannon, Programming a computer for playing chess, \emph{Philos. Mag. (7)} \textbf{41}
+(1950), 256--275.
+
+\bibitem{steinerberger}
+S. Steinerberger, On the number of positions in chess without promotion, \emph{Internat. J.
+Game Theory} \textbf{44} (2015), 761--767.
+
+\bibitem{tromp}
+J. Tromp, ChessPositionRanking, software repository, 2021. Available at
+\url{https://github.com/tromp/ChessPositionRanking}.
+
+\end{thebibliography}
+
+\bigskip
+\hrule
+\bigskip
+
+\noindent 2020 {\it Mathematics Subject Classification}: Primary 05A15; Secondary 00A08,
+11A51, 11Y55, 91A46.
+
+\noindent \emph{Keywords:} chess, prime factorization, G\"odel numbering, enumeration, pairing
+function, promotion, integer programming, lattice reduction.
+
+\bigskip
+\hrule
+\bigskip
+
+\noindent (Concerned with sequences
+\seqnum{A000040} and
+\seqnum{A035286}.)
+
+\bigskip
+\hrule
+\bigskip
+
+\end{document}

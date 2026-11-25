@@ -1,0 +1,539 @@
+-------------------------------------------------------------------------------
+           SPEICHERN UND LADEN VON NEURONALEN NETZ-MODELLEN
+-------------------------------------------------------------------------------
+
+INHALTSVERZEICHNIS
+------------------
+1.  Was ist ein neuronales Netz-Modell?
+2.  Warum ein Modell speichern?
+3.  Wie speichert man ein Modell?
+4.  Wie lädt man ein Modell?
+5.  Dateistruktur
+6.  Best Practices
+7.  Fehlerbehebung
+8.  Häufig gestellte Fragen
+
+
+-------------------------------------------------------------------------------
+1. WAS IST EIN NEURONALES NETZ-MODELL?
+-------------------------------------------------------------------------------
+
+Ein neuronales Netz-Modell ist eine Datei, die die gesamte "Intelligenz" enthält,
+die das Netz während des Trainings gelernt hat. Stellen Sie es sich als das
+"Gehirn" des neuronalen Netzes nach dem Training vor.
+
+1.1 Was enthält das Modell?
+---------------------------
+
++-----------------------------------------------------------------------------+
+¦ KOMPONENTE          ¦ BESCHREIBUNG                    ¦ BEISPIEL            ¦
++---------------------+---------------------------------+---------------------¦
+¦ Synaptische Gewichte¦ Numerische Werte, die die       ¦ Matrizen von Zahlen ¦
+¦                     ¦ Informationsverarbeitung        ¦ zwischen Neuronen   ¦
+¦                     ¦ bestimmen                       ¦                     ¦
++---------------------+---------------------------------+---------------------¦
+¦ Netzwerkstruktur    ¦ Anzahl der Schichten und        ¦ [64, 32, 16, 1]     ¦
+¦                     ¦ Neuronen pro Schicht            ¦ Neuronen            ¦
++---------------------+---------------------------------+---------------------¦
+¦ Normalisierung      ¦ Parameter zur Skalierung der    ¦ Mittelwert und      ¦
+¦                     ¦ Eingabedaten                    ¦ Standardabweichung  ¦
++---------------------+---------------------------------+---------------------¦
+¦ Hyperparameter      ¦ Trainingskonfiguration          ¦ Lernrate, Epochen   ¦
++-----------------------------------------------------------------------------+
+
+1.2 Dateiformate
+----------------
+
++-----------------------------------------------------------------------------+
+¦ FORMAT      ¦ ERWEITERUNG  ¦ WANN VERWENDEN                               ¦
++-------------+--------------+----------------------------------------------¦
+¦ HDF5 (H5)   ¦ .h5          ¦ Bei Verwendung von TensorFlow/Keras          ¦
+¦ Joblib      ¦ .joblib      ¦ Bei Verwendung von scikit-learn (RandomForest)¦
++-----------------------------------------------------------------------------+
+
+
+-------------------------------------------------------------------------------
+2. WARUM EIN MODELL SPEICHERN?
+-------------------------------------------------------------------------------
+
+2.1 Hauptvorteile
+-----------------
+
++-----------------------------------------------------------------------------+
+¦ VORTEIL         ¦ ERKLÄRUNG                      ¦ PRAKTISCHES BEISPIEL    ¦
++-----------------+--------------------------------+-------------------------¦
+¦ Zeitersparnis   ¦ Kein erneutes Training nötig   ¦ Training: 10-30 Min.    ¦
+¦                 ¦                                ¦ Laden: 1-2 Sekunden     ¦
++-----------------+--------------------------------+-------------------------¦
+¦ Konsistenz      ¦ Gleiches Modell jederzeit      ¦ Gleiche Ergebnisse in   ¦
+¦                 ¦                                ¦ verschiedenen Sitzungen ¦
++-----------------+--------------------------------+-------------------------¦
+¦ Portabilität    ¦ Modell kann geteilt werden     ¦ An andere Benutzer      ¦
+¦                 ¦                                ¦ oder Computer senden    ¦
++-----------------+--------------------------------+-------------------------¦
+¦ Experimentation ¦ Mehrere Versionen möglich      ¦ Modell_v1.h5,           ¦
+¦                 ¦                                ¦ Modell_v2.h5,           ¦
+¦                 ¦                                ¦ Modell_v3.h5            ¦
++-----------------+--------------------------------+-------------------------¦
+¦ Backup          ¦ Trainingsergebnisse sichern    ¦ Bei Programmabsturz     ¦
+¦                 ¦                                ¦ Modell wiederherstellen ¦
++-----------------------------------------------------------------------------+
+
+2.2 Wann sollte man ein Modell speichern?
+-----------------------------------------
+
++-----------------------------------------------------------------------------+
+¦ SITUATION               ¦ AKTION                ¦ GRUND                    ¦
++-------------------------+-----------------------+--------------------------¦
+¦ Nach dem Training       ¦ Sofort speichern      ¦ Arbeit nicht verlieren   ¦
+¦ Vor Änderungen          ¦ Backup erstellen      ¦ Bei Fehlern               ¦
+¦                         ¦                       ¦ zurückkehren können      ¦
+¦ Bei guter Genauigkeit   ¦ Als stabile Version   ¦ Referenzmodell haben     ¦
+¦                         ¦ speichern             ¦                          ¦
+¦ Vor Programmende        ¦ Immer speichern       ¦ In nächster Sitzung      ¦
+¦                         ¦                       ¦ verwenden                ¦
++-----------------------------------------------------------------------------+
+
+
+-------------------------------------------------------------------------------
+3. WIE SPEICHERT MAN EIN MODELL?
+-------------------------------------------------------------------------------
+
+3.1 Schritt-für-Schritt-Prozess
+-------------------------------
+
++-----------------------------------------------------------------------------+
+¦                       SPEICHERPROZESS                                      ¦
++-----------------------------------------------------------------------------¦
+¦                                                                           ¦
+¦  1. NETZ TRAINIEREN                                                       ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦     ¦  Klicken Sie auf "Train Network"                               ¦   ¦
+¦     ¦  Warten Sie, bis das Training abgeschlossen ist                ¦   ¦
+¦     ¦  Überprüfen Sie, ob die Genauigkeit akzeptabel ist (>60%)      ¦   ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦                              ?                                            ¦
+¦  2. SCHALTFLÄCHE "SAVE MODEL" AKTIVIEREN                                 ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦     ¦  Nach erfolgreichem Training wird der Button aktiviert          ¦   ¦
+¦     ¦  Wenn der Button nicht aktiv ist, ist das Training fehlgeschlagen¦   ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦                              ?                                            ¦
+¦  3. AUF "SAVE MODEL" KLICKEN                                              ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦     ¦  Ein Dialog zum Auswählen des Speicherorts öffnet sich          ¦   ¦
+¦     ¦  Der Standardordner ist "models/"                               ¦   ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦                              ?                                            ¦
+¦  4. DATEI BENENNEN                                                        ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦     ¦  Verwenden Sie einen beschreibenden Namen:                      ¦   ¦
+¦     ¦  ? chess_model_2024_12_15_accuracy_82.h5                      ¦   ¦
+¦     ¦  ? model_v2_1000_games.h5                                     ¦   ¦
+¦     ¦  ? modell.h5 (zu allgemein)                                   ¦   ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦                              ?                                            ¦
+¦  5. SPEICHERN BESTÄTIGEN                                                 ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦     ¦  Das Programm zeigt eine Erfolgsmeldung an                      ¦   ¦
+¦     ¦  "Modell erfolgreich gespeichert unter: models/modell.h5"      ¦   ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦                                                                           ¦
++-----------------------------------------------------------------------------+
+
+3.2 Praktisches Speicherbeispiel
+--------------------------------
+
+Szenario: Sie haben das Netz mit 1000 Positionen trainiert und die Genauigkeit
+beträgt 78%.
+
+Schritte:
+  ? Das Netz ist trainiert (Button "Analyze Position" ist aktiv)
+  ? Klicken Sie auf "Save Model"
+  ? Der Speicherdialog öffnet sich
+  ? Geben Sie ein: chess_model_78percent_1000games_2024_12_15.h5
+  ? Die Datei wird gespeichert unter: models/chess_model_78percent_1000games_2024_12_15.h5
+
+Ergebnis: Sie können das Programm jetzt schließen und dieses Modell jederzeit
+wieder laden.
+
+3.3 Empfohlene Namensstruktur
+-----------------------------
+
++-----------------------------------------------------------------------------+
+¦ MUSTER                             ¦ BEISPIEL              ¦ ERKLÄRUNG      ¦
++------------------------------------+-----------------------+----------------¦
+¦ modell_v{version}_{datum}_         ¦ modell_v3_20241215_   ¦ Version, Datum  ¦
+¦ {genauigkeit}.h5                   ¦ 82.h5                 ¦ und Genauigkeit ¦
++------------------------------------+-----------------------+----------------¦
+¦ modell_{n_spiele}_{datum}.h5       ¦ modell_2000games_     ¦ Anzahl Spiele   ¦
+¦                                    ¦ 20241215.h5           ¦ und Datum       ¦
++------------------------------------+-----------------------+----------------¦
+¦ experiment_{beschreibung}_         ¦ exp_center_control_   ¦ Für spezifische ¦
+¦ {datum}.h5                         ¦ 20241215.h5           ¦ Experimente     ¦
++-----------------------------------------------------------------------------+
+
+
+-------------------------------------------------------------------------------
+4. WIE LÄDT MAN EIN MODELL?
+-------------------------------------------------------------------------------
+
+4.1 Schritt-für-Schritt-Prozess
+-------------------------------
+
++-----------------------------------------------------------------------------+
+¦                       LADEPROZESS                                          ¦
++-----------------------------------------------------------------------------¦
+¦                                                                           ¦
+¦  1. AUF "LOAD MODEL" KLICKEN                                              ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦     ¦  Ein Dialog zum Auswählen der Datei öffnet sich                 ¦   ¦
+¦     ¦  Filtert nach den Erweiterungen .h5 und .joblib                ¦   ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦                              ?                                            ¦
+¦  2. DATEI AUSWÄHLEN                                                        ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦     ¦  Navigieren Sie zum Ordner, in dem Sie die Modelle gespeichert  ¦   ¦
+¦     ¦  haben Wählen Sie die gewünschte Datei aus                      ¦   ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦                              ?                                            ¦
+¦  3. LADEN BESTÄTIGEN                                                       ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦     ¦  Das Programm lädt das Modell und zeigt eine Erfolgsmeldung an  ¦   ¦
+¦     ¦  "Modell erfolgreich geladen!"                                  ¦   ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦                              ?                                            ¦
+¦  4. STATUS ÜBERPRÜFEN                                                      ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦     ¦  Der Status ändert sich zu "Trainiert"                          ¦   ¦
+¦     ¦  Der Button "Analyze Position" wird aktiviert                   ¦   ¦
+¦     ¦  Sie können das Modell sofort verwenden                         ¦   ¦
+¦     +-----------------------------------------------------------------+   ¦
+¦                                                                           ¦
++-----------------------------------------------------------------------------+
+
+4.2 Was passiert beim Laden eines Modells?
+------------------------------------------
+
++-----------------------------------------------------------------------------+
+¦ AKTION                ¦ ERGEBNIS                                          ¦
++-----------------------+---------------------------------------------------¦
+¦ Laden der Gewichte    ¦ Die gelernten Werte werden wiederhergestellt     ¦
+¦ Netzwerk-             ¦ Die Netzwerkstruktur wird neu erstellt           ¦
+¦ Rekonstruktion        ¦                                                   ¦
+¦ Normalisierung        ¦ Die Skalierungsparameter werden wiederhergestellt ¦
+¦ Aktivierung der       ¦ Der Button "Analyze Position" wird aktiviert     ¦
+¦ Analyse               ¦                                                   ¦
++-----------------------------------------------------------------------------+
+
+4.3 Modell-Kompatibilität
+-------------------------
+
++-----------------------------------------------------------------------------+
+¦ GESPEICHERT MIT   ¦ KANN GELADEN WERDEN MIT  ¦ ANMERKUNGEN                ¦
++-------------------+---------------------------+----------------------------¦
+¦ TensorFlow (Keras)¦ TensorFlow (Keras)        ¦ ? Kompatibel bei         ¦
+¦                   ¦                           ¦ ähnlicher Version          ¦
++-------------------+---------------------------+----------------------------¦
+¦ scikit-learn      ¦ scikit-learn (Joblib)     ¦ ? Kompatibel              ¦
+¦ (Joblib)          ¦                           ¦                            ¦
++-------------------+---------------------------+----------------------------¦
+¦ TensorFlow ?      ¦ ? Nein                   ¦ Inkompatible Formate      ¦
+¦ scikit-learn      ¦                           ¦                            ¦
++-------------------+---------------------------+----------------------------¦
+¦ scikit-learn ?    ¦ ? Nein                   ¦ Inkompatible Formate      ¦
+¦ TensorFlow        ¦                           ¦                            ¦
++-----------------------------------------------------------------------------+
+
+
+-------------------------------------------------------------------------------
+5. DATEISTRUKTUR
+-------------------------------------------------------------------------------
+
+5.1 Standard-Speicherort
+------------------------
+
+Ihr Ordner/
++-- models/                          ? Modell-Ordner (wird automatisch erstellt)
+    +-- chess_model_20241215_82.h5   ? Mit TensorFlow gespeichertes Modell
+    +-- chess_model_20241216_78.h5   ? Ein weiteres gespeichertes Modell
+    +-- random_forest_model.joblib   ? Mit scikit-learn gespeichertes Modell
+    +-- backups/                     ? Ordner für Sicherungskopien
+        +-- chess_model_backup.h5    ? Sicherungskopie
+
+5.2 Dateigrößen
+---------------
+
++-----------------------------------------------------------------------------+
+¦ MODELLTYP              ¦ TYPISCHE GRÖSSE  ¦ ENTHÄLT                         ¦
++------------------------+------------------+---------------------------------¦
+¦ H5 (Keras/TensorFlow)  ¦ 50 KB - 5 MB    ¦ Synaptische Gewichte und        ¦
+¦                        ¦                  ¦ Struktur                        ¦
++------------------------+------------------+---------------------------------¦
+¦ Joblib (scikit-learn)  ¦ 10 KB - 500 KB  ¦ Entscheidungsbaumparameter      ¦
++-----------------------------------------------------------------------------+
+
+5.3 Best Practices für die Organisation
+---------------------------------------
+
++-----------------------------------------------------------------------------+
+¦ PRAXIS                  ¦ BESCHREIBUNG                                     ¦
++-------------------------+--------------------------------------------------¦
+¦ Unterordner nach Datum  ¦ models/2024/12/modell_15_12.h5                  ¦
+¦ Unterordner nach Version¦ models/v2/modell_v2.h5                          ¦
+¦ README-Datei pflegen    ¦ models/README.txt mit Beschreibungen            ¦
+¦ Automatische Backups    ¦ So konfigurieren, dass Backups gespeichert      ¦
+¦                         ¦ werden                                          ¦
++-----------------------------------------------------------------------------+
+
+
+-------------------------------------------------------------------------------
+6. BEST PRACTICES
+-------------------------------------------------------------------------------
+
+6.1 Wann speichern?
+-------------------
+
++-----------------------------------------------------------------------------+
+¦ ZEITPUNKT                 ¦ GRUND                                         ¦
++---------------------------+-----------------------------------------------¦
+¦ Sofort nach dem Training  ¦ Arbeit nicht verlieren                        ¦
+¦ Vor dem Schließen des     ¦ Modell für nächste Sitzung haben              ¦
+¦ Programms                 ¦                                               ¦
+¦ Nach Verbesserung der     ¦ Beste Version speichern                       ¦
+¦ Genauigkeit               ¦                                               ¦
+¦ Vor Experimenten mit      ¦ Wiederherstellungspunkt haben                 ¦
+¦ Änderungen                ¦                                               ¦
++-----------------------------------------------------------------------------+
+
+6.2 Wann laden?
+---------------
+
++-----------------------------------------------------------------------------+
+¦ ZEITPUNKT                 ¦ GRUND                                         ¦
++---------------------------+-----------------------------------------------¦
+¦ Beim Programmstart        ¦ Modell aus vorheriger Sitzung verwenden       ¦
+¦ Nach einem Absturz        ¦ Verlorene Arbeit wiederherstellen             ¦
+¦ Zum Vergleich von         ¦ Verschiedene Modelle testen                   ¦
+¦ Versionen                 ¦                                               ¦
+¦ Zum Teilen mit anderen    ¦ Von anderen erstellte Modelle verwenden      ¦
++-----------------------------------------------------------------------------+
+
+6.3 Versionierungsstrategie
+---------------------------
+
+  v1.0 ? Erstes Modell (50% Genauigkeit)
+  v1.1 ? Verbessertes Modell mit mehr Daten (65% Genauigkeit)
+  v2.0 ? Modell mit verbesserter Architektur (78% Genauigkeit)
+  v2.1 ? Modell mit Turnierpartie-Daten (82% Genauigkeit)
+  v3.0 ? Modell mit neuen Merkmalen (85% Genauigkeit)
+
+6.4 Namensempfehlungen
+----------------------
+
++-----------------------------------------------------------------------------+
+¦ KOMPONENTE  ¦ BEISPIEL        ¦ EMPFOHLENES FORMAT                        ¦
++-------------+-----------------+-------------------------------------------¦
+¦ Version     ¦ v2              ¦ v{N}                                      ¦
+¦ Datum       ¦ 2024-12-15      ¦ YYYY-MM-DD                                ¦
+¦ Genauigkeit ¦ 82              ¦ {genauigkeit}%                            ¦
+¦ Daten       ¦ 2000spiele      ¦ {N}spiele                                 ¦
+¦ Architektur ¦ 64-32-16        ¦ {N1}-{N2}-{N3}                            ¦
++-----------------------------------------------------------------------------+
+
+Vollständiges Beispiel: modell_v2_2024-12-15_82_2000spiele_64-32-16.h5
+
+
+-------------------------------------------------------------------------------
+7. FEHLERBEHEBUNG
+-------------------------------------------------------------------------------
+
+7.1 Häufige Probleme beim Speichern
+-----------------------------------
+
++-----------------------------------------------------------------------------+
+¦ PROBLEM                   ¦ URSACHE           ¦ LÖSUNG                     ¦
++---------------------------+-------------------+----------------------------¦
+¦ "Save Model" nicht aktiv  ¦ Modell nicht      ¦ Zuerst das Netz           ¦
+¦                           ¦ trainiert         ¦ trainieren                 ¦
++---------------------------+-------------------+----------------------------¦
+¦ Fehler beim Speichern     ¦ Schreibrechte     ¦ Als Administrator ausführen¦
++---------------------------+-------------------+----------------------------¦
+¦ Nicht genug Speicherplatz ¦ Festplatte voll   ¦ Speicherplatz freigeben    ¦
+¦                           ¦                   ¦ oder anderes Laufwerk      ¦
++---------------------------+-------------------+----------------------------¦
+¦ Datei wird nicht          ¦ Ordner existiert  ¦ Ordner models/ manuell     ¦
+¦ gespeichert               ¦ nicht             ¦ erstellen                  ¦
++-----------------------------------------------------------------------------+
+
+7.2 Häufige Probleme beim Laden
+-------------------------------
+
++-----------------------------------------------------------------------------+
+¦ PROBLEM                   ¦ URSACHE           ¦ LÖSUNG                     ¦
++---------------------------+-------------------+----------------------------¦
+¦ Formatfehler              ¦ Datei beschädigt  ¦ Backup verwenden           ¦
++---------------------------+-------------------+----------------------------¦
+¦ Versionsfehler            ¦ TensorFlow/       ¦ Bibliotheken aktualisieren ¦
+¦                           ¦ sklearn anders    ¦                            ¦
++---------------------------+-------------------+----------------------------¦
+¦ Datei nicht gefunden      ¦ Falscher Pfad     ¦ Im richtigen Ordner suchen ¦
++---------------------------+-------------------+----------------------------¦
+¦ Speicherfehler            ¦ Modell zu groß    ¦ Mit mehr RAM laden        ¦
++-----------------------------------------------------------------------------+
+
+7.3 Häufige Fehlermeldungen
+---------------------------
+
++-----------------------------------------------------------------------------+
+¦ FEHLER                         ¦ BEDEUTUNG          ¦ LÖSUNG                ¦
++--------------------------------+--------------------+-----------------------¦
+¦ "No trained model to save"     ¦ Modell nicht       ¦ Netz zuerst trainieren¦
+¦                                ¦ trainiert          ¦                       ¦
++--------------------------------+--------------------+-----------------------¦
+¦ "Could not load model. Check  ¦ Datei beschädigt   ¦ Datei prüfen          ¦
+¦ the file format."              ¦ oder falsches      ¦                       ¦
+¦                                ¦ Format             ¦                       ¦
++--------------------------------+--------------------+-----------------------¦
+¦ "Save failed: Permission       ¦ Keine Schreib-     ¦ Rechte ändern oder    ¦
+¦ denied"                        ¦ rechte             ¦ anderen Ort wählen    ¦
++--------------------------------+--------------------+-----------------------¦
+¦ "Load failed: No module named  ¦ TensorFlow nicht   ¦ pip install           ¦
+¦ 'tensorflow'"                  ¦ installiert        ¦ tensorflow            ¦
++-----------------------------------------------------------------------------+
+
+
+-------------------------------------------------------------------------------
+8. HÄUFIG GESTELLTE FRAGEN
+-------------------------------------------------------------------------------
+
+8.1 Kann ich mein Modell mit anderen teilen?
+--------------------------------------------
+
+Ja, die Datei .h5 oder .joblib ist vollständig portabel. Sie müssen nur:
+
+  1. Die Modelldatei kopieren
+  2. Per E-Mail oder anderen Wegen teilen
+  3. Die andere Person muss die gleichen Bibliotheken installiert haben
+
+8.2 Was passiert, wenn ich die Netzwerkarchitektur ändere?
+----------------------------------------------------------
+
+Wenn Sie die Architektur ändern (Anzahl der Neuronen, Schichten), ist das
+gespeicherte Modell nicht kompatibel. Sie müssen:
+
+  1. Das aktuelle Modell vor den Änderungen speichern
+  2. Das neue Modell von Grund auf trainieren
+  3. Das neue Modell unter einem anderen Namen speichern
+
+8.3 Wie groß ist ein gespeichertes Modell?
+------------------------------------------
+
++-----------------------------------------------------------------------------+
+¦ DATENMENGE        ¦ TYPISCHE GRÖSSE                                       ¦
++-------------------+-------------------------------------------------------¦
+¦ 100 Positionen    ¦ < 100 KB                                              ¦
+¦ 1.000 Positionen  ¦ ~ 200 KB                                              ¦
+¦ 10.000 Positionen ¦ ~ 1-2 MB                                              ¦
+¦ 100.000 Positionen¦ ~ 5-10 MB                                             ¦
++-----------------------------------------------------------------------------+
+
+8.4 Kann ich ein Modell ohne Training laden?
+--------------------------------------------
+
+Nein, um den Button "Load Model" zu verwenden, müssen Sie zunächst eine
+Modelldatei aus einer vorherigen Sitzung haben.
+
+8.5 Wie erkenne ich, ob das Modell korrekt geladen wurde?
+----------------------------------------------------------
+
+  ? Der Status ändert sich zu "Trainiert"
+  ? Der Button "Analyze Position" wird aktiviert
+  ? Sie können Positionen analysieren
+  ? Es gibt keine Fehlermeldungen
+
+8.6 Kann ich mehrere Modelle gespeichert haben?
+-----------------------------------------------
+
+Ja, Sie können so viele Modelle haben, wie Sie möchten. Jedes muss einen
+eindeutigen Namen haben.
+
+8.7 Welches Modell ist besser: H5 oder Joblib?
+----------------------------------------------
+
++-----------------------------------------------------------------------------+
+¦ FORMAT             ¦ VORTEILE              ¦ NACHTEILE                    ¦
++--------------------+-----------------------+------------------------------¦
+¦ H5 (TensorFlow)    ¦ Leistungsfähiger,     ¦ Benötigt TensorFlow,         ¦
+¦                    ¦ bessere Genauigkeit   ¦ schwerer                     ¦
++--------------------+-----------------------+------------------------------¦
+¦ Joblib (scikit-    ¦ Schneller, leichter   ¦ Weniger genau, weniger       ¦
+¦ learn)             ¦                       ¦ leistungsfähig               ¦
++-----------------------------------------------------------------------------+
+
+8.8 Wie weiß ich, welches Modell ich laden soll?
+------------------------------------------------
+
++-----------------------------------------------------------------------------+
+¦ SITUATION             ¦ EMPFEHLUNG                                       ¦
++-----------------------+---------------------------------------------------¦
+¦ Höhere Genauigkeit    ¦ Modell mit der höchsten Genauigkeit laden       ¦
+¦ Neueres Modell        ¦ Neuestes Modell laden                           ¦
+¦ Mehr Daten            ¦ Modell mit mehr Trainingsdaten laden            ¦
++-----------------------------------------------------------------------------+
+
+
+-------------------------------------------------------------------------------
+9. VOLLSTÄNDIGES PRAKTISCHES BEISPIEL
+-------------------------------------------------------------------------------
+
+9.1 Modell speichern
+--------------------
+
+  1. Programm öffnen
+  2. PGN mit mehreren Partien laden
+  3. Alle Partien analysieren
+  4. Neuronales Netz öffnen
+  5. Netz trainieren ? "Train Network"
+  6. Genauigkeit prüfen: 82.4%
+  7. Modell speichern ? "Save Model"
+  8. Benennen: "modell_v1_82pkt_2024-12-15.h5"
+  9. Speichern bestätigen
+ 10. Programm schließen
+
+9.2 Modell laden
+----------------
+
+  1. Programm öffnen
+  2. Neuronales Netz öffnen
+  3. Modell laden ? "Load Model"
+  4. Auswählen: "modell_v1_82pkt_2024-12-15.h5"
+  5. Laden bestätigen
+  6. Status prüfen: "Trainiert"
+  7. Position analysieren ? "Analyze Position"
+  8. Vorhersageergebnisse anzeigen lassen
+
+
+-------------------------------------------------------------------------------
+?? SCHNELLE ZUSAMMENFASSUNG
+-------------------------------------------------------------------------------
+
++-----------------------------------------------------------------------------+
+¦ AKTION      ¦ WANN                ¦ WIE                  ¦ WAS PASSIERT    ¦
++-------------+---------------------+----------------------+-----------------¦
+¦ SPEICHERN   ¦ Nach dem Training   ¦ Button "Save Model"  ¦ Erstellt Datei  ¦
+¦             ¦                     ¦                      ¦ .h5/.joblib     ¦
++-------------+---------------------+----------------------+-----------------¦
+¦ LADEN       ¦ Beim Programmstart  ¦ Button "Load Model"  ¦ Stellt das      ¦
+¦             ¦                     ¦                      ¦ trainierte      ¦
+¦             ¦                     ¦                      ¦ Modell wieder   ¦
+¦             ¦                     ¦                      ¦ her             ¦
++-------------+---------------------+----------------------+-----------------¦
+¦ NICHT       ¦ Vor dem Schließen   ¦ Nicht speichern      ¦ Verlieren das   ¦
+¦ SPEICHERN   ¦                     ¦                      ¦ trainierte      ¦
+¦             ¦                     ¦                      ¦ Modell          ¦
++-----------------------------------------------------------------------------+
+
+-------------------------------------------------------------------------------
+              © 2026 DietriChessAnalyzer - Alle Rechte vorbehalten
+-------------------------------------------------------------------------------

@@ -1,0 +1,86 @@
+# =========================
+# Dependencies
+# =========================
+node_modules/
+**/node_modules/
+
+# =========================
+# Build / cache
+# =========================
+dist/
+build/
+.next/
+.cache/
+*.tsbuildinfo
+*.map
+
+# =========================
+# Env / secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Python
+# =========================
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# =========================
+# DietrichessAnalyzer (local / pesado)
+# =========================
+DietrichessAnalyzer/python/
+DietrichessAnalyzer/engines/
+DietrichessAnalyzer/engines/**
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Bases de datos locales
+DietrichessAnalyzer/data/*.db
+DietrichessAnalyzer/data/**/*.db
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs y exports generados
+DietrichessAnalyzer/logs/
+DietrichessAnalyzer/exports/
+*.log
+
+# Modelos grandes (quítalo si SÍ quieres versionarlos)
+DietrichessAnalyzer/models/
+DietrichessAnalyzer/models/**
+
+# =========================
+# OS / IDE
+# =========================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# =========================
+# Packages / archives
+# =========================
+*.zip
+*.tgz
+*.rar
+*.7z
+# =========================
+# Backups / temporales
+# =========================
+*.save
+*.bak-*
+~$*

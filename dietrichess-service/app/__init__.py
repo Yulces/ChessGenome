@@ -1,0 +1,1 @@
+# DietriChess HTTP service package

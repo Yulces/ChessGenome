@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" width="900" height="560" font-family="system-ui, -apple-system, sans-serif">
+  <!-- Fondo -->
+  <rect width="900" height="560" fill="#ffffff"/>
+
+  <!-- Título -->
+  <text x="450" y="28" text-anchor="middle" font-size="18" font-weight="700" fill="#111">Chart anatomy</text>
+
+  <!-- Área del gráfico -->
+  <rect x="90" y="60" width="640" height="340" fill="#fafafa" stroke="#e5e5e5"/>
+
+  <!-- Rejilla horizontal -->
+  <g stroke="#e8e8e8" stroke-width="1">
+    <line x1="90" y1="60" x2="730" y2="60"/>
+    <line x1="90" y1="128" x2="730" y2="128"/>
+    <line x1="90" y1="196" x2="730" y2="196"/>
+    <line x1="90" y1="264" x2="730" y2="264"/>
+    <line x1="90" y1="332" x2="730" y2="332"/>
+  </g>
+
+  <!-- Eje Y -->
+  <line x1="90" y1="60" x2="90" y2="400" stroke="#333" stroke-width="1.5"/>
+  <!-- Eje X -->
+  <line x1="90" y1="400" x2="730" y2="400" stroke="#333" stroke-width="1.5"/>
+
+  <!-- Etiquetas Y -->
+  <g font-size="11" fill="#333" text-anchor="end">
+    <text x="82" y="64">4532.5</text>
+    <text x="82" y="132">4531.5</text>
+    <text x="82" y="200">4530.5</text>
+    <text x="82" y="268">4529.5</text>
+    <text x="82" y="336">4528.5</text>
+  </g>
+
+  <!-- Etiquetas X -->
+  <g font-size="11" fill="#333" text-anchor="middle">
+    <text x="90" y="418">0</text>
+    <text x="250" y="418">10</text>
+    <text x="410" y="418">20</text>
+    <text x="570" y="418">30</text>
+    <text x="730" y="418">40</text>
+  </g>
+
+  <!-- Curva L10 (azul) -->
+  <path d="M 90 350 Q 180 300 260 270 T 410 210 T 570 130 T 730 90"
+        fill="none" stroke="#2563eb" stroke-width="2.5"/>
+
+  <!-- Curva L (naranja) -->
+  <path d="M 90 370 Q 180 330 260 300 T 410 245 T 570 175 T 730 130"
+        fill="none" stroke="#ff6b00" stroke-width="2.5"/>
+
+  <!-- Curva R (violeta) -->
+  <path d="M 90 300 Q 180 280 260 260 T 410 220 T 570 160 T 730 110"
+        fill="none" stroke="#7c3aed" stroke-width="2.5"/>
+
+  <!-- Curva D (rosa) -->
+  <path d="M 90 380 Q 180 360 260 350 T 410 320 T 570 280 T 730 240"
+        fill="none" stroke="#db2777" stroke-width="2.5"/>
+
+  <!-- Puntos y etiquetas -->
+  <g fill="#2563eb">
+    <circle cx="90" cy="350" r="3.5"/>
+    <circle cx="250" cy="272" r="3.5"/>
+    <circle cx="410" cy="210" r="3.5"/>
+    <circle cx="570" cy="130" r="3.5"/>
+    <circle cx="730" cy="90" r="3.5"/>
+  </g>
+  <g font-size="10" font-weight="700" fill="#2563eb" text-anchor="middle">
+    <text x="90" y="342">L10:0</text>
+    <text x="250" y="264">L10:10</text>
+    <text x="410" y="202">L10:20</text>
+    <text x="570" y="122">L10:30</text>
+    <text x="730" y="82">L10:40</text>
+  </g>
+
+  <!-- Etiquetas D y R -->
+  <g font-size="10" font-weight="700" fill="#db2777" text-anchor="middle">
+    <text x="250" y="345">D10</text>
+    <text x="410" y="315">D20</text>
+  </g>
+  <g font-size="10" font-weight="700" fill="#7c3aed" text-anchor="middle">
+    <text x="250" y="255">R10</text>
+    <text x="410" y="215">R20</text>
+  </g>
+
+  <!-- Leyenda -->
+  <rect x="750" y="60" width="140" height="110" fill="#ffffff" stroke="#ddd" rx="4"/>
+  <g font-size="12" fill="#111">
+    <rect x="762" y="74" width="16" height="4" fill="#2563eb"/>
+    <text x="786" y="80">L₁₀</text>
+    <rect x="762" y="96" width="16" height="4" fill="#ff6b00"/>
+    <text x="786" y="102">L</text>
+    <rect x="762" y="118" width="16" height="4" fill="#db2777"/>
+    <text x="786" y="124">D(k)</text>
+    <rect x="762" y="140" width="16" height="4" fill="#7c3aed"/>
+    <text x="786" y="146">R(k)</text>
+  </g>
+
+  <!-- Anotaciones con líneas punteadas -->
+  <!-- 1. Título -->
+  <line x1="450" y1="34" x2="450" y2="55" stroke="#888" stroke-dasharray="3 3"/>
+  <circle cx="450" cy="34" r="10" fill="#ff6b00"/>
+  <text x="450" y="38" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">1</text>
+
+  <!-- 2. Eje Y -->
+  <line x1="90" y1="55" x2="60" y2="45" stroke="#888" stroke-dasharray="3 3"/>
+  <circle cx="55" cy="43" r="10" fill="#ff6b00"/>
+  <text x="55" y="47" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">2</text>
+
+  <!-- 3. Eje X -->
+  <line x1="730" y1="400" x2="760" y2="430" stroke="#888" stroke-dasharray="3 3"/>
+  <circle cx="765" cy="432" r="10" fill="#ff6b00"/>
+  <text x="765" y="436" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">3</text>
+
+  <!-- 4. Curva L10 -->
+  <line x1="410" y1="210" x2="450" y2="260" stroke="#888" stroke-dasharray="3 3"/>
+  <circle cx="455" cy="265" r="10" fill="#ff6b00"/>
+  <text x="455" y="269" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">4</text>
+
+  <!-- 5. Etiquetas de puntos -->
+  <line x1="570" y1="122" x2="640" y2="220" stroke="#888" stroke-dasharray="3 3"/>
+  <circle cx="645" cy="225" r="10" fill="#ff6b00"/>
+  <text x="645" y="229" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">5</text>
+
+  <!-- 6. Leyenda -->
+  <line x1="820" y1="170" x2="820" y2="200" stroke="#888" stroke-dasharray="3 3"/>
+  <circle cx="820" cy="205" r="10" fill="#ff6b00"/>
+  <text x="820" y="209" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">6</text>
+
+  <!-- Leyenda explicativa abajo -->
+  <g font-size="12" fill="#111">
+    <circle cx="40" cy="460" r="9" fill="#ff6b00"/>
+    <text x="40" y="464" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">1</text>
+    <text x="60" y="464">Chart title: plies shown and number of positions</text>
+
+    <circle cx="40" cy="484" r="9" fill="#ff6b00"/>
+    <text x="40" y="488" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">2</text>
+    <text x="60" y="488">Y axis: values of active series (grid + rotatable label)</text>
+
+    <circle cx="40" cy="508" r="9" fill="#ff6b00"/>
+    <text x="40" y="512" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">3</text>
+    <text x="60" y="512">X axis: ply number (0 = starting position)</text>
+
+    <circle cx="480" cy="460" r="9" fill="#ff6b00"/>
+    <text x="480" y="464" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">4</text>
+    <text x="500" y="464">Series curve (L₁₀ blue, L orange, D pink, R violet)</text>
+
+    <circle cx="480" cy="484" r="9" fill="#ff6b00"/>
+    <text x="480" y="488" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">5</text>
+    <text x="500" y="488">Point labels (configurable angle per series)</text>
+
+    <circle cx="480" cy="508" r="9" fill="#ff6b00"/>
+    <text x="480" y="512" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">6</text>
+    <text x="500" y="512">Legend: visible series with their color</text>
+  </g>
+</svg>
