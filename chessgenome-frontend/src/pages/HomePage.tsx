@@ -64,12 +64,15 @@ export function HomePage({ onNavigate, onOpenPosition }: Props) {
           <figure className="author-card shrink-0">
             <img
               src="/authors/dietrich-luebbert.jpg"
-              alt="Dietrich Lübbert"
+              alt="Lic. Dietrich Lübbert"
               width={68}
               height={68}
             />
             <figcaption className="text-[10px] sm:text-xs text-gray-700 leading-tight text-center">
-              Dietrich Lübbert
+              Lic. Dietrich Lübbert
+              <span className="block text-[9px] sm:text-[10px] text-gray-500">
+                Independent researcher
+              </span>
             </figcaption>
           </figure>
           <h2 className="text-2xl sm:text-4xl font-bold tracking-tight flex-1 min-w-0 text-gray-900">
@@ -80,12 +83,15 @@ export function HomePage({ onNavigate, onOpenPosition }: Props) {
           <figure className="author-card shrink-0">
             <img
               src="/authors/jose-cespedes.jpg"
-              alt="José Angel Céspedes Bejerano"
+              alt="Lic. José Angel Céspedes Bejerano"
               width={68}
               height={68}
             />
             <figcaption className="text-[10px] sm:text-xs text-gray-700 leading-tight text-center">
-              José A. Céspedes
+              Lic. José Angel Céspedes Bejerano
+              <span className="block text-[9px] sm:text-[10px] text-gray-500">
+                Independent researcher
+              </span>
             </figcaption>
           </figure>
         </div>
