@@ -5,7 +5,7 @@ Dump comprimido de la base de datos `chessgenome` (MongoDB 7).
 ## Contenido
 
 - `chessgenome_mongo_dump.gz`: dump en formato archive comprimido con gzip.
-  Colecciones: `positions`, `transitions`, `pgns`, `comments`, `users`, `authors`, `training_samples`, `neural_models`.
+  Colecciones: `positions`, `transitions`, `pgns`, `comments`, `authors`, `training_samples`, `neural_models`.
 
 ## Restaurar
 
@@ -17,4 +17,4 @@ Con el contenedor de MongoDB en marcha:
 
 ## Generar el dump de nuevo
 
-    docker exec chessgenome-mongodb mongodump --db chessgenome --archive --gzip > chessgenome_mongo_dump.gz
+    docker exec chessgenome-mongodb mongodump --db chessgenome --excludeCollection=users --archive --gzip > chessgenome_mongo_dump.gz
