@@ -18,3 +18,7 @@ Con el contenedor de MongoDB en marcha:
 ## Generar el dump de nuevo
 
     docker exec chessgenome-mongodb mongodump --db chessgenome --excludeCollection=users --archive --gzip > chessgenome_mongo_dump.gz
+
+## Nota sobre la colección `users`
+
+La colección `users` se excluye deliberadamente del dump por contener datos personales (emails y hashes de contraseñas). Los usuarios se crean al registrarse en la aplicación. Si necesitas restaurar usuarios en un entorno de desarrollo, crea las cuentas a través de la app o solicita el dump de usuarios por un canal privado.
