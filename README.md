@@ -28,3 +28,9 @@
 # Node 20 LTS recommended for the frontend
 cd chessgenome-backend && npm install && npm run start:dev
 cd chessgenome-frontend && npm install && npm run dev
+
+## Supplementary material
+
+Supplementary material for the paper *Prime Codes of Chess Positions and the Chess Genome Sequence* is available in the `paper/` directory. To verify the results, run:
+
+    python3 paper/verify.py
